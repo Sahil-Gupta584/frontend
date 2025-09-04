@@ -1,9 +1,9 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 
-import { Providers } from "./providers";
-
+import { Nav } from "@/components/navbar";
 import { siteConfig } from "@/config/site";
+import { Providers, ReactQueryProvider } from "../providers";
 
 export const metadata: Metadata = {
   title: {
@@ -29,12 +29,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html suppressHydrationWarning lang="en">
-      <body>
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          {children}
-        </Providers>
-      </body>
-    </html>
+    <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+      <ReactQueryProvider>
+        <div className="min-h-screen max-w-6xl m-auto text-foreground bg-[#131315] font-sans antialiased">
+          <Nav />
+          <main className="container mx-auto max-w-6xl pt-6 px-6 flex-grow">
+            {children}
+          </main>
+        </div>
+      </ReactQueryProvider>
+    </Providers>
   );
 }

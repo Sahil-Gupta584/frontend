@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+export default {
+    images: { remotePatterns: [{ hostname: 'cdnjs.cloudflare.com' }, { hostname: 'datafa.st' }, { hostname: 'icons.duckduckgo.com' }, { hostname: 'purecatamphetamine.github.io' }] }
+};
 
-module.exports = nextConfig;

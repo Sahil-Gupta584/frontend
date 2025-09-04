@@ -1,141 +1,127 @@
+"use client";
+
 import {
-  Navbar as HeroUINavbar,
-  NavbarContent,
-  NavbarMenu,
-  NavbarMenuToggle,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownSection,
+  DropdownTrigger,
+  Navbar,
   NavbarBrand,
+  NavbarContent,
   NavbarItem,
-  NavbarMenuItem,
-} from "@heroui/navbar";
-import { Button } from "@heroui/button";
-import { Kbd } from "@heroui/kbd";
-import { Link } from "@heroui/link";
-import { Input } from "@heroui/input";
-import { link as linkStyles } from "@heroui/theme";
-import NextLink from "next/link";
-import clsx from "clsx";
+  User,
+} from "@heroui/react";
+import Link from "next/link";
 
-import { siteConfig } from "@/config/site";
-import { ThemeSwitch } from "@/components/theme-switch";
-import {
-  TwitterIcon,
-  GithubIcon,
-  DiscordIcon,
-  HeartFilledIcon,
-  SearchIcon,
-  Logo,
-} from "@/components/icons";
-
-export const Navbar = () => {
-  const searchInput = (
-    <Input
-      aria-label="Search"
-      classNames={{
-        inputWrapper: "bg-default-100",
-        input: "text-sm",
-      }}
-      endContent={
-        <Kbd className="hidden lg:inline-block" keys={["command"]}>
-          K
-        </Kbd>
-      }
-      labelPlacement="outside"
-      placeholder="Search..."
-      startContent={
-        <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-      }
-      type="search"
-    />
-  );
-
+export function Nav() {
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky">
-      <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
-        <NavbarBrand as="li" className="gap-3 max-w-fit">
-          <NextLink className="flex justify-start items-center gap-1" href="/">
-            <Logo />
-            <p className="font-bold text-inherit">ACME</p>
-          </NextLink>
-        </NavbarBrand>
-        <ul className="hidden lg:flex gap-4 justify-start ml-2">
-          {siteConfig.navItems.map((item) => (
-            <NavbarItem key={item.href}>
-              <NextLink
-                className={clsx(
-                  linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium",
-                )}
-                color="foreground"
-                href={item.href}
-              >
-                {item.label}
-              </NextLink>
-            </NavbarItem>
-          ))}
-        </ul>
-      </NavbarContent>
-
-      <NavbarContent
-        className="hidden sm:flex basis-1/5 sm:basis-full"
-        justify="end"
-      >
-        <NavbarItem className="hidden sm:flex gap-2">
-          <Link isExternal aria-label="Twitter" href={siteConfig.links.twitter}>
-            <TwitterIcon className="text-default-500" />
-          </Link>
-          <Link isExternal aria-label="Discord" href={siteConfig.links.discord}>
-            <DiscordIcon className="text-default-500" />
-          </Link>
-          <Link isExternal aria-label="Github" href={siteConfig.links.github}>
-            <GithubIcon className="text-default-500" />
-          </Link>
-          <ThemeSwitch />
-        </NavbarItem>
-        <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
-        <NavbarItem className="hidden md:flex">
-          <Button
-            isExternal
-            as={Link}
-            className="text-sm font-normal text-default-600 bg-default-100"
-            href={siteConfig.links.sponsor}
-            startContent={<HeartFilledIcon className="text-danger" />}
-            variant="flat"
-          >
-            Sponsor
-          </Button>
-        </NavbarItem>
-      </NavbarContent>
-
-      <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        <Link isExternal aria-label="Github" href={siteConfig.links.github}>
-          <GithubIcon className="text-default-500" />
+    <Navbar
+      shouldHideOnScroll
+      classNames={{ wrapper: "px-0" }}
+      className="bg-transparent "
+    >
+      {/* Brand */}
+      <NavbarBrand>
+        <Link href="/dashboard" className="font-bold text-white text-lg">
+          Insightly
         </Link>
-        <ThemeSwitch />
-        <NavbarMenuToggle />
-      </NavbarContent>
+      </NavbarBrand>
 
-      <NavbarMenu>
-        {searchInput}
-        <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.navMenuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
-              <Link
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
-                      ? "danger"
-                      : "foreground"
-                }
-                href="#"
-                size="lg"
-              >
-                {item.label}
-              </Link>
-            </NavbarMenuItem>
-          ))}
-        </div>
-      </NavbarMenu>
-    </HeroUINavbar>
+      {/* Right side user menu */}
+      <NavbarContent justify="end">
+        <NavbarItem className="hidden lg:flex">
+          <Dropdown
+            showArrow
+            classNames={{
+              base: "before:bg-neutral-800", // arrow bg
+              content:
+                "p-0 border border-neutral-800 rounded-lg shadow-lg bg-[#222225]",
+            }}
+            radius="sm"
+          >
+            <DropdownTrigger>
+              <User
+                avatarProps={{
+                  size: "sm",
+                  src: "https://avatars.githubusercontent.com/u/30373425?v=4",
+                }}
+                classNames={{
+                  name: "text-white",
+                  description: "text-neutral-400",
+                }}
+                className="cursor-pointer hover:bg-neutral-700 transition p-2"
+                name="Junior Garcia"
+              />
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="User menu"
+              className="p-2"
+              disabledKeys={["profile"]}
+              itemClasses={{
+                base: [
+                  "rounded-md",
+                  "text-neutral-400",
+                  "transition-colors",
+                  "data-[hover=true]:text-white",
+                  "data-[hover=true]:bg-neutral-700",
+                  "data-[selectable=true]:focus:bg-neutral-600",
+                  "data-[pressed=true]:opacity-70",
+                  "data-[focus-visible=true]:ring-pink-500",
+                ],
+              }}
+            >
+              {/* Profile Section */}
+              <DropdownSection showDivider aria-label="Profile & Actions">
+                <DropdownItem
+                  key="profile"
+                  isReadOnly
+                  className="h-14 gap-2 opacity-100"
+                >
+                  <User
+                    avatarProps={{
+                      className: "hidden",
+                    }}
+                    classNames={{
+                      name: "text-white",
+                      description: "text-neutral-400",
+                    }}
+                    description="@jrgarciadev"
+                    name="Junior Garcia"
+                  />
+                </DropdownItem>
+                <DropdownItem key="settings">⚙️ Settings</DropdownItem>
+                <DropdownItem key="billing">💳 Billing</DropdownItem>
+              </DropdownSection>
+
+              {/* Preferences Section */}
+              <DropdownSection aria-label="Preferences">
+                <DropdownItem
+                  key="theme"
+                  isReadOnly
+                  className="cursor-default"
+                  endContent={
+                    <select
+                      className="z-10 w-20 rounded-md text-xs border border-neutral-700 bg-[#19191C] text-neutral-400 hover:border-pink-500 transition"
+                      id="theme"
+                      name="theme"
+                    >
+                      <option>System</option>
+                      <option>Dark</option>
+                      <option>Light</option>
+                    </select>
+                  }
+                >
+                  🎨 Theme
+                </DropdownItem>
+                <DropdownItem key="logout" className="text-pink-500">
+                  🚪 Log Out
+                </DropdownItem>
+              </DropdownSection>
+            </DropdownMenu>
+          </Dropdown>
+        </NavbarItem>
+      </NavbarContent>
+    </Navbar>
   );
-};
+}

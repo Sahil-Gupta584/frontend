@@ -2,10 +2,10 @@
 
 import type { ThemeProviderProps } from "next-themes";
 
-import * as React from "react";
 import { HeroUIProvider } from "@heroui/system";
-import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { useRouter } from "next/navigation";
+import * as React from "react";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -25,7 +25,21 @@ export function Providers({ children, themeProps }: ProvidersProps) {
 
   return (
     <HeroUIProvider navigate={router.push}>
+      <ToastProvider placement="top-center" />
       <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
     </HeroUIProvider>
+  );
+}
+
+import { ToastProvider } from "@heroui/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactNode, useState } from "react";
+
+export function ReactQueryProvider({ children }: { children: ReactNode }) {
+  // useState ensures a single QueryClient per app lifecycle
+  const [queryClient] = useState(() => new QueryClient());
+
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 }

@@ -1,3 +1,10 @@
+@config "../tailwind.config.js";
 @import "tailwindcss";
 
-@config "../tailwind.config.js"
+.recharts-label-list {
+  pointer-events: none;
+}
+
+.text-desc {
+  @apply text-xs text-default-500;
+}
