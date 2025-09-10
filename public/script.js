@@ -1,4 +1,4 @@
-! function() {
+! function () {
     "use strict";
     const t = document.currentScript,
         e = "data-",
@@ -53,7 +53,7 @@
 
     function i() {
         let t = r("insightly_visitor_id");
-        return t || (t = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (function(t) {
+        return t || (t = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (function (t) {
             const e = 16 * Math.random() | 0;
             return ("x" == t ? e : 3 & e | 8).toString(16)
         })), s("insightly_visitor_id", t, 365)), t
@@ -61,7 +61,7 @@
 
     function c() {
         let t = r("insightly_session_id");
-        return t || (t = "sxxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (function(t) {
+        return t || (t = "sxxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (function (t) {
             const e = 16 * Math.random() | 0;
             return ("x" == t ? e : 3 & e | 8).toString(16)
         })), s("insightly_session_id", t, 1 / 48)), t
@@ -109,14 +109,14 @@
     }
 
     function p(t, e) {
-        return "true" === localStorage.getItem("insightly_ignore") ? (console.log("insightly: Tracking disabled via localStorage flag"), void(e && e({
+        return "true" === localStorage.getItem("insightly_ignore") ? (console.log("insightly: Tracking disabled via localStorage flag"), void (e && e({
             status: 200
-        }))) : a() ? (console.log("insightly: Bot detected, not sending data"), void(e && e({
+        }))) : a() ? (console.log("insightly: Bot detected, not sending data"), void (e && e({
             status: 200
         }))) : void
-        function(t, e) {
+        function (t, e) {
             const n = new XMLHttpRequest;
-            n.open("POST", w, !0), n.setRequestHeader("Content-Type", "application/json"), n.onreadystatechange = function() {
+            n.open("POST", w, !0), n.setRequestHeader("Content-Type", "application/json"), n.onreadystatechange = function () {
                 if (n.readyState === XMLHttpRequest.DONE) {
                     if (200 === n.status) {
                         console.log("Event data sent successfully");
@@ -133,29 +133,29 @@
         x = "";
 
     function v(t) {
-        if (!d) return void(t && t({
+        if (!d) return void (t && t({
             status: 200
         }));
         const e = Date.now(),
             n = window.location.href;
-        if (n === x && e - _ < 6e4) return console.log("insightly: Pageview throttled - too recent"), void(t && t({
+        if (n === x && e - _ < 6e4) return console.log("insightly: Pageview throttled - too recent"), void (t && t({
             status: 200
         }));
         _ = e, x = n,
-            function(t, e) {
+            function (t, e) {
                 try {
                     sessionStorage.setItem("insightly_pageview_state", JSON.stringify({
                         time: t,
                         url: e
                     }))
-                } catch (t) {}
+                } catch (t) { }
             }(e, n);
         const o = h();
         o.type = "pageview", p(o, t)
     }
 
     function y(t, e, n) {
-        if (!d) return void(n && n({
+        if (!d) return void (n && n({
             status: 200
         }));
         const o = h();
@@ -169,7 +169,7 @@
     }
 
     function b(t, e, n) {
-        if (!d) return void(n && n({
+        if (!d) return void (n && n({
             status: 200
         }));
         const o = h();
@@ -184,27 +184,27 @@
                         if ("payment" === t) b(t, {
                             email: e.email
                         });
-                        else if ("identify" === t) ! function(t, e, n) {
-            if (!d) return void(n && n({
-                status: 200
-            }));
-            const o = h();
-            o.type = "identify", o.extraData = {
-                user_id: t,
-                name: e.name || "",
-                ...e
-            }, p(o, n)
-        }(e.user_id, e);
-        else {
-            const n = D(e || {});
-            if (null === n) return void console.error("insightly: Custom event rejected due to validation errors");
-            b("custom", {
-                eventName: t,
-                ...n
-            })
-        } else console.warn(`insightly: Missing user_id for ${t} event`);
-        else console.warn(`insightly: Missing email for ${t} event`);
-        else console.warn("insightly: Missing event_name for custom event");
+                        else if ("identify" === t) ! function (t, e, n) {
+                            if (!d) return void (n && n({
+                                status: 200
+                            }));
+                            const o = h();
+                            o.type = "identify", o.extraData = {
+                                user_id: t,
+                                name: e.name || "",
+                                ...e
+                            }, p(o, n)
+                        }(e.user_id, e);
+                        else {
+                            const n = D(e || {});
+                            if (null === n) return void console.error("insightly: Custom event rejected due to validation errors");
+                            b("custom", {
+                                eventName: t,
+                                ...n
+                            })
+                        } else console.warn(`insightly: Missing user_id for ${t} event`);
+                else console.warn(`insightly: Missing email for ${t} event`);
+            else console.warn("insightly: Missing event_name for custom event");
         else console.log(`insightly: Event '${t}' ignored - ${u}`)
     }
 
@@ -224,7 +224,7 @@
                 continue
             }
             if (n >= 10) return console.error("insightly: Maximum 10 custom parameters allowed"), null;
-            if ("string" != typeof(a = s) || 0 === a.length || a.length > 32 || !/^[a-z0-9_-]+$/.test(a.toLowerCase())) return console.error(`insightly: Invalid property name "${s}". Use only lowercase letters, numbers, underscores, and hyphens. Max 32 characters.`), null;
+            if ("string" != typeof (a = s) || 0 === a.length || a.length > 32 || !/^[a-z0-9_-]+$/.test(a.toLowerCase())) return console.error(`insightly: Invalid property name "${s}". Use only lowercase letters, numbers, underscores, and hyphens. Max 32 characters.`), null;
             const t = s.toLowerCase(),
                 i = o(r);
             e[t] = i, n++
@@ -232,19 +232,19 @@
         var a;
         return e
     }
-    if (window.insightly = S, window.insightly.q && delete window.insightly.q, function() {
-            for (; l.length > 0;) {
-                const t = l.shift();
-                if (Array.isArray(t) && t.length > 0) try {
-                    S.apply(null, t)
-                } catch (e) {
-                    console.error("insightly: Error processing queued call:", e, t)
-                }
+    if (window.insightly = S, window.insightly.q && delete window.insightly.q, function () {
+        for (; l.length > 0;) {
+            const t = l.shift();
+            if (Array.isArray(t) && t.length > 0) try {
+                S.apply(null, t)
+            } catch (e) {
+                console.error("insightly: Error processing queued call:", e, t)
             }
-        }(), !d) return void console.warn(`insightly: ${u}`);
+        }
+    }(), !d) return void console.warn(`insightly: ${u}`);
 
     function E(t) {
-        t && t.href && function(t) {
+        t && t.href && function (t) {
             try {
                 const e = new URL(t, window.location.origin);
                 if ("http:" !== e.protocol && "https:" !== e.protocol) return !1;
@@ -285,13 +285,13 @@
                 !isNaN(t) && t >= 0 && (o = t)
             }
             const a = () => {
-                const n = function() {
-                        const t = Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight),
-                            e = window.innerHeight,
-                            n = window.pageYOffset || document.documentElement.scrollTop,
-                            o = t - e;
-                        return o <= 0 ? 100 : Math.min(100, Math.round(n / o * 100))
-                    }(),
+                const n = function () {
+                    const t = Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight),
+                        e = window.innerHeight,
+                        n = window.pageYOffset || document.documentElement.scrollTop,
+                        o = t - e;
+                    return o <= 0 ? 100 : Math.min(100, Math.round(n / o * 100))
+                }(),
                     a = t.getAttribute("data-fast-scroll-threshold");
                 let s = .5;
                 if (null !== a) {
@@ -322,7 +322,7 @@
         const t = document.querySelectorAll("[data-fast-scroll]");
         if (0 === t.length) return;
         const e = new Map;
-        t.forEach((function(t) {
+        t.forEach((function (t) {
             const n = t.getAttribute("data-fast-scroll-threshold");
             let o = .5;
             if (null !== n) {
@@ -330,9 +330,9 @@
                 !isNaN(t) && t >= 0 && t <= 1 ? o = t : console.warn(`insightly: Invalid threshold value "${n}" for element. Using default 0.5. Threshold must be between 0 and 1.`)
             }
             e.has(o) || e.set(o, []), e.get(o).push(t)
-        })), e.forEach((function(t, e) {
-            const n = new IntersectionObserver((function(t) {
-                t.forEach((function(t) {
+        })), e.forEach((function (t, e) {
+            const n = new IntersectionObserver((function (t) {
+                t.forEach((function (t) {
                     t.isIntersecting && (A(t.target), n.unobserve(t.target))
                 }))
             }), {
@@ -340,11 +340,11 @@
                 rootMargin: "0px",
                 threshold: e
             });
-            t.forEach((function(t) {
+            t.forEach((function (t) {
                 n.observe(t)
             }))
         }))
-    }! function() {
+    } ! function () {
         try {
             const t = sessionStorage.getItem("insightly_pageview_state");
             if (t) {
@@ -357,19 +357,19 @@
         } catch (t) {
             _ = 0, x = ""
         }
-    }(), document.addEventListener("click", (function(t) {
+    }(), document.addEventListener("click", (function (t) {
         const e = t.target.closest("[data-fast-goal]");
         e && I(e);
         E(t.target.closest("a"))
-    })), document.addEventListener("keydown", (function(t) {
+    })), document.addEventListener("keydown", (function (t) {
         if ("Enter" === t.key || " " === t.key) {
             const e = t.target.closest("[data-fast-goal]");
             e && I(e);
             E(t.target.closest("a"))
         }
-    })), document.addEventListener("submit", (function(t) {
+    })), document.addEventListener("submit", (function (t) {
         const e = t.target.closest("form[data-fast-goal]");
-        e && function(t) {
+        e && function (t) {
             const e = t.getAttribute("data-fast-goal");
             if (e && e.trim()) {
                 const n = {
@@ -393,7 +393,7 @@
 
     function F() {
         v(),
-            function() {
+            function () {
                 try {
                     const t = new URL(window.location.href).searchParams.get("session_id");
                     t && t.startsWith("cs_") && !sessionStorage.getItem("insightly_stripe_payment_sent_" + t) && (y("stripe", t), sessionStorage.setItem("insightly_stripe_payment_sent_" + t, "1"))
@@ -401,7 +401,7 @@
                     console.error("Error auto detecting Stripe session ID:", t)
                 }
             }(),
-            function() {
+            function () {
                 try {
                     const t = new URL(window.location.href).searchParams.get("checkout_id");
                     t && !sessionStorage.getItem("insightly_polar_payment_sent_" + t) && (y("polar", t), sessionStorage.setItem("insightly_polar_payment_sent_" + t, "1"))
@@ -409,7 +409,7 @@
                     console.error("Error auto detecting Polar checkout ID:", t)
                 }
             }(),
-            function() {
+            function () {
                 try {
                     const t = new URL(window.location.href).searchParams.get("order_id");
                     t && !sessionStorage.getItem("insightly_lemonsqueezy_payment_sent_" + t) && (y("lemonsqueezy", t), sessionStorage.setItem("insightly_lemonsqueezy_payment_sent_" + t, "1"))
@@ -422,12 +422,33 @@
     function q() {
         k && clearTimeout(k), k = setTimeout(F, 100)
     }
+
+    function sendHeartbeat() {
+        const payload = {
+            visitorId: i(), // existing function that gives a unique visitor ID
+            sessionId: c(), // existing function that gives session ID
+            websiteId: m,   // from data-website-id
+            url: window.location.href,
+            referrer: document.referrer || null,
+            ts: Date.now(),
+        };
+
+        fetch("http://localhost:3000/api/heartbeat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        }).catch((err) => console.error("Heartbeat error:", err));
+    }
     F();
+    // ---- Heartbeat loop ----
+    sendHeartbeat();
+    // setInterval(sendHeartbeat, 5 * 60 * 60 * 1000);
+    setInterval(sendHeartbeat, 5 * 60 * 60 * 1000);
     let M = window.location.pathname;
     const P = window.history.pushState;
-    window.history.pushState = function() {
+    window.history.pushState = function () {
         P.apply(this, arguments), M !== window.location.pathname && (M = window.location.pathname, q())
-    }, window.addEventListener("popstate", (function() {
+    }, window.addEventListener("popstate", (function () {
         M !== window.location.pathname && (M = window.location.pathname, q())
     }))
 }();

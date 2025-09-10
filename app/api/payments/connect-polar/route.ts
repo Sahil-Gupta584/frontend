@@ -1,7 +1,9 @@
+import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
-const basePolarApi = "https://api.polar.sh/v1";
+// const basePolarApi = "https://api.polar.sh/v1";
+const basePolarApi = "https://sandbox-api.polar.sh/v1";
 
 async function fetchWithScopeCheck(
   endpoint: string,
@@ -47,7 +49,8 @@ export async function POST(req: NextRequest) {
       basePolarApi + "/webhooks/endpoints",
       {
         format: "raw",
-        url: `https://insightly.appwrite.network/api/website/${body.websiteId}/webhook/polar`,
+        // url: `https://insightly.appwrite.network/api/website/${body.websiteId}/webhook/polar`,
+        url: `https://d4c3b54a2cbb.ngrok-free.app/api/website/${body.websiteId}/webhook/polar`,
         events: [
           "order.created",
           "order.refunded",
@@ -62,6 +65,24 @@ export async function POST(req: NextRequest) {
     if (addWebhookRes.data?.error === "insufficient_scope") {
       throw new Error("webhook:write scope not found for given token.");
     }
+
+    const website = await database.getRow({
+      databaseId,
+      tableId: websitesTableId,
+      rowId: body.websiteId,
+    });
+
+    website.paymentProviders.push("Stripe");
+
+    await database.updateRow({
+      databaseId,
+      tableId: websitesTableId,
+      rowId: body.websiteId,
+      data: {
+        paymentProviders: website.paymentProviders,
+      },
+    });
+
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error(error);

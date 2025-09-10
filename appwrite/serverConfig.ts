@@ -1,14 +1,22 @@
 import { Client, TablesDB } from "node-appwrite";
 
-export const databaseId = "68b2b44d003465280f37";
-export const websitesCollectionId = "68b2b466000179a3332c";
+const databaseIdRaw = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
+if (!databaseIdRaw) throw new Error("Missing DATABASE_ID");
+const databaseId: string = databaseIdRaw;
+
+const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID;
+
+const websitesTableId = process.env.WEBSITE_TABLE_ID || "";
+const projectKey = process.env.APPWRITE_KEY || "";
+
+if (!databaseId || !projectId || !databaseId) {
+  throw new Error("Invalid envs");
+}
 
 const client = new Client()
   .setEndpoint("https://fra.cloud.appwrite.io/v1") // Your API Endpoint
-  .setProject("68ad713f00087b77096f")
-  .setKey(
-    "standard_0f5fb3432024560fe5f818d405fca7dcc6f62174013950cd6ee46836a308d608040b6bc6447cb5de7e39cd2117629f50554411b96f705fcd2dbd2e745bc20a1f48827e8fd022d13b2d5bbdcfef4e6c628ff8a2e84679a594afd5ff1baf1404dd98bbddd83e2a9c91a348f08866b98122bcdca0e6069ef7db5972b7703366ecb6"
-  );
+  .setProject(projectId)
+  .setKey(projectKey);
 
 const database = new TablesDB(client);
 
@@ -32,4 +40,4 @@ const database = new TablesDB(client);
 
 // migrate();
 
-export { database };
+export { database, databaseId, websitesTableId };

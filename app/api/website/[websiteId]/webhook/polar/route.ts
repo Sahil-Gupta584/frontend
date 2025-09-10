@@ -5,16 +5,19 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { websiteId: string } }
+  { params }: { params: Promise<{ websiteId: string }> }
 ) {
   try {
     const body = await req.json();
-    const websiteId = params.websiteId;
+    console.log("body", body);
+
+    const websiteId = (await params).websiteId;
 
     // Polar webhook type
     const eventType = body?.type;
     const data = body?.data;
-
+    const visitorId = body?.data?.insightly_visitor_id;
+    const sessionId = body?.data?.insightly_session_id;
     let revenue = 0;
     let renewalRevenue = 0;
     let refundedRevenue = 0;

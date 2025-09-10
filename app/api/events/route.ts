@@ -3,7 +3,7 @@ import { ID } from "appwrite";
 import { NextRequest, NextResponse } from "next/server";
 import { UAParser } from "ua-parser-js";
 
-const headers = {
+export const headers = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
@@ -34,23 +34,22 @@ export async function POST(req: NextRequest) {
     ip = ip === "::1" ? "103.190.15.171" : ip;
 
     const geo = await getGeo(ip);
-    console.log({ geo });
 
-    console.log("Received event data for", domain, {
-      website: websiteId,
-      href,
-      referrer,
-      viewport: JSON.stringify(viewport),
-      visitorId,
-      sessionId,
-      type,
-      browser,
-      os,
-      device,
-      ip,
-      countryCode: geo?.country,
-      city: geo?.city,
-    });
+    // console.log("Received event data for", domain, {
+    //   website: websiteId,
+    //   href,
+    //   referrer,
+    //   viewport: JSON.stringify(viewport),
+    //   visitorId,
+    //   sessionId,
+    //   type,
+    //   browser,
+    //   os,
+    //   device,
+    //   ip,
+    //   countryCode: geo?.country,
+    //   city: geo?.city,
+    // });
 
     await database.createRow({
       databaseId: databaseId,
@@ -59,7 +58,7 @@ export async function POST(req: NextRequest) {
       data: {
         website: websiteId,
         href,
-        referrer: new URL(referrer).hostname,
+        referrer: referrer ? new URL(referrer).hostname : null,
         viewport: JSON.stringify(viewport),
         visitorId,
         sessionId,

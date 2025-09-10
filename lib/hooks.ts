@@ -1,6 +1,7 @@
 import { account } from "@/appwrite/clientConfig";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { User } from "./types";
 
 export const useTimeZones = () => {
   const [timeZones, setTimeZones] = useState<
@@ -60,12 +61,6 @@ export const useTimeZones = () => {
   return timeZones;
 };
 
-interface User {
-  $id: string;
-  name?: string;
-  email?: string;
-}
-
 export function useUser() {
   const router = useRouter();
   const path = usePathname();
@@ -74,8 +69,8 @@ export function useUser() {
   useEffect(() => {
     account
       .get()
-      .then((data) => {
-        if (!data.$id) {
+      .then(async (data) => {
+        if (!data.$id && path?.includes("/dashboard")) {
           router.push(`/auth?redirect=${path}`);
           return;
         }
@@ -84,11 +79,28 @@ export function useUser() {
           router.push("/dashboard");
           return;
         }
+        if (!data.prefs.image) {
+          const session = await account.getSession("current");
+          const res = await fetch(
+            "https://www.googleapis.com/oauth2/v3/userinfo",
+            {
+              headers: {
+                Authorization: `Bearer ${session.providerAccessToken}`,
+              },
+            }
+          );
+          const profile = await res.json();
+          await account.updatePrefs({ image: profile.picture });
+        }
 
-        setUser(data);
+        setUser({ ...data, image: data.prefs.image });
       })
-      .catch(() => router.push(`/auth?redirect=${path}`));
+      .catch(() => {
+        if (path?.includes("/dashboard")) {
+          router.push(`/auth?redirect=${path}`);
+        }
+      });
   }, [path, router]);
 
-  return { ...user };
+  return user;
 }

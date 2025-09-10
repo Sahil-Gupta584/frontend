@@ -1,13 +1,7 @@
-import { account } from "@/appwrite/clientConfig";
-import {
-  database,
-  databaseId,
-  websitesCollectionId,
-} from "@/appwrite/serverConfig";
 import { Favicon } from "@/components/favicon";
-import { Select, SelectItem } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
-import { Query } from "node-appwrite";
+import { Select, SelectItem, SelectSection } from "@heroui/react";
+import Link from "next/link";
+import { IoSettingsSharp } from "react-icons/io5";
 
 export const durationOptions = [
   { key: "today", label: "Today" },
@@ -23,25 +17,17 @@ function Filters({
   websiteId,
   duration,
   setDuration,
+  data,
+  isLoading,
 }: {
   websiteId: string;
   duration: string;
   setDuration: (duration: string) => void;
+  data: { $id: string; domain: string }[];
+  isLoading: boolean;
 }) {
-  const getWebsitesQuery = useQuery({
-    queryKey: ["getWebsites"],
-    queryFn: async () => {
-      const user = await account.get();
-      return await database.listRows({
-        tableId: websitesCollectionId,
-        databaseId: databaseId,
-        queries: [Query.equal("userId", user.$id)],
-      });
-    },
-  });
-
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-4 items-end">
       {/* Website selector */}
       <Select
         variant="flat"
@@ -54,28 +40,45 @@ function Filters({
         defaultSelectedKeys={[websiteId]}
         disallowEmptySelection
         labelPlacement="outside-left"
-        items={getWebsitesQuery.data ? getWebsitesQuery.data.rows : []}
-        isLoading={getWebsitesQuery.isLoading}
+        selectorIcon={<SelectorIcon />}
+        items={data}
+        isLoading={isLoading}
+        maxListboxHeight={400}
         renderValue={(items) =>
-          items.map((item) => (
-            <div
-              className="font-semibold text-md flex items-center gap-2"
-              key={item.data?.$id || item.key}
-            >
-              <Favicon domain={item.data?.domain} />
-              {item.data?.domain}
-            </div>
-          ))
+          items.map((item) => {
+            return (
+              <div
+                className="font-semibold text-md flex items-center gap-2"
+                key={item.textValue}
+              >
+                <Favicon domain={item.textValue as string} />
+                {item.textValue}
+              </div>
+            );
+          })
         }
       >
-        {(website) => (
-          <SelectItem key={website.$id}>
-            <div className="font-semibold text-md flex items-center gap-2">
-              <Favicon domain={website.domain} />
-              {website.domain}
-            </div>
+        <SelectSection showDivider>
+          {data &&
+            data.map((website) => (
+              <SelectItem key={website.$id} textValue={website.domain}>
+                <div className="font-semibold text-md flex items-center gap-2">
+                  <Favicon domain={website.domain} />
+                  {website.domain}
+                </div>
+              </SelectItem>
+            ))}
+        </SelectSection>
+        <SelectSection className="p-0">
+          <SelectItem
+            key="setting"
+            endContent={<IoSettingsSharp />}
+            as={Link}
+            href={`/dashboard/${websiteId}/settings?domain=${data ? data.find((w) => w.$id === websiteId)?.domain : ""}`}
+          >
+            Settings
           </SelectItem>
-        )}
+        </SelectSection>
       </Select>
 
       {/* Duration selector */}
@@ -99,4 +102,26 @@ function Filters({
   );
 }
 
+export const SelectorIcon = (props: any) => {
+  return (
+    <svg
+      aria-hidden="true"
+      fill="none"
+      focusable="false"
+      height="1em"
+      role="presentation"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.5"
+      viewBox="0 0 24 24"
+      width="1em"
+      {...props}
+    >
+      <path d="M0 0h24v24H0z" fill="none" stroke="none" />
+      <path d="M8 9l4 -4l4 4" />
+      <path d="M16 15l-4 4l-4 -4" />
+    </svg>
+  );
+};
 export default Filters;

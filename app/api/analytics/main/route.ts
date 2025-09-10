@@ -1,12 +1,9 @@
 import { database, databaseId } from "@/appwrite/serverConfig";
-import { getTimestamp } from "@/lib/utils";
+import { getDateKey, getTimestamp } from "@/lib/utils/server";
 import { NextRequest, NextResponse } from "next/server";
 import { Query } from "node-appwrite";
 
-export async function GET(
-  req: NextRequest
-  //   props
-) {
+export async function GET(req: NextRequest) {
   try {
     const websiteId = req.nextUrl.searchParams.get("websiteId");
     const duration = req.nextUrl.searchParams.get("duration");
@@ -39,18 +36,47 @@ export async function GET(
     const events = eventsRes.rows;
     const revenues = revenuesRes.rows;
 
-    // 3. Normalize into daily buckets
     const buckets: Record<string, any> = {};
 
-    // --- Visitors ---
-    for (const ev of events) {
-      const date = new Date(ev.$createdAt).toISOString().split("T")[0]; // YYYY-MM-DD
-      if (!buckets[date]) {
-        buckets[date] = {
-          name: new Date(date).toLocaleDateString("en-US", {
-            day: "2-digit",
-            month: "short",
-          }),
+    const startDate = new Date(timestamp);
+
+    const endDate = new Date();
+    for (
+      let d = new Date(startDate);
+      d <= endDate;
+      duration === "today" ||
+      duration === "yesterday" ||
+      duration === "last_24_hours"
+        ? d.setHours(d.getHours() + 1)
+        : duration === "last_12_months" || duration === "all_time"
+          ? d.setMonth(d.getMonth() + 1)
+          : d.setDate(d.getDate() + 1)
+    ) {
+      const dateKey = getDateKey(d.toISOString(), duration);
+
+      if (!buckets[dateKey]) {
+        buckets[dateKey] = {
+          id: `${d.toISOString()}`, // ✅ unique identifier
+          name:
+            duration === "today" ||
+            duration === "yesterday" ||
+            duration === "last_24_hours"
+              ? d
+                  .toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    hour12: true,
+                  })
+                  .replace(" AM", "am")
+                  .replace(" PM", "pm")
+              : duration === "last_12_months" || duration === "all_time"
+                ? d.toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                  })
+                : d.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "2-digit",
+                  }),
           visitors: 0,
           revenue: 0,
           renewalRevenue: 0,
@@ -58,31 +84,20 @@ export async function GET(
           customers: 0,
           sales: 0,
           goalCount: 0,
-          timestamp: new Date(date).toISOString(),
+          timestamp: d.toISOString(),
         };
       }
+    }
+
+    // --- Visitors ---
+    for (const ev of events) {
+      const date = getDateKey(ev.$createdAt, duration);
       buckets[date].visitors += 1;
     }
 
     // --- Revenues ---
     for (const rev of revenues) {
-      const date = new Date(rev.timestamp).toISOString().split("T")[0];
-      if (!buckets[date]) {
-        buckets[date] = {
-          name: new Date(date).toLocaleDateString("en-US", {
-            day: "2-digit",
-            month: "short",
-          }),
-          visitors: 0,
-          revenue: 0,
-          renewalRevenue: 0,
-          refundedRevenue: 0,
-          customers: 0,
-          sales: 0,
-          goalCount: 0,
-          timestamp: new Date(date).toISOString(),
-        };
-      }
+      const date = getDateKey(rev.$createdAt, duration);
       buckets[date].revenue += rev.revenue || 0;
       buckets[date].renewalRevenue += rev.renewalRevenue || 0;
       buckets[date].refundedRevenue += rev.refundedRevenue || 0;
@@ -96,7 +111,40 @@ export async function GET(
         new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
     );
 
-    return NextResponse.json(dataset);
+    const sessionDurations: number[] = [];
+
+    const groupedBySession: Record<string, string[]> = {};
+
+    for (const ev of events) {
+      if (!groupedBySession[ev.sessionId]) groupedBySession[ev.sessionId] = [];
+      groupedBySession[ev.sessionId].push(ev.$createdAt);
+    }
+
+    for (const sessionId in groupedBySession) {
+      const timestamps = groupedBySession[sessionId].map((t) =>
+        new Date(t).getTime()
+      );
+      const min = Math.min(...timestamps);
+      const max = Math.max(...timestamps);
+      const duration = (max - min) / 1000; // in seconds
+      if (duration > 0) sessionDurations.push(duration);
+    }
+
+    const avgSessionTime =
+      sessionDurations.reduce((a, b) => a + b, 0) / sessionDurations.length;
+
+    const totalSessions = Object.keys(groupedBySession).length;
+
+    let bounceCount = 0;
+    for (const sessionId in groupedBySession) {
+      if (groupedBySession[sessionId].length === 1) {
+        bounceCount++;
+      }
+    }
+
+    const bounceRate = ((bounceCount / totalSessions) * 100).toFixed(2);
+
+    return NextResponse.json({ dataset, avgSessionTime, bounceRate });
   } catch (err) {
     console.error(err);
     return NextResponse.json(

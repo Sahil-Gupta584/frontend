@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardBody, Tab, Tabs } from "@heroui/react";
 import { CommonChart, CommonChartProps } from "./commonChart";
-import { classNames } from "./mapChart";
+import { classNames } from "./locationCharts";
 
 const geoUrl =
   "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson";
@@ -18,7 +18,7 @@ export default function SystemCharts({
   osData,
 }: SystemChartProps) {
   return (
-    <Card className="flex-1 border-neutral-700 ">
+    <Card className="border border-[#373737]">
       <CardBody className="h-80 p-0">
         <Tabs
           aria-label="systemCharts"
@@ -27,13 +27,13 @@ export default function SystemCharts({
           color="secondary"
         >
           <Tab key="browser" title={<span>Browser</span>}>
-            <CommonChart data={browserData} renderFlag={true} />
+            <CommonChart data={browserData} />
           </Tab>
           <Tab key="OS" title="OS">
-            <CommonChart data={osData} renderFlag={true} />
+            <CommonChart data={osData} />
           </Tab>
           <Tab key="Device" title="Device">
-            <CommonChart data={deviceData} renderFlag={true} />
+            <CommonChart data={deviceData} />
           </Tab>
         </Tabs>
       </CardBody>

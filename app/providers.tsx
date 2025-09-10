@@ -25,8 +25,10 @@ export function Providers({ children, themeProps }: ProvidersProps) {
 
   return (
     <HeroUIProvider navigate={router.push}>
-      <ToastProvider placement="top-center" />
-      <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+      <ReactQueryProvider>
+        <ToastProvider placement="top-center" />
+        <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+      </ReactQueryProvider>
     </HeroUIProvider>
   );
 }
@@ -36,7 +38,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode, useState } from "react";
 
 export function ReactQueryProvider({ children }: { children: ReactNode }) {
-  // useState ensures a single QueryClient per app lifecycle
   const [queryClient] = useState(() => new QueryClient());
 
   return (
