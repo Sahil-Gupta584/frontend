@@ -1,6 +1,8 @@
-import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
 import { Metadata } from "next";
+
 import Dashboard from "./components/dashboard";
+
+import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
 
 export default function Page() {
   return <Dashboard />;

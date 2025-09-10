@@ -1,8 +1,3 @@
-import { AddScriptCard } from "@/app/dashboard/new/components/addScriptCard";
-import { Time } from "@/app/dashboard/new/components/newWebsite";
-import { useTimeZones } from "@/lib/hooks";
-import { tryCatchWrapper } from "@/lib/utils/client";
-import { addWebsiteSchema } from "@/lib/zodSchemas";
 import {
   addToast,
   Autocomplete,
@@ -17,7 +12,14 @@ import {
 } from "@heroui/react";
 import router from "next/router";
 import { useEffect, useState } from "react";
+
 import { deleteWebsite, getWebsite, saveWebsiteData } from "../../actions";
+
+import { AddScriptCard } from "@/app/dashboard/new/components/addScriptCard";
+import { Time } from "@/app/dashboard/new/components/newWebsite";
+import { useTimeZones } from "@/lib/hooks";
+import { tryCatchWrapper } from "@/lib/utils/client";
+import { addWebsiteSchema } from "@/lib/zodSchemas";
 
 export interface TWebsiteData {
   domain: string;
@@ -34,6 +36,7 @@ function GeneralTab({ websiteId }: { websiteId: string }) {
   useEffect(() => {
     async function init() {
       const doc = await getWebsite(websiteId);
+
       if (doc) setWebsiteData({ domain: doc.domain, timezone: doc.timezone });
     }
     init();
@@ -64,12 +67,14 @@ Please type 'delete' to confirm the deletion.
         const data = await addWebsiteSchema.parseAsync({
           ...websiteData,
         });
+
         await saveWebsiteData({ $id: websiteId, ...websiteData });
         setIsLoading(false);
       },
       successMsg: `${field} updated successfully.`,
     });
   }
+
   return (
     <>
       <Card>

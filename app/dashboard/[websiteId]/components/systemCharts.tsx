@@ -1,5 +1,6 @@
 "use client";
 import { Card, CardBody, Tab, Tabs } from "@heroui/react";
+
 import { CommonChart, CommonChartProps } from "./commonChart";
 import { classNames } from "./locationCharts";
 

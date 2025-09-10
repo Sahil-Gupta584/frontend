@@ -20,6 +20,7 @@ export const addWebsiteSchema = z.object({
     .refine((val) => {
       const domainRegex =
         /^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+$/;
+
       return domainRegex.test(val);
     }, "Please enter a valid domain."),
   timezone: z.string().min(1, "Timezone is required"),

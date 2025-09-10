@@ -1,7 +1,5 @@
 "use client";
 
-import { tryCatchWrapper } from "@/lib/utils/client";
-import { addWebsiteSchema, TAddWebsiteForm } from "@/lib/zodSchemas";
 import {
   addToast,
   Autocomplete,
@@ -21,12 +19,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoIosArrowRoundUp } from "react-icons/io";
+
 import { useTimeZones, useUser } from "../../../../lib/hooks";
 import BackBtn from "../../[websiteId]/components/backBtn";
 import { createDomain, isDomainExists } from "../actions";
+
 import { AddScriptCard } from "./addScriptCard";
 import RevenueConnectTab from "./revenueConnectTab";
 import Title from "./tabTitle";
+
+import { addWebsiteSchema, TAddWebsiteForm } from "@/lib/zodSchemas";
+import { tryCatchWrapper } from "@/lib/utils/client";
 
 type WebsiteData = { websiteId: string; step: string; domain: string };
 
@@ -82,6 +85,7 @@ export default function NewWebsite() {
             title: "Warning",
             description: "Website already exists.",
           });
+
           return;
         }
 
@@ -93,7 +97,7 @@ export default function NewWebsite() {
 
         if (res && res?.$id) {
           router.push(
-            `/dashboard/new?step=addScript&websiteId=${res.$id}&domain=${res.domain}`
+            `/dashboard/new?step=addScript&websiteId=${res.$id}&domain=${res.domain}`,
           );
           addToast({
             color: "success",
@@ -229,8 +233,9 @@ export default function NewWebsite() {
                     const url = websiteData?.step
                       ? window.location.href.replace("addScript", "revenue")
                       : "/dashboard/new?step=revenue";
+
                     setWebsiteData(
-                      (prev) => ({ ...prev, step: "revenue" }) as WebsiteData
+                      (prev) => ({ ...prev, step: "revenue" }) as WebsiteData,
                     );
                     router.push(url);
                   }}
@@ -270,8 +275,10 @@ export default function NewWebsite() {
 
 export function Time({ selectedTimeZone }: { selectedTimeZone: string }) {
   let timeStr = "";
+
   try {
     const now = new Date();
+
     timeStr = selectedTimeZone
       ? now.toLocaleTimeString("en-US", {
           timeZone: selectedTimeZone,
@@ -283,6 +290,7 @@ export function Time({ selectedTimeZone }: { selectedTimeZone: string }) {
   } catch (error) {
     console.log({ selectedTimeZone });
   }
+
   return (
     <span className="text-gray-400 text-nowrap ">where time is {timeStr}</span>
   );

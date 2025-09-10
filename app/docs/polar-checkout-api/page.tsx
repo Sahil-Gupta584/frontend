@@ -1,9 +1,10 @@
 "use client";
-import ChipComponent from "@/components/chip";
 import { Snippet } from "@heroui/react";
 import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+
+import ChipComponent from "@/components/chip";
 
 const codeSamples: Record<string, string> = {
   javascript: `// app/api/create-checkout/route.js
@@ -59,7 +60,7 @@ async def create_checkout(request: Request):
 
 const languages = Object.keys(codeSamples);
 
-function page() {
+function Page() {
   const [selectedLang, setSelectedLang] = useState("javascript");
 
   return (
@@ -130,4 +131,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

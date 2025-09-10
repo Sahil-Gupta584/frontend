@@ -1,8 +1,9 @@
 "use server";
 
+import { ID, Query } from "node-appwrite";
+
 import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
 import { TPaymentProviders } from "@/lib/types";
-import { ID, Query } from "node-appwrite";
 
 export async function isDomainExists(domain: string) {
   try {
@@ -31,7 +32,7 @@ export async function createDomain(data: any) {
 
 export async function disconnectProvider(
   websiteId: string,
-  provider: TPaymentProviders
+  provider: TPaymentProviders,
 ) {
   try {
     const website = await database.getRow({
@@ -42,7 +43,7 @@ export async function disconnectProvider(
     });
 
     const updatedProviders = (website.paymentProviders || []).filter(
-      (p: string) => p !== provider
+      (p: string) => p !== provider,
     );
 
     // update row

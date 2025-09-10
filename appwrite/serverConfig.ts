@@ -1,6 +1,7 @@
 import { Client, TablesDB } from "node-appwrite";
 
 const databaseIdRaw = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
+
 if (!databaseIdRaw) throw new Error("Missing DATABASE_ID");
 const databaseId: string = databaseIdRaw;
 

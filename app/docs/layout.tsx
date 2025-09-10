@@ -1,10 +1,12 @@
 "use client";
 
-import { Nav } from "@/components/navbar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LuDot } from "react-icons/lu";
+
 import BackBtn from "../dashboard/[websiteId]/components/backBtn";
+
+import { Nav } from "@/components/navbar";
 
 export default function RootLayout({
   children,
@@ -12,6 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+
   function Anchor({
     href,
     text,
@@ -33,6 +36,7 @@ export default function RootLayout({
       </Link>
     );
   }
+
   return (
     <main className=" max-w-[68rem] mx-auto p-10">
       <Nav

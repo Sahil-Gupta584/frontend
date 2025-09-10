@@ -1,13 +1,15 @@
 "use client";
-import { getWebsite } from "@/app/dashboard/[websiteId]/actions";
-import PolarLogo from "@/components/polarLogo";
-import { tryCatchWrapper } from "@/lib/utils/client";
 import { Tab, Tabs } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { FaStripeS } from "react-icons/fa";
+
 import PolarForm from "./polarForm";
 import StripeForm from "./stripeForm";
+
+import { tryCatchWrapper } from "@/lib/utils/client";
+import PolarLogo from "@/components/polarLogo";
+import { getWebsite } from "@/app/dashboard/[websiteId]/actions";
 
 export default function RevenueConnectTab({
   websiteId,
@@ -20,6 +22,7 @@ export default function RevenueConnectTab({
       return tryCatchWrapper({
         callback: async () => {
           const website = await getWebsite(websiteId);
+
           if (!website) throw new Error("Failed to get website");
 
           return website.paymentProviders as string[];

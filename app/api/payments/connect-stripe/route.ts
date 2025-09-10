@@ -1,13 +1,14 @@
-import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
+
+import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
 
 const baseStripeApi = "https://api.stripe.com/v1";
 
 async function fetchWithScopeCheckStripe(
   endpoint: string,
   token: string,
-  scopeName: string
+  scopeName: string,
 ) {
   const res = await axios.get(`${baseStripeApi}${endpoint}`, {
     headers: {
@@ -63,9 +64,10 @@ export async function POST(req: NextRequest) {
     // // 3. Register webhook endpoint
 
     const params = new URLSearchParams();
+
     params.append(
       "url",
-      `https://d4c3b54a2cbb.ngrok-free.app/api/website/${body.websiteId}/webhook/stripe`
+      `https://d4c3b54a2cbb.ngrok-free.app/api/website/${body.websiteId}/webhook/stripe`,
     );
 
     [
@@ -87,7 +89,7 @@ export async function POST(req: NextRequest) {
       {
         headers: { Authorization: `Bearer ${body.apiKey}` },
         validateStatus: () => true,
-      }
+      },
     );
 
     // console.log(webhookRes.data);
@@ -112,12 +114,14 @@ export async function POST(req: NextRequest) {
         paymentProviders: website.paymentProviders,
       },
     });
+
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error(error);
+
     return NextResponse.json(
       { error: (error as Error).message },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }

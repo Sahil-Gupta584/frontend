@@ -1,10 +1,11 @@
 "use client";
 
-import { useUser } from "@/lib/hooks";
 import AddWebsiteForm from "./components/addWebsiteForm";
 import HowItWorks from "./components/howItWorks";
 import LandingPageNav from "./components/landingNav";
 import Pricing from "./components/pricing";
+
+import { useUser } from "@/lib/hooks";
 
 export default function Home() {
   const user = useUser();
@@ -21,6 +22,7 @@ export default function Home() {
       });
 
       const data = await res.json();
+
       if (data.url) {
         window.location.href = data.url; // ✅ safe redirect
       }
@@ -49,9 +51,9 @@ export default function Home() {
           <div className="relative flex items-center bg-white/5 border-b border-white/5 h-10 px-4">
             {/* Dots */}
             <div className="flex space-x-1.5 absolute left-4">
-              <div className="w-2 h-2 rounded-full bg-red-500"></div>
-              <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
+              <div className="w-2 h-2 rounded-full bg-red-500" />
+              <div className="w-2 h-2 rounded-full bg-yellow-500" />
+              <div className="w-2 h-2 rounded-full bg-green-500" />
             </div>
 
             {/* URL */}
@@ -64,7 +66,12 @@ export default function Home() {
           {/* Code Content */}
           <div className="p-4 leading-relaxed opacity-90">
             <article className="w-full">
-              <iframe src="/demo" frameBorder="2" className="w-full h-196" />
+              <iframe
+                src="/demo"
+                frameBorder="2"
+                className="w-full h-196"
+                title="Demo"
+              />
             </article>
           </div>
         </div>

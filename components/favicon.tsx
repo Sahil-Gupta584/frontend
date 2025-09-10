@@ -1,5 +1,6 @@
-import { getFaviconUrl } from "@/lib/utils/server";
 import { HTMLAttributes } from "react";
+
+import { getFaviconUrl } from "@/lib/utils/server";
 
 export function Favicon({
   className,

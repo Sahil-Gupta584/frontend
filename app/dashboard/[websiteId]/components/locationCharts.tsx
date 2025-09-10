@@ -2,6 +2,7 @@
 import { Card, CardBody, Tab, Tabs } from "@heroui/react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import { Tooltip } from "react-tooltip";
+
 import "react-tooltip/dist/react-tooltip.css";
 import { CommonChart, CommonChartProps } from "./commonChart";
 import CommonTooltip from "./commonTooltip";
@@ -48,6 +49,7 @@ export default function LocationCharts({
         color = "#fd366eb3"; // Medium
       else if (intensity > 0.1) color = "#fd366e38"; // Low
     }
+
     return {
       visitors: country ? country.visitors : 0,
       color,
@@ -146,6 +148,7 @@ export default function LocationCharts({
                 // if (!content) return null;
 
                 let parsed: any;
+
                 try {
                   parsed = JSON.parse(content as string);
                 } catch {

@@ -1,12 +1,14 @@
 "use client";
 
-import LinkComponent from "@/components/link";
-import polar from "@/public/images/payment-providers/icon-polar.webp";
-import stripe from "@/public/images/payment-providers/icon-stripe.webp";
 import { Alert } from "@heroui/react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+
 import CommonCards from "./components/commonCards";
+
+import LinkComponent from "@/components/link";
+import polar from "@/public/images/payment-providers/icon-polar.webp";
+import stripe from "@/public/images/payment-providers/icon-stripe.webp";
 export default function GettingStarted() {
   const [selectedProvider, setSelectedProvider] = useState("None");
   const search = useSearchParams();
@@ -20,6 +22,7 @@ export default function GettingStarted() {
     },
     { name: "Polar", src: polar.src, cards: <CommonCards provider="Polar" /> },
   ];
+
   return (
     <div className="space-y-10">
       <div className=" space-y-2">
@@ -47,13 +50,18 @@ export default function GettingStarted() {
         </p>
         <div className="grid grid-cols-4 gap-4">
           {providers.map((p) => (
-            <img
-              src={p.src}
+            <div
+              role="button"
               key={p.name}
-              alt={p.name}
-              className={`grow rounded-3xl cursor-pointer transition p-1  ${selectedProvider === p.name ? "opacity-100 border-pink-400 border-3" : "opacity-50"} ${selectedProvider === "None" ? "opacity-100" : ""} object-fill hover:scale-[1.02]`}
+              className="border-0 outline-none"
               onClick={() => setSelectedProvider(p.name)}
-            />
+            >
+              <img
+                src={p.src}
+                alt={p.name}
+                className={`grow rounded-3xl cursor-pointer transition p-1  ${selectedProvider === p.name ? "opacity-100 border-pink-400 border-3" : "opacity-50"} ${selectedProvider === "None" ? "opacity-100" : ""} object-fill hover:scale-[1.02]`}
+              />
+            </div>
           ))}
         </div>
       </div>

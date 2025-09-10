@@ -8,6 +8,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+
 import CommonTooltip from "./commonTooltip";
 
 function CustomBarShape({ x, y, width, height, bar, payload }: any) {
@@ -23,7 +24,7 @@ function CustomBarShape({ x, y, width, height, bar, payload }: any) {
     >
       <div
         className={`group-hover:opacity-40 hover:!opacity-100 flex items-center ${bar === "visitor" ? "" : "rounded-r-md"} ${!hasRevenue ? "rounded-r-md" : ""} h-full transition cursor-pointer ${bar == "visitor" ? "bg-[#fd366e]/50 mr-[2px]" : "bg-[#e78468]/50"} z-10 `}
-      ></div>
+      />
     </foreignObject>
   );
 }

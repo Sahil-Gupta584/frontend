@@ -1,5 +1,6 @@
-import { TClassName } from "@/lib/types";
 import { Chip } from "@heroui/react";
+
+import { TClassName } from "@/lib/types";
 
 export default function ChipComponent({
   child,

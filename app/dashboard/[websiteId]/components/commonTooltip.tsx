@@ -15,7 +15,7 @@ function CommonTooltip({
         <Divider className="my-2" />
         <ul className="text-sm flex justify-between">
           <li className="flex gap-2 items-center">
-            <div className="size-5 bg-primary rounded-sm"></div>
+            <div className="size-5 bg-primary rounded-sm" />
             Visitors
           </li>
           <li>{data?.visitors}</li>
@@ -26,7 +26,7 @@ function CommonTooltip({
             <Divider className="my-2" />
             <ul className="text-sm flex justify-between">
               <li className="flex gap-2 items-center">
-                <div className="size-5 bg-[#e78468] rounded-sm"></div>
+                <div className="size-5 bg-[#e78468] rounded-sm" />
                 Revenue
               </li>
               <li>${data?.revenue}</li>

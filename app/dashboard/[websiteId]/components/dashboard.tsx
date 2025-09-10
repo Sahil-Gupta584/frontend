@@ -1,17 +1,19 @@
 "use client";
-import { account } from "@/appwrite/clientConfig";
-import { GraphLoader, LocationSystemChartsLoader } from "@/components/loaders";
-import MainGraphLoader from "@/components/loaders/mainGraph";
 import { Card, CardBody, CardHeader, Divider } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+
 import { CommonChart } from "./commonChart";
 import Filters from "./filters";
 import LocationCharts from "./locationCharts";
 import MainGraph from "./mainGraph";
 import SystemCharts from "./systemCharts";
+
+import MainGraphLoader from "@/components/loaders/mainGraph";
+import { GraphLoader, LocationSystemChartsLoader } from "@/components/loaders";
+import { account } from "@/appwrite/clientConfig";
 
 export default function Dashboard() {
   const { websiteId } = useParams<{ websiteId: string }>();
@@ -56,6 +58,7 @@ export default function Dashboard() {
       const res = await axios("/api/website", {
         params: { userId: user.$id },
       });
+
       return res.data?.websites;
     },
   });

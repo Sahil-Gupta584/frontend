@@ -7,7 +7,9 @@ export function bucketHour(date: Date, groupSize: number) {
   const h = date.getHours();
   const bucket = Math.floor(h / groupSize) * groupSize;
   const d = new Date(date);
+
   d.setHours(bucket, 0, 0, 0);
+
   return d;
 }
 
@@ -26,12 +28,14 @@ export function getTimestamp(duration: string) {
       return new Date(
         now.getFullYear(),
         now.getMonth(),
-        now.getDate()
+        now.getDate(),
       ).getTime();
 
     case "yesterday": {
       const d = new Date(now);
+
       d.setDate(now.getDate() - 1);
+
       return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
     }
 
@@ -46,7 +50,9 @@ export function getTimestamp(duration: string) {
 
     case "last_12_months": {
       const d = new Date(now);
+
       d.setFullYear(now.getFullYear() - 1);
+
       return d.getTime();
     }
 
@@ -78,6 +84,7 @@ export function getLabel(timestamp: string, duration: string) {
       // Example: "Today 08:30 PM" or "Yesterday 09:15 AM"
       const isToday = date.toDateString() === new Date().toDateString();
       const dayLabel = isToday ? "Today" : "Yesterday";
+
       return `${dayLabel} ${date.toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",

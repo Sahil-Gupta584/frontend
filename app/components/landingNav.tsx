@@ -1,5 +1,3 @@
-import Logo from "@/components/logo";
-import { User } from "@/lib/types";
 import {
   Button,
   Navbar,
@@ -8,6 +6,9 @@ import {
   NavbarItem,
 } from "@heroui/react";
 import Link from "next/link";
+
+import Logo from "@/components/logo";
+import { User } from "@/lib/types";
 
 function LandingPageNav({ user }: { user: User | null }) {
   return (

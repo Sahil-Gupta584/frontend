@@ -1,14 +1,16 @@
 // app/api/website/[websiteId]/webhook/polar/route.ts
-import { database, databaseId } from "@/appwrite/serverConfig";
 import { ID } from "appwrite";
 import { NextRequest, NextResponse } from "next/server";
 
+import { database, databaseId } from "@/appwrite/serverConfig";
+
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ websiteId: string }> }
+  { params }: { params: Promise<{ websiteId: string }> },
 ) {
   try {
     const body = await req.json();
+
     console.log("body", body);
 
     const websiteId = (await params).websiteId;
@@ -72,9 +74,10 @@ export async function POST(
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error(err);
+
     return NextResponse.json(
       { error: (err as Error).message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

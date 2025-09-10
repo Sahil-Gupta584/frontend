@@ -1,13 +1,14 @@
 "use client";
 
-import { account } from "@/appwrite/clientConfig";
-import { Favicon } from "@/components/favicon";
 import { Button, Skeleton } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import { Line, LineChart, ResponsiveContainer } from "recharts";
+
+import { Favicon } from "@/components/favicon";
+import { account } from "@/appwrite/clientConfig";
 
 export default function Dashboard() {
   const getWebsitesQuery = useQuery({
@@ -17,6 +18,7 @@ export default function Dashboard() {
       const res = await axios("/api/website", {
         params: { userId: user.$id, events: true },
       });
+
       return res.data?.websites;
     },
   });
@@ -29,6 +31,7 @@ export default function Dashboard() {
     events.forEach((e: any) => {
       const date = new Date(e.$createdAt); // adjust field name if different
       const day = days[date.getDay()];
+
       counts[day] = (counts[day] || 0) + 1;
     });
 
@@ -38,6 +41,7 @@ export default function Dashboard() {
       value: counts[d] || 0,
     }));
   }
+
   return (
     <div className="min-h-screen w-full  text-white p-6">
       <div className="max-w-6xl mx-auto flex flex-col gap-6">

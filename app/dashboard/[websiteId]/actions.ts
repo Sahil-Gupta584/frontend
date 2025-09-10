@@ -1,7 +1,9 @@
 "use server";
-import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
 import { Query } from "node-appwrite";
+
 import { TWebsiteData } from "./settings/components/generalTab";
+
+import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
 
 export async function getLiveVisitors(websiteId: string) {
   try {
@@ -11,7 +13,7 @@ export async function getLiveVisitors(websiteId: string) {
       queries: [
         Query.lessThan(
           "$createdAt",
-          new Date(Date.now() - 5 * 60 * 1000).toISOString()
+          new Date(Date.now() - 5 * 60 * 1000).toISOString(),
         ),
       ],
     });
@@ -23,8 +25,9 @@ export async function getLiveVisitors(websiteId: string) {
           rowId: r.$id,
           tableId: "heartbeat",
         });
-      })
+      }),
     );
+
     return (
       await database.listRows({
         databaseId,
@@ -47,6 +50,7 @@ export async function getWebsite(websiteId: string) {
       tableId: websitesTableId,
       rowId: websiteId,
     });
+
     return res;
   } catch (error) {
     console.log(error);

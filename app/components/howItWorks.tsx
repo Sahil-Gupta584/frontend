@@ -1,6 +1,7 @@
 import { Card, CardBody } from "@heroui/react";
 import { motion } from "framer-motion";
 import { FaArrowRightLong } from "react-icons/fa6";
+
 import { cardVariants } from "../docs/revenue-attribution-guide/components/commonCards";
 
 function StepCard({

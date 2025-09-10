@@ -1,9 +1,8 @@
 import "@/styles/globals.css";
 import { Metadata } from "next";
+import localFont from "next/font/local";
 
 import { Providers } from "./providers";
-
-import localFont from "next/font/local";
 
 export const metadata: Metadata = {
   title:

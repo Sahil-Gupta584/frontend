@@ -1,7 +1,8 @@
-import { Favicon } from "@/components/favicon";
 import { Select, SelectItem, SelectSection } from "@heroui/react";
 import Link from "next/link";
 import { IoSettingsSharp } from "react-icons/io5";
+
+import { Favicon } from "@/components/favicon";
 
 export const durationOptions = [
   { key: "today", label: "Today" },

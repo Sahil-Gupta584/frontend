@@ -1,7 +1,8 @@
-import { TClassName } from "@/lib/types";
 import { Button } from "@heroui/react";
 import Link from "next/link";
 import { IoIosArrowRoundUp } from "react-icons/io";
+
+import { TClassName } from "@/lib/types";
 
 const BackBtn = ({
   text,

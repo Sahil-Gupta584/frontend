@@ -1,6 +1,7 @@
-import { TClassName } from "@/lib/types";
 import Link from "next/link";
 import { HiExternalLink } from "react-icons/hi";
+
+import { TClassName } from "@/lib/types";
 export default function LinkComponent({
   href,
   text,

@@ -1,8 +1,9 @@
 import "@/styles/globals.css";
 import { Metadata } from "next";
 
-import { Nav } from "@/components/navbar";
 import { Providers } from "../providers";
+
+import { Nav } from "@/components/navbar";
 
 export const metadata: Metadata = {
   title: { default: "Home | Dashboard", template: "%s | Dashboard" },

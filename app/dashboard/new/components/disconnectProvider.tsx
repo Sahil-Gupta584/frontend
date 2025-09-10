@@ -1,10 +1,12 @@
-import { TPaymentProviders } from "@/lib/types";
-import { tryCatchWrapper } from "@/lib/utils/client";
 import { Button } from "@heroui/react";
 import { useMutation } from "@tanstack/react-query";
 import { FaCircleCheck } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
+
 import { disconnectProvider } from "../actions";
+
+import { tryCatchWrapper } from "@/lib/utils/client";
+import { TPaymentProviders } from "@/lib/types";
 
 function DisconnectProvider({
   websiteId,
@@ -26,6 +28,7 @@ function DisconnectProvider({
         successMsg: `${provider} removed successfully`,
       }),
   });
+
   return (
     <div className="flex flex-col gap-4 mt-2">
       <h2 className="inline-flex gap-2 items-center">

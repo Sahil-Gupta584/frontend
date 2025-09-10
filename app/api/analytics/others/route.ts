@@ -1,7 +1,8 @@
-import { database, databaseId } from "@/appwrite/serverConfig";
-import { getTimestamp, normalizeReferrer } from "@/lib/utils/server";
 import { Query } from "appwrite";
 import { NextRequest, NextResponse } from "next/server";
+
+import { database, databaseId } from "@/appwrite/serverConfig";
+import { getTimestamp, normalizeReferrer } from "@/lib/utils/server";
 
 type Metric = {
   label: string;
@@ -18,6 +19,7 @@ export async function GET(req: NextRequest) {
     if (!websiteId || !duration) throw new Error("Invalid payload");
 
     const timestamp = getTimestamp(duration);
+
     if (!timestamp) throw new Error("Invalid duration.");
 
     // 1. Fetch all events
@@ -50,8 +52,10 @@ export async function GET(req: NextRequest) {
 
     // Create a map for sessionId → total revenue
     const revenueMap = new Map<string, number>();
+
     revenues.forEach((r) => {
       const prev = revenueMap.get(r.sessionId) || 0;
+
       revenueMap.set(r.sessionId, prev + (r.revenue || 0));
     });
 
@@ -82,6 +86,7 @@ export async function GET(req: NextRequest) {
       const url = new URL(e.href);
       const pathname = url.pathname;
       const page = pageMap.get(pathname);
+
       if (page) {
         page.visitors += 1;
         page.revenue += sessionRevenue;
@@ -97,6 +102,7 @@ export async function GET(req: NextRequest) {
       const refDomain = normalizeReferrer(e.referrer);
 
       const ref = referrerMap.get(refDomain);
+
       if (ref) {
         ref.visitors += 1;
         ref.revenue += sessionRevenue;
@@ -111,6 +117,7 @@ export async function GET(req: NextRequest) {
 
       // Map
       const m = mapMap.get(e.countryCode);
+
       if (m) {
         m.visitors += 1;
         m.revenue += sessionRevenue;
@@ -125,6 +132,7 @@ export async function GET(req: NextRequest) {
 
       // Country
       const country = countryMap.get(e.countryCode);
+
       if (country) {
         country.visitors += 1;
         country.revenue += sessionRevenue;
@@ -139,6 +147,7 @@ export async function GET(req: NextRequest) {
 
       // Region
       const region = regionMap.get(e.region);
+
       if (region) {
         region.visitors += 1;
         region.revenue += sessionRevenue;
@@ -153,6 +162,7 @@ export async function GET(req: NextRequest) {
 
       // City
       const city = cityMap.get(e.city);
+
       if (city) {
         city.visitors += 1;
         city.revenue += sessionRevenue;
@@ -167,6 +177,7 @@ export async function GET(req: NextRequest) {
 
       // Browser
       const browser = browserMap.get(e.browser);
+
       if (browser) {
         browser.visitors += 1;
         browser.revenue += sessionRevenue;
@@ -181,6 +192,7 @@ export async function GET(req: NextRequest) {
 
       // OS
       const os = osMap.get(e.os);
+
       if (os) {
         os.visitors += 1;
         os.revenue += sessionRevenue;
@@ -195,6 +207,7 @@ export async function GET(req: NextRequest) {
 
       // Device
       const device = deviceMap.get(e.device);
+
       if (device) {
         device.visitors += 1;
         device.revenue += sessionRevenue;
@@ -224,9 +237,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(dataset);
   } catch (err) {
     console.error(err);
+
     return NextResponse.json(
       { error: (err as Error).message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

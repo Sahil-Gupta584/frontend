@@ -12,12 +12,14 @@ export async function tryCatchWrapper<T>({
 }) {
   try {
     const res = await callback();
+
     if (successMsg) {
       addToast({
         color: "success",
         description: successMsg,
       });
     }
+
     return res;
   } catch (error) {
     console.log(error);
@@ -25,6 +27,7 @@ export async function tryCatchWrapper<T>({
     if (error instanceof z.ZodError) {
       // Handle Zod validation errors
       const firstError = `${error.issues[0].path}: ${error.issues[0].message}`;
+
       addToast({
         color: "danger",
         title: "Validation Error",

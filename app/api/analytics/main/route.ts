@@ -1,7 +1,8 @@
-import { database, databaseId } from "@/appwrite/serverConfig";
-import { getDateKey, getTimestamp } from "@/lib/utils/server";
 import { NextRequest, NextResponse } from "next/server";
 import { Query } from "node-appwrite";
+
+import { database, databaseId } from "@/appwrite/serverConfig";
+import { getDateKey, getTimestamp } from "@/lib/utils/server";
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,6 +12,7 @@ export async function GET(req: NextRequest) {
     if (!websiteId || !duration) throw new Error("Invalid payload");
 
     const timestamp = getTimestamp(duration);
+
     if (!timestamp) throw new Error("Invalid duration.");
 
     // 1. Fetch events
@@ -41,6 +43,7 @@ export async function GET(req: NextRequest) {
     const startDate = new Date(timestamp);
 
     const endDate = new Date();
+
     for (
       let d = new Date(startDate);
       d <= endDate;
@@ -92,12 +95,14 @@ export async function GET(req: NextRequest) {
     // --- Visitors ---
     for (const ev of events) {
       const date = getDateKey(ev.$createdAt, duration);
+
       buckets[date].visitors += 1;
     }
 
     // --- Revenues ---
     for (const rev of revenues) {
       const date = getDateKey(rev.$createdAt, duration);
+
       buckets[date].revenue += rev.revenue || 0;
       buckets[date].renewalRevenue += rev.renewalRevenue || 0;
       buckets[date].refundedRevenue += rev.refundedRevenue || 0;
@@ -108,7 +113,7 @@ export async function GET(req: NextRequest) {
     // 4. Convert buckets → array sorted by date
     const dataset = Object.values(buckets).sort(
       (a: any, b: any) =>
-        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
     );
 
     const sessionDurations: number[] = [];
@@ -122,11 +127,12 @@ export async function GET(req: NextRequest) {
 
     for (const sessionId in groupedBySession) {
       const timestamps = groupedBySession[sessionId].map((t) =>
-        new Date(t).getTime()
+        new Date(t).getTime(),
       );
       const min = Math.min(...timestamps);
       const max = Math.max(...timestamps);
       const duration = (max - min) / 1000; // in seconds
+
       if (duration > 0) sessionDurations.push(duration);
     }
 
@@ -136,6 +142,7 @@ export async function GET(req: NextRequest) {
     const totalSessions = Object.keys(groupedBySession).length;
 
     let bounceCount = 0;
+
     for (const sessionId in groupedBySession) {
       if (groupedBySession[sessionId].length === 1) {
         bounceCount++;
@@ -147,9 +154,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ dataset, avgSessionTime, bounceRate });
   } catch (err) {
     console.error(err);
+
     return NextResponse.json(
       { error: (err as Error).message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

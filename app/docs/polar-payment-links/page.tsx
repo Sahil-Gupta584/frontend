@@ -29,7 +29,7 @@ const Page = () => {
       </p>
       <img
         src="/images/blog-payment-link-attribution-polar.png"
-        alt="Image"
+        alt=""
         className="rounded-2xl my-6"
       />
       <p className="text-gray-400!">

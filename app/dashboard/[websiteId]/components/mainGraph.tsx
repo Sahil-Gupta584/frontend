@@ -1,7 +1,4 @@
 "use client";
-import { client } from "@/appwrite/clientConfig";
-import { databaseId } from "@/appwrite/serverConfig";
-import { getLabel } from "@/lib/utils/server";
 import { Card, CardBody, CardHeader, Checkbox } from "@heroui/react";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -14,8 +11,14 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+
 import { getLiveVisitors } from "../actions";
+
 import CommonTooltip from "./commonTooltip";
+
+import { getLabel } from "@/lib/utils/server";
+import { databaseId } from "@/appwrite/serverConfig";
+import { client } from "@/appwrite/clientConfig";
 
 type MainGraphProps = {
   chartData: {
@@ -55,14 +58,14 @@ function MainGraph({
         timestamp: d.timestamp,
         id: d.id,
       })),
-    [chartData]
+    [chartData],
   );
 
   useEffect(() => {
     getLiveVisitors(websiteId).then((data) => {
       if (data) {
         setLiveVisitors(
-          data.map((v) => ({ sessionId: v.sessionId, visitorId: v.visitorId }))
+          data.map((v) => ({ sessionId: v.sessionId, visitorId: v.visitorId })),
         );
       }
     });
@@ -71,7 +74,7 @@ function MainGraph({
       ({ payload, events }: { payload: TLiveVisitor; events: string[] }) => {
         if (
           !events.includes(
-            `databases.${databaseId}.tables.heartbeat.rows.*.create`
+            `databases.${databaseId}.tables.heartbeat.rows.*.create`,
           )
         )
           return;
@@ -80,12 +83,14 @@ function MainGraph({
           const exists = prev.some(
             (v) =>
               v.sessionId === payload.sessionId &&
-              v.visitorId === payload.visitorId
+              v.visitorId === payload.visitorId,
           );
+
           if (exists) return prev;
+
           return [...prev, payload];
         });
-      }
+      },
     );
   }, []);
 
@@ -189,8 +194,8 @@ function MainGraph({
             <li className="flex items-center gap-2 text-sm text-neutral-400">
               Visitors now
               <span className="relative flex size-4 items-center justify-center">
-                <span className="absolute inline-flex h-full w-full animate-ping bg-primary rounded-full opacity-75"></span>
-                <span className="inline-flex size-2 rounded-full bg-primary items-center justify-center"></span>
+                <span className="absolute inline-flex h-full w-full animate-ping bg-primary rounded-full opacity-75" />
+                <span className="inline-flex size-2 rounded-full bg-primary items-center justify-center" />
               </span>
             </li>
             <li className="text-[1.5rem] font-bold">{liveVisitors.length}</li>
@@ -232,7 +237,7 @@ function MainGraph({
                   data={payload?.[0]?.payload}
                   label={getLabel(
                     String(payload?.[0]?.payload?.timestamp),
-                    duration
+                    duration,
                   )}
                 />
               )}

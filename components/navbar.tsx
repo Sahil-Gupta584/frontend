@@ -1,8 +1,5 @@
 "use client";
 
-import { account } from "@/appwrite/clientConfig";
-import { useUser } from "@/lib/hooks";
-import { TClassName } from "@/lib/types";
 import {
   Dropdown,
   DropdownItem,
@@ -18,7 +15,12 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
+
 import Logo from "./logo";
+
+import { TClassName } from "@/lib/types";
+import { useUser } from "@/lib/hooks";
+import { account } from "@/appwrite/clientConfig";
 
 export function Nav({
   brandChild,
@@ -30,6 +32,7 @@ export function Nav({
 }) {
   const user = useUser();
   const router = useRouter();
+
   return (
     <Navbar
       shouldHideOnScroll

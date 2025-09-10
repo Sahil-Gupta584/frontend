@@ -1,13 +1,15 @@
-import NextLink from "@/components/nextLink";
-import { polarSchema, TPolarForm } from "@/lib/zodSchemas";
 import { addToast, Button, Input } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { MdArrowRightAlt } from "react-icons/md";
-
 import axios from "axios";
+
 import DisconnectProvider from "../disconnectProvider";
+
 import { LinkWithTraffic, TProviderFormProps } from "./stripeForm";
+
+import { polarSchema, TPolarForm } from "@/lib/zodSchemas";
+import NextLink from "@/components/nextLink";
 
 export default function PolarForm({
   websiteId,
@@ -27,7 +29,7 @@ export default function PolarForm({
         orgId: data.organizationId,
         websiteId: data.websiteId,
       },
-      { validateStatus: () => true }
+      { validateStatus: () => true },
     );
 
     if (res.data.error) {

@@ -1,20 +1,22 @@
 "use client";
-import { account } from "@/appwrite/clientConfig";
-import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
-import { GraphLoader, LocationSystemChartsLoader } from "@/components/loaders";
 
-import MainGraphLoader from "@/components/loaders/mainGraph";
 import { Card, CardBody, CardHeader, Divider } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Query } from "appwrite";
 import axios from "axios";
 import { useState } from "react";
+
 import { CommonChart } from "../dashboard/[websiteId]/components/commonChart";
 import Filters from "../dashboard/[websiteId]/components/filters";
 import LocationCharts from "../dashboard/[websiteId]/components/locationCharts";
 import MainGraph from "../dashboard/[websiteId]/components/mainGraph";
 import SystemCharts from "../dashboard/[websiteId]/components/systemCharts";
 import { ReactQueryProvider } from "../providers";
+
+import MainGraphLoader from "@/components/loaders/mainGraph";
+import { GraphLoader, LocationSystemChartsLoader } from "@/components/loaders";
+import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
+import { account } from "@/appwrite/clientConfig";
 
 function Page() {
   const websiteId = "68b2e27b000850428c13";
@@ -56,6 +58,7 @@ function Page() {
     queryKey: ["getWebsites"],
     queryFn: async () => {
       const user = await account.get();
+
       return await database.listRows({
         tableId: websitesTableId,
         databaseId: databaseId,
@@ -63,6 +66,7 @@ function Page() {
       });
     },
   });
+
   return (
     <section className="mb-6 max-w-6xl mx-auto p-4">
       <ReactQueryProvider>

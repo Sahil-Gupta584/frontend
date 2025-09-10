@@ -1,8 +1,9 @@
-import ChipComponent from "@/components/chip";
-import { TPaymentProviders } from "@/lib/types";
 import { Card, CardBody } from "@heroui/react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+
+import { TPaymentProviders } from "@/lib/types";
+import ChipComponent from "@/components/chip";
 
 export const cardVariants = {
   hidden: { opacity: 0, y: 20 },

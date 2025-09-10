@@ -13,7 +13,7 @@ export default function Title({
       <span className="relative flex size-4 items-center justify-center">
         <span
           className={`absolute inline-flex h-full w-full ${isActive ? "animate-ping bg-primary" : ""} rounded-full opacity-75`}
-        ></span>
+        />
         <span
           className={`inline-flex ${isCompleted ? "size-4" : "size-3"} rounded-full ${isActive || isCompleted ? "bg-primary" : "bg-[#7d7d89]"} items-center justify-center`}
         >

@@ -1,7 +1,9 @@
-import { account } from "@/appwrite/clientConfig";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
 import { User } from "./types";
+
+import { account } from "@/appwrite/clientConfig";
 
 export const useTimeZones = () => {
   const [timeZones, setTimeZones] = useState<
@@ -72,11 +74,13 @@ export function useUser() {
       .then(async (data) => {
         if (!data.$id && path?.includes("/dashboard")) {
           router.push(`/auth?redirect=${path}`);
+
           return;
         }
 
         if (path === "/auth" && data.$id) {
           router.push("/dashboard");
+
           return;
         }
         if (!data.prefs.image) {
@@ -87,9 +91,10 @@ export function useUser() {
               headers: {
                 Authorization: `Bearer ${session.providerAccessToken}`,
               },
-            }
+            },
           );
           const profile = await res.json();
+
           await account.updatePrefs({ image: profile.picture });
         }
 

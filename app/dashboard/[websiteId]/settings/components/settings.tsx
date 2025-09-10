@@ -1,11 +1,14 @@
 "use client";
-import RevenueConnectTab from "@/app/dashboard/new/components/revenueConnectTab";
 import { Tab, Tabs } from "@heroui/react";
 import { useParams, useSearchParams } from "next/navigation";
 import { AiFillDollarCircle } from "react-icons/ai";
 import { IoSettingsSharp } from "react-icons/io5";
+
 import BackBtn from "../../components/backBtn";
+
 import GeneralTab from "./generalTab";
+
+import RevenueConnectTab from "@/app/dashboard/new/components/revenueConnectTab";
 
 const Settings = () => {
   const { websiteId } = useParams<{
@@ -14,6 +17,7 @@ const Settings = () => {
   }>();
   const search = useSearchParams();
   const domain = search.get("domain");
+
   return (
     <>
       <BackBtn

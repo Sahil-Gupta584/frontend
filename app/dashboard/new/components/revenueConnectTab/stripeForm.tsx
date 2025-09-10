@@ -1,5 +1,3 @@
-import LinkComponent from "@/components/link";
-import { stripeSchema, TStripeForm } from "@/lib/zodSchemas";
 import {
   addToast,
   Button,
@@ -11,7 +9,11 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useForm } from "react-hook-form";
+
 import DisconnectProvider from "../disconnectProvider";
+
+import { stripeSchema, TStripeForm } from "@/lib/zodSchemas";
+import LinkComponent from "@/components/link";
 
 const stripeLink =
   "https://dashboard.stripe.com/apikeys/create?name=Insightly&permissions%5B%5D=rak_charge_read&permissions%5B%5D=rak_subscription_read&permissions%5B%5D=rak_customer_read&permissions%5B%5D=rak_payment_intent_read&permissions%5B%5D=rak_checkout_session_read&permissions%5B%5D=rak_invoice_read&permissions%5B%5D=rak_webhook_write";
@@ -39,7 +41,7 @@ export default function StripeForm({
         apiKey: data.apiKey,
         websiteId: data.websiteId,
       },
-      { validateStatus: () => true }
+      { validateStatus: () => true },
     );
 
     if (res.data.error) {
@@ -51,6 +53,7 @@ export default function StripeForm({
     }
     refetch();
   };
+
   return (
     <form onSubmit={stripeForm.handleSubmit(onStripeSubmit)}>
       <ul>

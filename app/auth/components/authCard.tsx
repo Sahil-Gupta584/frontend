@@ -1,7 +1,4 @@
 "use client";
-import { account } from "@/appwrite/clientConfig";
-import Logo from "@/components/logo";
-import { useUser } from "@/lib/hooks";
 import { Button, Card, CardBody } from "@heroui/react";
 import { OAuthProvider } from "appwrite";
 import Link from "next/link";
@@ -9,14 +6,21 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 
+import { account } from "@/appwrite/clientConfig";
+import Logo from "@/components/logo";
+import { useUser } from "@/lib/hooks";
+
 function AuthCard() {
   const [domain, setDomain] = useState("");
   const user = useUser();
   const search = useSearchParams();
+
   useEffect(() => {
     const redirect = search.get("redirect");
+
     if (redirect) {
       const redirectParams = new URLSearchParams(redirect.split("?")[1]);
+
       setDomain(redirectParams.get("domain") || "");
     }
   }, [search]);
@@ -27,7 +31,7 @@ function AuthCard() {
       failure: window.location.origin + "/auth",
       success: new URL(
         search.get("redirect") || "/dashboard",
-        window.location.origin
+        window.location.origin,
       ).toString(),
       scopes: ["profile"],
     });
@@ -54,6 +58,7 @@ function AuthCard() {
                   <img
                     className="size-2 mx-1"
                     src={`https://icons.duckduckgo.com/ip3/${domain}.ico`}
+                    alt=""
                   />
                   {domain}
                 </p>

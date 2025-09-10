@@ -1,9 +1,11 @@
 "use client";
-import { PricingTableOne } from "@/components/billingsdk/pricing-table-one";
-import { plans } from "@/lib/billingsdk-config";
 import { Button, Card, CardBody } from "@heroui/react";
 import { motion } from "framer-motion";
+
 import { cardVariants } from "../docs/revenue-attribution-guide/components/commonCards";
+
+import { plans } from "@/lib/billingsdk-config";
+import { PricingTableOne } from "@/components/billingsdk/pricing-table-one";
 
 const MotionCard = motion(Card);
 
@@ -41,7 +43,7 @@ function PricingCard({
         <ul className="text-gray-400 flex flex-col gap-2">
           {features.map((f, i) => (
             <li key={i} className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-primary rounded-full"></span>
+              <span className="w-2 h-2 bg-primary rounded-full" />
               {f.includes("Coming Soon") ? (
                 <span className="italic text-yellow-400">{f}</span>
               ) : (
@@ -68,6 +70,7 @@ export default function Pricing() {
   async function handleCheckout(plan: string) {
     console.log({ plan });
   }
+
   return (
     <article id="pricing">
       <p className="text-primary text-center mb-4 font-bold">PRICING</p>

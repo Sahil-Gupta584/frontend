@@ -1,13 +1,15 @@
-import { User } from "@/lib/types";
 import { Button, Input } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { GoGlobe } from "react-icons/go";
 
+import { User } from "@/lib/types";
+
 function AddWebsiteForm({ user }: { user: User | null }) {
   const [website, setWebsite] = useState("");
   const router = useRouter();
+
   function handleAddWebsite(e: any) {
     e?.preventDefault();
     if (user && user.$id) {
@@ -16,6 +18,7 @@ function AddWebsiteForm({ user }: { user: User | null }) {
       router.push(`/auth?redirect=/dashboard/new?domain=${website}`);
     }
   }
+
   return (
     <form className="w-64 space-y-2 mx-auto" onSubmit={handleAddWebsite}>
       <Input
@@ -24,6 +27,7 @@ function AddWebsiteForm({ user }: { user: User | null }) {
             <img
               className="size-5"
               src={`https://icons.duckduckgo.com/ip3/${website}.ico`}
+              alt=""
             />
           ) : (
             <GoGlobe />
