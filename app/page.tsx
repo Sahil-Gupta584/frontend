@@ -56,7 +56,7 @@ export default function Home() {
 
             {/* URL */}
             <p className="absolute left-1/2 -translate-x-1/2 text-xs sm:text-sm text-neutral-500">
-              https://insightly.xyz/{" "}
+              https://insightly.xyz/
               <span className="text-white">syncmate.xyz</span>
             </p>
           </div>

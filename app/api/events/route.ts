@@ -1,13 +1,8 @@
 import { database, databaseId } from "@/appwrite/serverConfig";
+import { headers } from "@/lib/constants";
 import { ID } from "appwrite";
 import { NextRequest, NextResponse } from "next/server";
 import { UAParser } from "ua-parser-js";
-
-export const headers = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-};
 
 export async function POST(req: NextRequest) {
   try {
@@ -85,7 +80,7 @@ export async function POST(req: NextRequest) {
 // 👇 This handles the preflight request
 export async function OPTIONS() {
   return NextResponse.json(null, {
-    headers,
+    headers: headers,
   });
 }
 

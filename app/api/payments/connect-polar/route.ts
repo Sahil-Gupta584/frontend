@@ -59,7 +59,13 @@ export async function POST(req: NextRequest) {
           "subscription.canceled",
         ],
       },
-      { headers: { Authorization: `Bearer ${body.token}` } }
+      {
+        headers: {
+          Authorization: `Bearer ${body.token}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        validateStatus: () => true,
+      }
     );
 
     if (addWebhookRes.data?.error === "insufficient_scope") {
@@ -72,7 +78,7 @@ export async function POST(req: NextRequest) {
       rowId: body.websiteId,
     });
 
-    website.paymentProviders.push("Stripe");
+    website.paymentProviders.push("Polar");
 
     await database.updateRow({
       databaseId,

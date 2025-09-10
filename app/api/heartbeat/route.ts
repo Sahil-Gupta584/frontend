@@ -1,7 +1,7 @@
 import { database, databaseId } from "@/appwrite/serverConfig";
+import { headers } from "@/lib/constants";
 import { NextRequest, NextResponse } from "next/server";
 import { ID, Query } from "node-appwrite";
-import { headers } from "../events/route";
 
 export async function POST(req: NextRequest) {
   try {
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return NextResponse.json({ ok: true }, { headers });
+    return NextResponse.json({ ok: true }, { headers: headers });
   } catch (error) {
     console.log(error);
 

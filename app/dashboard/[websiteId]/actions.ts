@@ -47,7 +47,7 @@ export async function getWebsite(websiteId: string) {
       tableId: websitesTableId,
       rowId: websiteId,
     });
-    return { domain: res.domain, timezone: res.timezone };
+    return res;
   } catch (error) {
     console.log(error);
     null;

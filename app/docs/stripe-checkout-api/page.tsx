@@ -73,7 +73,7 @@ function page() {
       <h2 className="font-bold text-3xl ">
         Attribute revenue with Stripe Checkout API
       </h2>
-      <p className="text-gray-400! mb-6">
+      <li className="text-gray-400! mb-6">
         Pass metadata with
         <ChipComponent
           child="insightly_visitor_id"
@@ -87,7 +87,7 @@ function page() {
           classname="text-sm p-1 text-gray-200"
         />
         (cookies from DataFast) when creating a checkout session:
-      </p>
+      </li>
       <div className="w-full rounded-xl border border-gray-700 bg-gray-900 shadow-lg overflow-hidden">
         {/* Language Switch Tabs */}
         <div className="flex space-x-2 border-b border-gray-700 bg-gray-800 px-3 py-2 text-sm">

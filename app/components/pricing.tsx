@@ -1,4 +1,6 @@
 "use client";
+import { PricingTableOne } from "@/components/billingsdk/pricing-table-one";
+import { plans } from "@/lib/billingsdk-config";
 import { Button, Card, CardBody } from "@heroui/react";
 import { motion } from "framer-motion";
 import { cardVariants } from "../docs/revenue-attribution-guide/components/commonCards";
@@ -63,6 +65,9 @@ function PricingCard({
 }
 
 export default function Pricing() {
+  async function handleCheckout(plan: string) {
+    console.log({ plan });
+  }
   return (
     <article id="pricing">
       <p className="text-primary text-center mb-4 font-bold">PRICING</p>
@@ -71,7 +76,7 @@ export default function Pricing() {
       </p>
 
       <div className="flex flex-col md:flex-row gap-6 justify-center">
-        <PricingCard
+        {/* <PricingCard
           plan="Free"
           price="$0 /m"
           buttonLabel="Get Started"
@@ -94,6 +99,12 @@ export default function Pricing() {
             "Priority Support",
             "Funnel Insights (Coming Soon)",
           ]}
+        /> */}
+        <PricingTableOne
+          className="bg-transparent"
+          onPlanSelect={handleCheckout}
+          theme={"classic"}
+          plans={plans}
         />
       </div>
     </article>

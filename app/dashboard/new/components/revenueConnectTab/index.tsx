@@ -1,9 +1,9 @@
 "use client";
-import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
+import { getWebsite } from "@/app/dashboard/[websiteId]/actions";
 import PolarLogo from "@/components/polarLogo";
+import { tryCatchWrapper } from "@/lib/utils/client";
 import { Tab, Tabs } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
-import { Query } from "node-appwrite";
 import React from "react";
 import { FaStripeS } from "react-icons/fa";
 import PolarForm from "./polarForm";
@@ -17,17 +17,17 @@ export default function RevenueConnectTab({
   const { data: connectedProviders, refetch } = useQuery({
     queryKey: ["paymentProviders"],
     queryFn: async () => {
-      const website = await database.getRow({
-        databaseId,
-        tableId: websitesTableId,
-        rowId: websiteId,
-        queries: [Query.select(["paymentProviders"])],
+      return tryCatchWrapper({
+        callback: async () => {
+          const website = await getWebsite(websiteId);
+          if (!website) throw new Error("Failed to get website");
+
+          return website.paymentProviders as string[];
+        },
       });
-      return website.paymentProviders as string[];
     },
     enabled: false,
   });
-  refetch();
 
   function Title({ text, icon }: { text: string; icon: React.ReactNode }) {
     return (
@@ -45,6 +45,7 @@ export default function RevenueConnectTab({
         cursor: "dark:bg-default-100",
         tabList: "dark:bg-default",
         base: "block",
+        tab: "shadow-none!",
       }}
     >
       <Tab

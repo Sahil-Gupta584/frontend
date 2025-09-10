@@ -1,11 +1,10 @@
-import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
 import { TPaymentProviders } from "@/lib/types";
 import { tryCatchWrapper } from "@/lib/utils/client";
 import { Button } from "@heroui/react";
 import { useMutation } from "@tanstack/react-query";
-import { Query } from "node-appwrite";
 import { FaCircleCheck } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
+import { disconnectProvider } from "../actions";
 
 function DisconnectProvider({
   websiteId,
@@ -21,26 +20,7 @@ function DisconnectProvider({
     mutationFn: () =>
       tryCatchWrapper({
         callback: async () => {
-          const website = await database.getRow({
-            databaseId,
-            rowId: websiteId,
-            tableId: websitesTableId,
-            queries: [Query.select(["paymentProviders"])],
-          });
-
-          const updatedProviders = (website.paymentProviders || []).filter(
-            (p: string) => p !== provider
-          );
-
-          // update row
-          await database.updateRow({
-            databaseId,
-            rowId: websiteId,
-            tableId: websitesTableId,
-            data: {
-              paymentProviders: updatedProviders,
-            },
-          });
+          await disconnectProvider(websiteId, provider);
           refetch();
         },
         successMsg: `${provider} removed successfully`,

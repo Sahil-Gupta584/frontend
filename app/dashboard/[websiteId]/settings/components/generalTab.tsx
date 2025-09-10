@@ -34,7 +34,7 @@ function GeneralTab({ websiteId }: { websiteId: string }) {
   useEffect(() => {
     async function init() {
       const doc = await getWebsite(websiteId);
-      if (doc) setWebsiteData(doc);
+      if (doc) setWebsiteData({ domain: doc.domain, timezone: doc.timezone });
     }
     init();
   }, [websiteId]);
