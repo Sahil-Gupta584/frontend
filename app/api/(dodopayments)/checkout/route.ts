@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     console.log({ geo });
 
     body.billing_address = {
-      country: geo?.country || "XX",
+      country: geo?.country || "US",
       city: geo?.city || "Unknown",
       state: geo?.region || "Unknown",
       street: "N/A",
