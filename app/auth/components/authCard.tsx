@@ -1,6 +1,5 @@
 "use client";
 import { Button, Card, CardBody } from "@heroui/react";
-import { OAuthProvider } from "appwrite";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -8,6 +7,7 @@ import { FcGoogle } from "react-icons/fc";
 
 import { account } from "@/appwrite/clientConfig";
 import Logo from "@/components/logo";
+import { OAuthProvider } from "node-appwrite";
 
 function AuthCard() {
   const [domain, setDomain] = useState("");
@@ -24,6 +24,15 @@ function AuthCard() {
   }, [search]);
 
   function handleAuth() {
+    console.log(
+      new URL(
+        search.get("redirect") || "/dashboard",
+        window.location.origin
+      ).toString(),
+      search.get("redirect"),
+      window.location.href
+    );
+
     account.createOAuth2Session({
       provider: OAuthProvider.Google,
       failure: window.location.origin + "/auth",
@@ -41,7 +50,7 @@ function AuthCard() {
         <ul className="space-y-4 mb-4">
           <li>
             <Link
-              href="/dashboard"
+              href="/"
               className="flex gap-2 items-center font-bold text-white text-lg leading-normal"
             >
               <Logo className="h-9" />

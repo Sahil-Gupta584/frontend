@@ -18,9 +18,9 @@ import React from "react";
 
 import Logo from "./logo";
 
-import { TClassName } from "@/lib/types";
-import { useUser } from "@/lib/hooks";
 import { account } from "@/appwrite/clientConfig";
+import { useUser } from "@/lib/hooks";
+import { TClassName } from "@/lib/types";
 
 export function Nav({
   brandChild,
@@ -133,7 +133,7 @@ export function Nav({
                         name="theme"
                       >
                         <option>Dark</option>
-                        <option>Light</option>
+                        {/* <option>Light</option> */}
                       </select>
                     }
                   >

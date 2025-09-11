@@ -113,7 +113,7 @@ export async function GET(req: NextRequest) {
     // 4. Convert buckets → array sorted by date
     const dataset = Object.values(buckets).sort(
       (a: any, b: any) =>
-        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
     );
 
     const sessionDurations: number[] = [];
@@ -127,7 +127,7 @@ export async function GET(req: NextRequest) {
 
     for (const sessionId in groupedBySession) {
       const timestamps = groupedBySession[sessionId].map((t) =>
-        new Date(t).getTime(),
+        new Date(t).getTime()
       );
       const min = Math.min(...timestamps);
       const max = Math.max(...timestamps);
@@ -149,7 +149,8 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    const bounceRate = ((bounceCount / totalSessions) * 100).toFixed(2);
+    const bounceRate =
+      totalSessions > 0 ? ((bounceCount / totalSessions) * 100).toFixed(2) : 0;
 
     return NextResponse.json({ dataset, avgSessionTime, bounceRate });
   } catch (err) {
@@ -157,7 +158,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(
       { error: (err as Error).message },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

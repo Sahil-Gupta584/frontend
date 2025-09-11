@@ -29,7 +29,7 @@ export function AddScriptCard({
   defer
   data-website-id="${websiteId}"
   data-domain="${domain}"
-  src="https://${process.env.NEXT_PUBLIC_DOMAIN}/script.js">
+  src="https://${window.location.hostname === "localhost" ? "localhost:3000" : window.location.origin}/script.js">
   </script>`}
             language="html"
             theme={dracula}

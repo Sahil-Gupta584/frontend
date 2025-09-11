@@ -10,11 +10,16 @@ import { tryCatchWrapper } from "@/lib/utils/client";
 export default function Pricing({ user }: { user: User | null }) {
   const router = useRouter();
 
-  async function handleCheckout() {
+  async function handleCheckout(plan: string) {
     tryCatchWrapper({
       callback: async () => {
+        if (plan === "starter") {
+          router.push("/dashboard");
+
+          return;
+        }
         if (!user?.$id) {
-          router.push("/auth?redirect=/#pricing");
+          router.push(`/auth?redirect=${encodeURIComponent("/#pricing")}`);
 
           return;
         }
