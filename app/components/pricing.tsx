@@ -21,8 +21,8 @@ export default function Pricing({ user }: { user: User | null }) {
         const res = await axios.post("/api/checkout", {
           productCart: [
             {
-              // product_id: "pdt_FCjy9waPRfLCYi4A9GOE9", //live
-              product_id: "pdt_DSA9O6S2nmuxXO00BJo8U", //test
+              product_id: "pdt_FCjy9waPRfLCYi4A9GOE9", //live
+              // product_id: "pdt_DSA9O6S2nmuxXO00BJo8U", //test
               quantity: 1,
               amount: 9,
             },
