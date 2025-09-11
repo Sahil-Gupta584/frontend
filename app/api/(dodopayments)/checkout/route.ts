@@ -56,6 +56,8 @@ export async function POST(request: Request) {
 
     const geo = await getGeo(ip);
 
+    console.log({ geo });
+
     body.billing_address = {
       country: geo?.country || "XX",
       city: geo?.city || "Unknown",
