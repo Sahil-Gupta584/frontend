@@ -8,11 +8,9 @@ import { FcGoogle } from "react-icons/fc";
 
 import { account } from "@/appwrite/clientConfig";
 import Logo from "@/components/logo";
-import { useUser } from "@/lib/hooks";
 
 function AuthCard() {
   const [domain, setDomain] = useState("");
-  const user = useUser();
   const search = useSearchParams();
 
   useEffect(() => {
@@ -31,7 +29,7 @@ function AuthCard() {
       failure: window.location.origin + "/auth",
       success: new URL(
         search.get("redirect") || "/dashboard",
-        window.location.origin,
+        window.location.origin
       ).toString(),
       scopes: ["profile"],
     });

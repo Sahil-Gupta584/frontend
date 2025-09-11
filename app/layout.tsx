@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     "Insightly |  Understand who’s visiting, where they come from and what keeps them engaged.",
 };
 
-export const sen = localFont({
+const sen = localFont({
   src: [
     {
       path: "../public/fonts/Sen-Regular.ttf",
