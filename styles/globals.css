@@ -31,7 +31,9 @@ html {
     rgba(0, 0, 0, 0) 100%
   ) !important;
 }
-
+button {
+  @apply cursor-pointer!;
+}
 button,
 a[role="button"] {
   @apply font-semibold rounded-xl transition-all! duration-300!

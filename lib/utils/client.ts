@@ -35,7 +35,6 @@ export async function tryCatchWrapper<T>({
       });
     } else {
       // Handle other errors
-      console.error("Submission error:", error);
       addToast({
         color: "danger",
         title: "Error",

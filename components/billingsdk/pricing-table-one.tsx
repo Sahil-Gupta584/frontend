@@ -105,7 +105,7 @@ const cardVariants = cva(
       theme: "minimal",
       highlight: false,
     },
-  },
+  }
 );
 
 const priceTextVariants = cva("font-medium", {
@@ -170,11 +170,11 @@ const toggleVariants = cva(
     defaultVariants: {
       theme: "minimal",
     },
-  },
+  }
 );
 
 const buttonVariants = cva(
-  "gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 transition-all duration-300",
+  " gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 transition-all duration-300",
   {
     variants: {
       theme: {
@@ -187,7 +187,7 @@ const buttonVariants = cva(
     defaultVariants: {
       theme: "minimal",
     },
-  },
+  }
 );
 
 export interface PricingTableOneProps
@@ -213,7 +213,7 @@ export function PricingTableOne({
 
   function calculateDiscount(
     monthlyPrice: string,
-    yearlyPrice: string,
+    yearlyPrice: string
   ): number {
     const monthly = parseFloat(monthlyPrice);
     const yearly = parseFloat(yearlyPrice);
@@ -236,8 +236,8 @@ export function PricingTableOne({
   const yearlyPriceDiscount = plans.length
     ? Math.max(
         ...plans.map((plan) =>
-          calculateDiscount(plan.monthlyPrice, plan.yearlyPrice),
-        ),
+          calculateDiscount(plan.monthlyPrice, plan.yearlyPrice)
+        )
       )
     : 0;
 
@@ -257,7 +257,7 @@ export function PricingTableOne({
           <div
             className={cn(
               "flex flex-col gap-4",
-              theme === "classic" && "text-center",
+              theme === "classic" && "text-center"
             )}
           >
             <h2 className={cn(titleVariants({ size, theme }))}>
@@ -270,7 +270,7 @@ export function PricingTableOne({
               "flex flex-col justify-between gap-5 md:gap-10",
               theme === "classic"
                 ? "md:flex-col md:items-center"
-                : "md:flex-row",
+                : "md:flex-row"
             )}
           >
             <p className={cn(descriptionVariants({ size, theme }))}>
@@ -280,7 +280,7 @@ export function PricingTableOne({
             <div
               className={cn(
                 toggleVariants({ theme }),
-                theme === "classic" && "mx-auto",
+                theme === "classic" && "mx-auto"
               )}
             >
               <RadioGroup
@@ -338,7 +338,7 @@ export function PricingTableOne({
                     size,
                     theme,
                     highlight: plan.highlight,
-                  }),
+                  })
                 )}
               >
                 {/* Classic theme highlight effect */}
@@ -357,7 +357,7 @@ export function PricingTableOne({
                   className={cn(
                     theme === "classic" && !plan.highlight
                       ? "bg-muted text-muted-foreground border-border/50 mb-8"
-                      : highlightBadgeVariants({ theme }),
+                      : highlightBadgeVariants({ theme })
                   )}
                 >
                   {plan.title}
@@ -376,7 +376,7 @@ export function PricingTableOne({
                         <span
                           className={cn(
                             "my-auto",
-                            priceTextVariants({ size, theme }),
+                            priceTextVariants({ size, theme })
                           )}
                         >
                           {parseFloat(plan.yearlyPrice) >= 0 && (
@@ -385,19 +385,19 @@ export function PricingTableOne({
                           {plan.yearlyPrice}
                           {calculateDiscount(
                             plan.monthlyPrice,
-                            plan.yearlyPrice,
+                            plan.yearlyPrice
                           ) > 0 && (
                             <span
                               className={cn(
                                 "text-xs ml-2",
                                 theme === "classic"
                                   ? "text-emerald-500 font-semibold"
-                                  : "underline",
+                                  : "underline"
                               )}
                             >
                               {calculateDiscount(
                                 plan.monthlyPrice,
-                                plan.yearlyPrice,
+                                plan.yearlyPrice
                               )}
                               % off
                             </span>
@@ -425,7 +425,7 @@ export function PricingTableOne({
                   className={cn(
                     "my-6",
                     theme === "classic" &&
-                      "bg-gradient-to-r from-transparent via-border to-transparent",
+                      "bg-gradient-to-r from-transparent via-border to-transparent"
                   )}
                 />
 
@@ -447,7 +447,7 @@ export function PricingTableOne({
                         />
                         <span
                           className={cn(
-                            theme === "classic" && "text-foreground/90",
+                            theme === "classic" && "text-foreground/90"
                           )}
                         >
                           {feature.name}

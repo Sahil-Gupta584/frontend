@@ -2,8 +2,9 @@ import { ID } from "appwrite";
 import { NextRequest, NextResponse } from "next/server";
 import { UAParser } from "ua-parser-js";
 
-import { headers } from "@/lib/constants";
 import { database, databaseId } from "@/appwrite/serverConfig";
+import { headers } from "@/lib/constants";
+import { getGeo } from "@/lib/utils/server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -75,7 +76,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { ok: false, error: (error as Error).message },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -85,24 +86,4 @@ export async function OPTIONS() {
   return NextResponse.json(null, {
     headers: headers,
   });
-}
-
-async function getGeo(ip: string) {
-  try {
-    const token = process.env.IP_INFO_TOKEN;
-
-    if (!token) console.error("Invalid ipinfo token");
-    const url = `https://ipinfo.io/${ip}?token=${token}`;
-
-    const res = await fetch(url);
-    const data = await res.json();
-
-    if (!res.ok) return null;
-
-    return data;
-  } catch (error) {
-    console.log("Error to get Geo", error);
-
-    return null;
-  }
 }

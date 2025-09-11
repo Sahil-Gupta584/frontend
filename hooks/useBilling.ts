@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { DodoPayments } from "dodopayments";
+import { useCallback, useState } from "react";
 
 import {
-  getProducts,
-  getProduct,
-  getCustomer,
-  getCustomerSubscriptions,
-  getCustomerPayments,
-  createCustomer,
-  updateCustomer,
   checkout,
+  createCustomer,
+  getCustomer,
+  getCustomerPayments,
+  getCustomerSubscriptions,
+  getProduct,
+  getProducts,
+  updateCustomer,
 } from "@/lib/dodopayments";
 
 interface UseBillingState {
@@ -36,7 +36,7 @@ export const useBilling = ({ baseUrl }: { baseUrl?: string }) => {
   const handleAsyncOperation = useCallback(
     async <T>(
       operation: () => Promise<T>,
-      operationName: string,
+      operationName: string
     ): Promise<T> => {
       try {
         setLoading(true);
@@ -54,13 +54,13 @@ export const useBilling = ({ baseUrl }: { baseUrl?: string }) => {
         setLoading(false);
       }
     },
-    [],
+    []
   );
 
   const fetchProducts = useCallback(async () => {
     return handleAsyncOperation(
       () => getProducts({ baseUrl }),
-      "fetch products",
+      "fetch products"
     );
   }, [handleAsyncOperation]);
 
@@ -68,63 +68,63 @@ export const useBilling = ({ baseUrl }: { baseUrl?: string }) => {
     async (product_id: string) => {
       return handleAsyncOperation(
         () => getProduct({ baseUrl, product_id }),
-        "fetch product",
+        "fetch product"
       );
     },
-    [handleAsyncOperation],
+    [handleAsyncOperation]
   );
 
   const fetchCustomer = useCallback(
     async (customer_id: string) => {
       return handleAsyncOperation(
         () => getCustomer({ baseUrl, customer_id }),
-        "fetch customer",
+        "fetch customer"
       );
     },
-    [handleAsyncOperation],
+    [handleAsyncOperation]
   );
 
   const fetchCustomerSubscriptions = useCallback(
     async (customer_id: string) => {
       return handleAsyncOperation(
         () => getCustomerSubscriptions({ baseUrl, customer_id }),
-        "fetch customer subscriptions",
+        "fetch customer subscriptions"
       );
     },
-    [handleAsyncOperation],
+    [handleAsyncOperation]
   );
 
   const fetchCustomerPayments = useCallback(
     async (customer_id: string) => {
       return handleAsyncOperation(
         () => getCustomerPayments({ baseUrl, customer_id }),
-        "fetch customer payments",
+        "fetch customer payments"
       );
     },
-    [handleAsyncOperation],
+    [handleAsyncOperation]
   );
 
   const createNewCustomer = useCallback(
     async (customer: DodoPayments.Customers.CustomerCreateParams) => {
       return handleAsyncOperation(
         () => createCustomer({ baseUrl, customer }),
-        "create customer",
+        "create customer"
       );
     },
-    [handleAsyncOperation],
+    [handleAsyncOperation]
   );
 
   const updateExistingCustomer = useCallback(
     async (
       customer_id: string,
-      customer: DodoPayments.Customers.CustomerUpdateParams,
+      customer: DodoPayments.Customers.CustomerUpdateParams
     ) => {
       return handleAsyncOperation(
         () => updateCustomer({ baseUrl, customer_id, customer }),
-        "update customer",
+        "update customer"
       );
     },
-    [handleAsyncOperation],
+    [handleAsyncOperation]
   );
 
   const createCheckout = useCallback(
@@ -137,7 +137,7 @@ export const useBilling = ({ baseUrl }: { baseUrl?: string }) => {
       customer: DodoPayments.Payments.CustomerRequest,
       billing_address: DodoPayments.Payments.BillingAddress,
       return_url: string,
-      customMetadata?: Record<string, string>,
+      customMetadata?: Record<string, string>
     ) => {
       return handleAsyncOperation(
         () =>
@@ -149,10 +149,10 @@ export const useBilling = ({ baseUrl }: { baseUrl?: string }) => {
             return_url,
             customMetadata,
           }),
-        "create checkout",
+        "create checkout"
       );
     },
-    [handleAsyncOperation],
+    [handleAsyncOperation]
   );
 
   const clearError = useCallback(() => {

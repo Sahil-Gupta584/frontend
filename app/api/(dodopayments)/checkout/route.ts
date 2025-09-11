@@ -1,8 +1,9 @@
+import axios from "axios";
 import { DodoPayments } from "dodopayments";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { getDodoPaymentsClient } from "@/lib/dodopayments";
+import { getGeo } from "@/lib/utils/server";
 
 const productCartItemSchema = z.object({
   product_id: z.string().min(1, "Product ID is required"),
@@ -48,7 +49,20 @@ const checkoutSessionSchema = z.object({
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    let body = await request.json();
+    let ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "0.0.0.0";
+
+    ip = ip === "::1" ? "103.190.15.171" : ip;
+
+    const geo = await getGeo(ip);
+
+    body.billing_address = {
+      country: geo?.country || "XX",
+      city: geo?.city || "Unknown",
+      state: geo?.region || "Unknown",
+      street: "N/A",
+      zipcode: geo?.postal || "000000",
+    };
 
     const validationResult = checkoutSessionSchema.safeParse(body);
 
@@ -61,7 +75,7 @@ export async function POST(request: Request) {
             message: issue.message,
           })),
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -72,22 +86,33 @@ export async function POST(request: Request) {
       return_url,
       customMetadata,
     } = validationResult.data;
+    const res = await axios.post(
+      "https://test.dodopayments.com/checkouts",
+      {
+        product_cart: productCart,
+        customer: customer,
+        billing_address:
+          billing_address as DodoPayments.Payments.BillingAddress,
+        return_url: return_url,
+        metadata: customMetadata,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.DODO_PAYMENTS_API_KEY}`,
+        },
+        validateStatus: () => true,
+      }
+    );
 
-    const session = await getDodoPaymentsClient().checkoutSessions.create({
-      product_cart: productCart,
-      customer: customer,
-      billing_address: billing_address as DodoPayments.Payments.BillingAddress,
-      return_url: return_url,
-      metadata: customMetadata,
-    });
+    if (!res.data?.checkout_url) console.log("res", res.data);
 
-    return NextResponse.json(session);
+    return NextResponse.json({ ok: true, url: res.data?.checkout_url });
   } catch (error) {
     console.error("Error in checkout POST handler:", error);
 
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

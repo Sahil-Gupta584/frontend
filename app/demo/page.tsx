@@ -2,21 +2,17 @@
 
 import { Card, CardBody, CardHeader, Divider } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
-import { Query } from "appwrite";
 import axios from "axios";
 import { useState } from "react";
 
 import { CommonChart } from "../dashboard/[websiteId]/components/commonChart";
-import Filters from "../dashboard/[websiteId]/components/filters";
 import LocationCharts from "../dashboard/[websiteId]/components/locationCharts";
 import MainGraph from "../dashboard/[websiteId]/components/mainGraph";
 import SystemCharts from "../dashboard/[websiteId]/components/systemCharts";
 import { ReactQueryProvider } from "../providers";
 
-import MainGraphLoader from "@/components/loaders/mainGraph";
 import { GraphLoader, LocationSystemChartsLoader } from "@/components/loaders";
-import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
-import { account } from "@/appwrite/clientConfig";
+import MainGraphLoader from "@/components/loaders/mainGraph";
 
 function Page() {
   const websiteId = "68b2e27b000850428c13";
@@ -54,33 +50,9 @@ function Page() {
     osData,
   } = otherGraphQuery.data || {};
 
-  const getWebsitesQuery = useQuery({
-    queryKey: ["getWebsites"],
-    queryFn: async () => {
-      const user = await account.get();
-
-      return await database.listRows({
-        tableId: websitesTableId,
-        databaseId: databaseId,
-        queries: [Query.equal("userId", user.$id)],
-      });
-    },
-  });
-
   return (
     <section className="mb-6 max-w-6xl mx-auto p-4">
       <ReactQueryProvider>
-        {getWebsitesQuery.data && (
-          <Filters
-            duration={duration}
-            setDuration={setDuration}
-            websiteId={websiteId}
-            //@ts-expect-error
-            data={getWebsitesQuery.data.rows}
-            isLoading={getWebsitesQuery.isLoading}
-          />
-        )}
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-[minmax(459px,auto)]">
           {/* Main Graph */}
           {mainGraphQuery.isLoading ? (

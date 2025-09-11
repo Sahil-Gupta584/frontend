@@ -28,7 +28,7 @@ export function getTimestamp(duration: string) {
       return new Date(
         now.getFullYear(),
         now.getMonth(),
-        now.getDate(),
+        now.getDate()
       ).getTime();
 
     case "yesterday": {
@@ -178,5 +178,25 @@ export function normalizeReferrer(referrer?: string): string {
     return host || "Direct/None";
   } catch {
     return "Direct/None";
+  }
+}
+
+export async function getGeo(ip: string) {
+  try {
+    const token = process.env.IP_INFO_TOKEN;
+
+    if (!token) console.error("Invalid ipinfo token");
+    const url = `https://ipinfo.io/${ip}?token=${token}`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!res.ok) return null;
+
+    return data;
+  } catch (error) {
+    console.log("Error to get Geo", error);
+
+    return null;
   }
 }
