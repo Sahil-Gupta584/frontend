@@ -87,7 +87,7 @@ export async function POST(request: Request) {
       customMetadata,
     } = validationResult.data;
     const res = await axios.post(
-      "https://test.dodopayments.com/checkouts",
+      "https://live.dodopayments.com/checkouts",
       {
         product_cart: productCart,
         customer: customer,
