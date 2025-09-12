@@ -16,7 +16,7 @@ import MainGraphLoader from "@/components/loaders/mainGraph";
 import Filters from "../dashboard/[websiteId]/components/filters";
 
 function Page() {
-  const websiteId = "68b2e27b000850428c13";
+  const websiteId = "68c43ddf0011d1180361";
   const [duration, setDuration] = useState("last_7_days");
 
   const mainGraphQuery = useQuery({
