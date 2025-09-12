@@ -43,17 +43,18 @@ export async function GET(req: NextRequest) {
       tableId: "revenues",
       queries: [
         Query.equal("website", websiteId),
-        Query.equal("sessionId", sessionIds),
+        Query.equal(
+          "sessionId",
+          sessionIds.length === 0 ? "random" : sessionIds
+        ),
         Query.greaterThan("$createdAt", new Date(timestamp).toISOString()), // ✅
       ],
     });
 
-    const revenues = revenuesRes.rows;
-
     // Create a map for sessionId → total revenue
     const revenueMap = new Map<string, number>();
 
-    revenues.forEach((r) => {
+    revenuesRes.rows.forEach((r) => {
       const prev = revenueMap.get(r.sessionId) || 0;
 
       revenueMap.set(r.sessionId, prev + (r.revenue || 0));
@@ -240,7 +241,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(
       { error: (err as Error).message },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

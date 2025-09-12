@@ -1,9 +1,11 @@
 "use client";
-import { Card, CardBody, CardHeader, Divider } from "@heroui/react";
+import { Alert, Card, CardBody, CardHeader, Divider } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { FiAlertTriangle } from "react-icons/fi";
+import { GoAlertFill } from "react-icons/go";
 
 import { CommonChart } from "./commonChart";
 import Filters from "./filters";
@@ -11,9 +13,10 @@ import LocationCharts from "./locationCharts";
 import MainGraph from "./mainGraph";
 import SystemCharts from "./systemCharts";
 
-import MainGraphLoader from "@/components/loaders/mainGraph";
-import { GraphLoader, LocationSystemChartsLoader } from "@/components/loaders";
 import { account } from "@/appwrite/clientConfig";
+import { GraphLoader, LocationSystemChartsLoader } from "@/components/loaders";
+import MainGraphLoader from "@/components/loaders/mainGraph";
+import NextLink from "@/components/nextLink";
 
 export default function Dashboard() {
   const { websiteId } = useParams<{ websiteId: string }>();
@@ -65,6 +68,61 @@ export default function Dashboard() {
 
   return (
     <section className="mb-6">
+      {mainGraphQuery.data && mainGraphQuery.data?.isEmpty && (
+        <Alert
+          color="warning"
+          icon={<FiAlertTriangle />}
+          hideIcon
+          className="dark:bg-[#312107]  border-warning-100 border text-sm fixed bottom-5 left-5 w-fit __className_23ba4a z-50"
+        >
+          <div className="flex gap-3">
+            <GoAlertFill className="mt-1 text-black" fill="#eab308" />
+            <ul>
+              <li className="flex gap-2 font-medium text-warning-600">
+                Awaiting the first event...
+                <span
+                  role="status"
+                  aria-label="Loading"
+                  className="inline-block w-3 h-3 rounded-full  border mt- border-current border-t-transparent animate-spin text-white"
+                />
+              </li>
+              <ol className="list-decimal list-inside text-warning-500 ">
+                <li className="flex">
+                  Install the script using the{" "}
+                  <NextLink
+                    text="tracking code"
+                    href={`/dashboard/${websiteId}/settings`}
+                    blank
+                  />
+                </li>
+                <li>
+                  Visit{" "}
+                  <NextLink
+                    text={
+                      Array.isArray(getWebsitesQuery.data)
+                        ? getWebsitesQuery.data.find(
+                            (w) => w?.$id === websiteId
+                          )?.domain
+                        : ""
+                    }
+                    blank
+                    href={`https://${getWebsitesQuery.data ? getWebsitesQuery.data.domain : ""}`}
+                  />
+                  to register the first event yourself
+                </li>
+                <li>Refresh your dashboard</li>
+                <li>
+                  Still not working?{" "}
+                  <NextLink
+                    text="Contact support"
+                    href="https://x.com/sahil_builds"
+                  />
+                </li>
+              </ol>
+            </ul>
+          </div>
+        </Alert>
+      )}
       {getWebsitesQuery.data && (
         <Filters
           duration={duration}
@@ -76,7 +134,6 @@ export default function Dashboard() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-[minmax(459px,auto)]">
-        {/* Main Graph */}
         {mainGraphQuery.isLoading ? (
           <MainGraphLoader />
         ) : (
@@ -91,7 +148,6 @@ export default function Dashboard() {
           )
         )}
 
-        {/* Pages */}
         <Card className="border border-[#373737]">
           <CardHeader>Page</CardHeader>
           <Divider />
@@ -102,7 +158,6 @@ export default function Dashboard() {
           )}
         </Card>
 
-        {/* Referrer */}
         <Card className="border border-[#373737]">
           <CardHeader>Referrer</CardHeader>
           <Divider />
@@ -115,7 +170,6 @@ export default function Dashboard() {
           </CardBody>
         </Card>
 
-        {/* Location + System */}
         {otherGraphQuery.isLoading ? (
           <LocationSystemChartsLoader />
         ) : (

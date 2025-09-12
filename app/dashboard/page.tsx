@@ -7,8 +7,8 @@ import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import { Line, LineChart, ResponsiveContainer } from "recharts";
 
-import { Favicon } from "@/components/favicon";
 import { account } from "@/appwrite/clientConfig";
+import { Favicon } from "@/components/favicon";
 
 export default function Dashboard() {
   const getWebsitesQuery = useQuery({
@@ -28,12 +28,14 @@ export default function Dashboard() {
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const counts: Record<string, any> = {};
 
-    events.forEach((e: any) => {
-      const date = new Date(e.$createdAt); // adjust field name if different
-      const day = days[date.getDay()];
+    if (Array.isArray(events)) {
+      events.forEach((e: any) => {
+        const date = new Date(e.$createdAt); // adjust field name if different
+        const day = days[date.getDay()];
 
-      counts[day] = (counts[day] || 0) + 1;
-    });
+        counts[day] = (counts[day] || 0) + 1;
+      });
+    }
 
     // Ensure all days exist (optional, for fixed-length chart)
     return days.map((d) => ({

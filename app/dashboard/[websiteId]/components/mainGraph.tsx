@@ -16,9 +16,9 @@ import { getLiveVisitors } from "../actions";
 
 import CommonTooltip from "./commonTooltip";
 
-import { getLabel } from "@/lib/utils/server";
-import { databaseId } from "@/appwrite/serverConfig";
 import { client } from "@/appwrite/clientConfig";
+import { databaseId } from "@/appwrite/serverConfig";
+import { getLabel } from "@/lib/utils/server";
 
 type MainGraphProps = {
   chartData: {
@@ -58,14 +58,14 @@ function MainGraph({
         timestamp: d.timestamp,
         id: d.id,
       })),
-    [chartData],
+    [chartData]
   );
 
   useEffect(() => {
     getLiveVisitors(websiteId).then((data) => {
       if (data) {
         setLiveVisitors(
-          data.map((v) => ({ sessionId: v.sessionId, visitorId: v.visitorId })),
+          data.map((v) => ({ sessionId: v.sessionId, visitorId: v.visitorId }))
         );
       }
     });
@@ -74,7 +74,7 @@ function MainGraph({
       ({ payload, events }: { payload: TLiveVisitor; events: string[] }) => {
         if (
           !events.includes(
-            `databases.${databaseId}.tables.heartbeat.rows.*.create`,
+            `databases.${databaseId}.tables.heartbeat.rows.*.create`
           )
         )
           return;
@@ -83,14 +83,14 @@ function MainGraph({
           const exists = prev.some(
             (v) =>
               v.sessionId === payload.sessionId &&
-              v.visitorId === payload.visitorId,
+              v.visitorId === payload.visitorId
           );
 
           if (exists) return prev;
 
           return [...prev, payload];
         });
-      },
+      }
     );
   }, []);
 
@@ -237,7 +237,7 @@ function MainGraph({
                   data={payload?.[0]?.payload}
                   label={getLabel(
                     String(payload?.[0]?.payload?.timestamp),
-                    duration,
+                    duration
                   )}
                 />
               )}
@@ -253,7 +253,6 @@ function MainGraph({
               activeDot={{ r: 6 }}
               hide={!isVisitorsSelected}
             />
-
             <Bar
               hide={!isRevenueSelected}
               dataKey="revenue"

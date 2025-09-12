@@ -1,5 +1,6 @@
 @config "../tailwind.config.js";
 @import "tailwindcss";
+
 html {
   scroll-behavior: smooth;
   scrollbar-color: color-mix(in oklch, currentColor 35%, transparent)

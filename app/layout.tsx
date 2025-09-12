@@ -48,6 +48,19 @@ export default function RootLayout({
 }) {
   return (
     <html suppressHydrationWarning lang="en" className="dark:bg-[#19191C]">
+      <head>
+        <script src="/script.js" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+        window.__APP_CONFIG__ = {
+          HOSTNAME: "${process.env.NEXT_PUBLIC_HOSTNAME}",
+          other: "${process.env.HOSTNAME}"
+        }
+      `,
+          }}
+        />
+      </head>
       <body className={sen.className}>
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           {children}
