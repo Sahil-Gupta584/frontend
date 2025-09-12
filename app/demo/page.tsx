@@ -13,6 +13,7 @@ import { ReactQueryProvider } from "../providers";
 
 import { GraphLoader, LocationSystemChartsLoader } from "@/components/loaders";
 import MainGraphLoader from "@/components/loaders/mainGraph";
+import Filters from "../dashboard/[websiteId]/components/filters";
 
 function Page() {
   const websiteId = "68b2e27b000850428c13";
@@ -50,9 +51,29 @@ function Page() {
     osData,
   } = otherGraphQuery.data || {};
 
+  const getWebsitesQuery = useQuery({
+    queryKey: ["getWebsites"],
+    queryFn: async () => {
+      const res = await axios("/api/website", {
+        params: { userId: "68c43d86288fed2fe824" },
+      });
+
+      return res.data?.websites;
+    },
+  });
+
   return (
     <section className="mb-6 max-w-6xl mx-auto p-4">
       <ReactQueryProvider>
+        {getWebsitesQuery.data && (
+          <Filters
+            duration={duration}
+            setDuration={setDuration}
+            websiteId={websiteId}
+            data={[getWebsitesQuery.data]}
+            isLoading={getWebsitesQuery.isLoading}
+          />
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-[minmax(459px,auto)]">
           {/* Main Graph */}
           {mainGraphQuery.isLoading ? (

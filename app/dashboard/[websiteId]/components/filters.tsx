@@ -19,12 +19,14 @@ function Filters({
   setDuration,
   data,
   isLoading,
+  isDemo,
 }: {
   websiteId: string;
   duration: string;
   setDuration: (duration: string) => void;
   data: { $id: string; domain: string }[];
   isLoading: boolean;
+  isDemo?: boolean;
 }) {
   return (
     <div className="flex gap-4 items-end">
@@ -37,11 +39,15 @@ function Filters({
           value: "font-semibold text-lg",
         }}
         placeholder="Select website"
-        defaultSelectedKeys={[websiteId]}
+        defaultSelectedKeys={isDemo ? ["68c43d86288fed2fe824"] : [websiteId]}
         disallowEmptySelection
         labelPlacement="outside-left"
         selectorIcon={<SelectorIcon />}
-        items={data}
+        items={
+          isDemo
+            ? [{ $id: "68c43d86288fed2fe824", domain: "syncmate.xyz" }]
+            : data
+        }
         isLoading={isLoading}
         maxListboxHeight={400}
         renderValue={(items) =>

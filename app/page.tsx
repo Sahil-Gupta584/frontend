@@ -46,7 +46,7 @@ export default function Home() {
           <AddWebsiteForm user={user} />
         </article>
 
-        {/* <div className="my-15 backdrop-blur-md bg-black/30 border-11 border-primary/30 mx-auto font-mono shadow-xl text-sm sm:text-xl rounded-4xl overflow-hidden relative group hover:border-white/20 transition-all duration-300">
+        <div className="my-15 backdrop-blur-md bg-black/30 border-11 border-primary/30 mx-auto font-mono shadow-xl text-sm sm:text-xl rounded-4xl overflow-hidden relative group hover:border-white/20 transition-all duration-300">
           <div className="relative flex items-center bg-white/5 border-b border-white/5 h-10 px-4">
             <div className="flex space-x-1.5 absolute left-4">
               <div className="w-2 h-2 rounded-full bg-red-500" />
@@ -55,7 +55,7 @@ export default function Home() {
             </div>
 
             <p className="absolute left-1/2 -translate-x-1/2 text-xs sm:text-sm text-neutral-500">
-              https://insightly.xyz/
+              https://appwrite.insightly.networkk/
               <span className="text-white">syncmate.xyz</span>
             </p>
           </div>
@@ -70,7 +70,7 @@ export default function Home() {
               />
             </article>
           </div>
-        </div> */}
+        </div>
         <HowItWorks />
         <div className="my-10 ">
           <AddWebsiteForm user={user} />
