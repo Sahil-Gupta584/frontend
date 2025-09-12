@@ -2,8 +2,8 @@ import { ID } from "appwrite";
 import { NextRequest, NextResponse } from "next/server";
 import { Query } from "node-appwrite";
 
-import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
 import { account } from "@/appwrite/clientConfig";
+import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { ok: false, error: "Unauthorized" },
-        { status: 401 },
+        { status: 401 }
       );
     }
     const result = await database.createRow({
@@ -49,11 +49,20 @@ export async function GET(req: NextRequest) {
           const eventsRes = await database.listRows({
             databaseId: databaseId,
             tableId: "events",
-            queries: [Query.equal("website", w.$id)],
+            queries: [
+              Query.equal("website", w.$id),
+              Query.greaterThanEqual(
+                "$createdAt",
+                new Date(
+                  new Date().getTime() - 24 * 60 * 60 * 1000
+                ).toISOString()
+              ),
+              Query.limit(1000000),
+            ],
           });
 
           return { ...w, events: eventsRes.rows };
-        }),
+        })
       );
     }
 

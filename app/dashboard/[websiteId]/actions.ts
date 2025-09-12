@@ -13,7 +13,7 @@ export async function getLiveVisitors(websiteId: string) {
       queries: [
         Query.lessThan(
           "$createdAt",
-          new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+          new Date(Date.now() - 5 * 60 * 1000).toISOString()
         ),
       ],
     });
@@ -25,7 +25,7 @@ export async function getLiveVisitors(websiteId: string) {
           rowId: r.$id,
           tableId: "heartbeat",
         });
-      }),
+      })
     );
 
     return (

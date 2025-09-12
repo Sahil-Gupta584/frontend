@@ -18,10 +18,22 @@ export async function GET(req: NextRequest) {
 
     if (!websiteId || !duration) throw new Error("Invalid payload");
 
-    const timestamp = getTimestamp(duration);
+    let timestamp: string | number | null = getTimestamp(duration);
 
-    if (!timestamp) throw new Error("Invalid duration.");
+    if (timestamp === null) throw new Error("Invalid duration.");
+    if (timestamp === 0) {
+      const row = await database.listRows({
+        databaseId,
+        tableId: "events",
+        queries: [
+          Query.equal("website", websiteId),
+          Query.limit(1),
+          Query.orderAsc("$createdAt"),
+        ],
+      });
 
+      timestamp = row.rows?.[0].$createdAt;
+    }
     // 1. Fetch all events
     const eventsRes = await database.listRows({
       databaseId,

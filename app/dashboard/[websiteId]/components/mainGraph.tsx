@@ -208,7 +208,7 @@ function MainGraph({
       </CardHeader>
       <CardBody className="h-96">
         <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={data}>
+          <ComposedChart data={data} className="outline-none">
             <defs>
               <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#fd366e" stopOpacity={0.4} />
