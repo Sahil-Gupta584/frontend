@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
     //   countryCode: geo?.country,
     //   city: geo?.city,
     // });
+    console.log({ device: device.type, os: os.name, browser: browser.name });
 
     await database.createRow({
       databaseId: databaseId,

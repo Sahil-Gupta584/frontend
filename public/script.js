@@ -76,7 +76,7 @@
     const m = n(e + "website-id"),
         g = n(e + "domain");
     !d || m && g || (d = !1, u = "Missing website ID or domain");
-    const w = !t.src.includes("insightly-three.vercel.app") ? new URL("/api/events", window.location.origin).href : "http://insightly-three.vercel.app/api/events";
+    const w = !t.src.includes("localhost:3000") ? new URL("/api/events", window.location.origin).href : "http://localhost:3000/api/events";
 
     function h() {
         const t = window.location.href;
@@ -433,7 +433,7 @@
             ts: Date.now(),
         };
 
-        fetch("http://insightly-three.vercel.app/api/heartbeat", {
+        fetch("http://localhost:3000/api/heartbeat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
