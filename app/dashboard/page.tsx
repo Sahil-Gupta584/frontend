@@ -121,6 +121,20 @@ export default function Dashboard() {
                 </div>
               </Link>
             ))}
+
+          {Array.isArray(getWebsitesQuery.data) &&
+            getWebsitesQuery.data.length === 0 && (
+              <p className="col-span-full text-center text-neutral-400">
+                No websites added yet. Click{" "}
+                <Link
+                  href="/dashboard/new"
+                  className="text-primary hover:underline"
+                >
+                  Add Website
+                </Link>{" "}
+                to get started 🚀
+              </p>
+            )}
         </div>
       </div>
     </div>

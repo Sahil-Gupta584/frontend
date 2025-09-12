@@ -72,6 +72,7 @@ function Page() {
             websiteId={websiteId}
             data={[getWebsitesQuery.data]}
             isLoading={getWebsitesQuery.isLoading}
+            isDemo={true}
           />
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-[minmax(459px,auto)]">
