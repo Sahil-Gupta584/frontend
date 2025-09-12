@@ -8,12 +8,12 @@ const databaseId: string = process.env
 const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID;
 const websitesTableId = "websites";
 const projectKey = process.env.APPWRITE_KEY;
-if (!projectId || !projectKey) throw new Error("Invalid envs");
+if (!projectId || !databaseId) throw new Error("Invalid envs");
 
 const client = new Client()
   .setEndpoint("https://fra.cloud.appwrite.io/v1")
   .setProject(projectId)
-  .setKey(projectKey);
+  .setKey(projectKey!);
 
 const database = new TablesDB(client);
 
