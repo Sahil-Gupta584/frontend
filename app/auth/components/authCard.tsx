@@ -7,7 +7,7 @@ import { FcGoogle } from "react-icons/fc";
 
 import { account } from "@/appwrite/clientConfig";
 import Logo from "@/components/logo";
-import { OAuthProvider } from "node-appwrite";
+import { OAuthProvider } from "appwrite";
 
 function AuthCard() {
   const [domain, setDomain] = useState("");
@@ -24,15 +24,6 @@ function AuthCard() {
   }, [search]);
 
   function handleAuth() {
-    console.log(
-      new URL(
-        search.get("redirect") || "/dashboard",
-        window.location.origin
-      ).toString(),
-      search.get("redirect"),
-      window.location.href
-    );
-
     account.createOAuth2Session({
       provider: OAuthProvider.Google,
       failure: window.location.origin + "/auth",
