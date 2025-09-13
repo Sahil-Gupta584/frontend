@@ -17,7 +17,7 @@ import Filters from "../dashboard/[websiteId]/components/filters";
 
 function Page() {
   const websiteId = "68c43ddf0011d1180361";
-  const [duration, setDuration] = useState("last_12_months");
+  const [duration, setDuration] = useState("last_30_days");
 
   const mainGraphQuery = useQuery({
     queryKey: ["mainGraph", websiteId, duration],
