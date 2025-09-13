@@ -53,29 +53,29 @@ export async function GET(req: NextRequest) {
     ).slice(0, 1000);
 
     // 3. Fetch all revenues for these sessionIds
-    const revenuesRes = await database.listRows({
-      databaseId,
-      tableId: "revenues",
-      queries: [
-        Query.equal("website", websiteId),
-        Query.greaterThan("$createdAt", new Date(timestamp).toISOString()),
-        Query.limit(10000000),
-      ],
-    });
+    // const revenuesRes = await database.listRows({
+    //   databaseId,
+    //   tableId: "revenues",
+    //   queries: [
+    //     Query.equal("website", websiteId),
+    //     Query.greaterThan("$createdAt", new Date(timestamp).toISOString()),
+    //     Query.limit(10000000),
+    //   ],
+    // });
 
-    // then filter
-    const revenues = revenuesRes.rows.filter((r) =>
-      sessionIds.includes(r.sessionId)
-    );
+    // // then filter
+    // const revenues = revenuesRes.rows.filter((r) =>
+    //   sessionIds.includes(r.sessionId)
+    // );
 
     // Create a map for sessionId → total revenue
     const revenueMap = new Map<string, number>();
 
-    revenues.forEach((r) => {
-      const prev = revenueMap.get(r.sessionId) || 0;
+    // revenues.forEach((r) => {
+    //   const prev = revenueMap.get(r.sessionId) || 0;
 
-      revenueMap.set(r.sessionId, prev + (r.revenue || 0));
-    });
+    //   revenueMap.set(r.sessionId, prev + (r.revenue || 0));
+    // });
 
     // 4. Prepare buckets
     const pageMap = new Map<string, Metric>();
