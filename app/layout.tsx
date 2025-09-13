@@ -49,7 +49,12 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning lang="en" className="dark:bg-[#19191C]">
       <head>
-        <script src="/script.js" />
+        <script
+  defer
+  data-website-id="68c55806002464fbde15"
+  data-domain="insightly.appwrite.network"
+  src="https://insightly.appwrite.network/script.js">
+  </script>
         <script
           dangerouslySetInnerHTML={{
             __html: `
