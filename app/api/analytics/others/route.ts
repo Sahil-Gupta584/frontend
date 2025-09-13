@@ -40,14 +40,17 @@ export async function GET(req: NextRequest) {
       tableId: "events",
       queries: [
         Query.equal("website", websiteId),
-        Query.greaterThan("$createdAt", new Date(timestamp).toISOString()), // ✅
+        Query.greaterThan("$createdAt", new Date(timestamp).toISOString()),
+        Query.limit(100000000),
       ],
     });
 
     const events = eventsRes.rows;
 
     // 2. Get unique sessionIds
-    const sessionIds = Array.from(new Set(events.map((e) => e.sessionId)));
+    const sessionIds = Array.from(
+      new Set(events.map((e) => e.sessionId))
+    ).slice(0, 1000);
 
     // 3. Fetch all revenues for these sessionIds
     const revenuesRes = await database.listRows({
@@ -55,18 +58,20 @@ export async function GET(req: NextRequest) {
       tableId: "revenues",
       queries: [
         Query.equal("website", websiteId),
-        Query.equal(
-          "sessionId",
-          sessionIds.length === 0 ? "random" : sessionIds
-        ),
-        Query.greaterThan("$createdAt", new Date(timestamp).toISOString()), // ✅
+        Query.greaterThan("$createdAt", new Date(timestamp).toISOString()),
+        Query.limit(10000000),
       ],
     });
+
+    // then filter
+    const revenues = revenuesRes.rows.filter((r) =>
+      sessionIds.includes(r.sessionId)
+    );
 
     // Create a map for sessionId → total revenue
     const revenueMap = new Map<string, number>();
 
-    revenuesRes.rows.forEach((r) => {
+    revenues.forEach((r) => {
       const prev = revenueMap.get(r.sessionId) || 0;
 
       revenueMap.set(r.sessionId, prev + (r.revenue || 0));
@@ -249,7 +254,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(dataset);
   } catch (err) {
-    console.error(err);
+    console.error("others", err);
 
     return NextResponse.json(
       { error: (err as Error).message },

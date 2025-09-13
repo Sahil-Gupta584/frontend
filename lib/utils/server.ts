@@ -1,3 +1,6 @@
+import { database, databaseId } from "@/appwrite/serverConfig";
+import { Query } from "node-appwrite";
+
 export function getFaviconUrl(domain: string) {
   return `https://icons.duckduckgo.com/ip3/${domain}.ico`;
 }
@@ -199,4 +202,32 @@ export async function getGeo(ip: string) {
 
     return null;
   }
+}
+
+export async function fetchRevenuesInChunks(
+  sessionIds: string[],
+  websiteId: string,
+  timestamp: string
+) {
+  const chunkSize = 50;
+  let results: any[] = [];
+
+  for (let i = 0; i < sessionIds.length; i += chunkSize) {
+    const chunk = sessionIds.slice(i, i + chunkSize);
+
+    const res = await database.listRows({
+      databaseId,
+      tableId: "revenues",
+      queries: [
+        Query.equal("website", websiteId),
+        Query.equal("sessionId", chunk),
+        Query.greaterThan("$createdAt", timestamp),
+        Query.limit(1000),
+      ],
+    });
+
+    results = results.concat(res.rows);
+  }
+
+  return results;
 }

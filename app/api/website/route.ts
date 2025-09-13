@@ -60,6 +60,7 @@ export async function GET(req: NextRequest) {
               Query.limit(1000000),
             ],
           });
+          console.log("eventsRes", eventsRes.rows.length);
 
           return { ...w, events: eventsRes.rows };
         })
@@ -70,4 +71,32 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     return NextResponse.json({ ok: false, error: (error as Error).message });
   }
+}
+
+async function fetchRevenuesInChunks(
+  sessionIds: string[],
+  websiteId: string,
+  timestamp: string
+) {
+  const chunkSize = 50;
+  let results: any[] = [];
+
+  for (let i = 0; i < sessionIds.length; i += chunkSize) {
+    const chunk = sessionIds.slice(i, i + chunkSize);
+
+    const res = await database.listRows({
+      databaseId,
+      tableId: "revenues",
+      queries: [
+        Query.equal("website", websiteId),
+        Query.equal("sessionId", chunk),
+        Query.greaterThan("$createdAt", timestamp),
+        Query.limit(100),
+      ],
+    });
+
+    results = results.concat(res.rows);
+  }
+
+  return results;
 }

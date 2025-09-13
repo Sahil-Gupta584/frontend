@@ -3,7 +3,7 @@ import { Alert, Card, CardBody, CardHeader, Divider } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiAlertTriangle } from "react-icons/fi";
 import { GoAlertFill } from "react-icons/go";
 
@@ -29,6 +29,7 @@ export default function Dashboard() {
         await axios("/api/analytics/main", { params: { duration, websiteId } })
       ).data;
     },
+    enabled: false,
   });
 
   const otherGraphQuery = useQuery({
@@ -40,6 +41,7 @@ export default function Dashboard() {
         })
       ).data;
     },
+    enabled: false,
   });
 
   const {
@@ -64,8 +66,13 @@ export default function Dashboard() {
 
       return res.data?.websites;
     },
+    enabled: false,
   });
-
+  useEffect(() => {
+    mainGraphQuery.refetch(),
+      otherGraphQuery.refetch(),
+      getWebsitesQuery.refetch();
+  }, [duration]);
   return (
     <section className="mb-6">
       {mainGraphQuery.data && mainGraphQuery.data?.isEmpty && (
@@ -129,12 +136,18 @@ export default function Dashboard() {
           setDuration={setDuration}
           websiteId={websiteId}
           data={getWebsitesQuery.data}
-          isLoading={getWebsitesQuery.isLoading}
+          isLoading={
+            getWebsitesQuery.isFetching ||
+            mainGraphQuery.isFetching ||
+            otherGraphQuery.isFetching
+          }
+          refetchMain={mainGraphQuery.refetch}
+          refetchOthers={otherGraphQuery.refetch}
         />
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-[minmax(459px,auto)]">
-        {mainGraphQuery.isLoading ? (
+        {mainGraphQuery.isFetching ? (
           <MainGraphLoader />
         ) : (
           mainGraphQuery.data && (
@@ -151,7 +164,7 @@ export default function Dashboard() {
         <Card className="border border-[#373737]">
           <CardHeader>Page</CardHeader>
           <Divider />
-          {otherGraphQuery.isLoading ? (
+          {otherGraphQuery.isFetching ? (
             <GraphLoader />
           ) : (
             pageData && <CommonChart data={pageData} />
@@ -162,7 +175,7 @@ export default function Dashboard() {
           <CardHeader>Referrer</CardHeader>
           <Divider />
           <CardBody className="p-0">
-            {otherGraphQuery.isLoading ? (
+            {otherGraphQuery.isFetching ? (
               <GraphLoader />
             ) : (
               referrerData && <CommonChart data={referrerData} />
@@ -170,7 +183,7 @@ export default function Dashboard() {
           </CardBody>
         </Card>
 
-        {otherGraphQuery.isLoading ? (
+        {otherGraphQuery.isFetching ? (
           <LocationSystemChartsLoader />
         ) : (
           <>

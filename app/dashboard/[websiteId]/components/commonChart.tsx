@@ -40,7 +40,11 @@ export interface CommonChartProps {
 export function CommonChart({ data }: CommonChartProps) {
   return (
     <CardBody className={`space-y-2 px-0 h-full`}>
-      <ResponsiveContainer width="100%" height={data.length * 40}>
+      <ResponsiveContainer
+        width="100%"
+        height={data.length * 40}
+        className="max-h-[381px]"
+      >
         <BarChart
           data={data}
           layout="vertical"

@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
         ],
       });
 
-      timestamp = row.rows?.[0].$createdAt;
+      timestamp = row.rows?.[0]?.$createdAt;
     }
     // row 2025-02-28T18:54:12.649+00:00
 
@@ -35,7 +35,8 @@ export async function GET(req: NextRequest) {
       tableId: "events",
       queries: [
         Query.equal("website", websiteId),
-        Query.greaterThan("$createdAt", new Date(timestamp).toISOString()), // ✅
+        Query.greaterThan("$createdAt", new Date(timestamp).toISOString()),
+        Query.limit(100000000),
       ],
     });
     const isEmpty = eventsRes.rows.length === 0;
@@ -46,7 +47,8 @@ export async function GET(req: NextRequest) {
       tableId: "revenues",
       queries: [
         Query.equal("website", websiteId),
-        Query.greaterThan("$createdAt", new Date(timestamp).toISOString()), // ✅
+        Query.greaterThan("$createdAt", new Date(timestamp).toISOString()),
+        Query.limit(100000000),
       ],
     });
 
@@ -170,7 +172,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ dataset, avgSessionTime, bounceRate, isEmpty });
   } catch (err) {
-    console.error(err);
+    console.error("main", err);
 
     return NextResponse.json(
       { error: (err as Error).message },

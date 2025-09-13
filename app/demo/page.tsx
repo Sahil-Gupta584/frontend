@@ -3,7 +3,7 @@
 import { Card, CardBody, CardHeader, Divider } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { CommonChart } from "../dashboard/[websiteId]/components/commonChart";
 import LocationCharts from "../dashboard/[websiteId]/components/locationCharts";
@@ -17,7 +17,7 @@ import Filters from "../dashboard/[websiteId]/components/filters";
 
 function Page() {
   const websiteId = "68c43ddf0011d1180361";
-  const [duration, setDuration] = useState("last_7_days");
+  const [duration, setDuration] = useState("last_12_months");
 
   const mainGraphQuery = useQuery({
     queryKey: ["mainGraph", websiteId, duration],
@@ -26,6 +26,7 @@ function Page() {
         await axios("/api/analytics/main", { params: { duration, websiteId } })
       ).data;
     },
+    enabled: false,
   });
 
   const otherGraphQuery = useQuery({
@@ -37,6 +38,7 @@ function Page() {
         })
       ).data;
     },
+    enabled: false,
   });
 
   const {
@@ -60,8 +62,13 @@ function Page() {
 
       return res.data?.websites;
     },
+    enabled: false,
   });
-
+  useEffect(() => {
+    mainGraphQuery.refetch(),
+      otherGraphQuery.refetch(),
+      getWebsitesQuery.refetch();
+  }, []);
   return (
     <section className="mb-6 max-w-6xl mx-auto p-4">
       <ReactQueryProvider>
@@ -69,15 +76,20 @@ function Page() {
           <Filters
             duration={duration}
             setDuration={setDuration}
-            websiteId={websiteId}
-            data={[getWebsitesQuery.data]}
-            isLoading={getWebsitesQuery.isLoading}
-            isDemo={true}
+            websiteId={"68c43d86288fed2fe824"}
+            data={[{ $id: "68c43d86288fed2fe824", domain: "syncmate.xyz" }]}
+            isLoading={
+              getWebsitesQuery.isFetching ||
+              mainGraphQuery.isFetching ||
+              otherGraphQuery.isFetching
+            }
+            refetchMain={mainGraphQuery.refetch}
+            refetchOthers={otherGraphQuery.refetch}
           />
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-[minmax(459px,auto)]">
           {/* Main Graph */}
-          {mainGraphQuery.isLoading ? (
+          {mainGraphQuery.isFetching ? (
             <MainGraphLoader />
           ) : (
             mainGraphQuery.data && (
@@ -95,7 +107,7 @@ function Page() {
           <Card className="border border-[#373737]">
             <CardHeader>Page</CardHeader>
             <Divider />
-            {otherGraphQuery.isLoading ? (
+            {otherGraphQuery.isFetching ? (
               <GraphLoader />
             ) : (
               pageData && <CommonChart data={pageData} />
@@ -107,7 +119,7 @@ function Page() {
             <CardHeader>Referrer</CardHeader>
             <Divider />
             <CardBody className="p-0">
-              {otherGraphQuery.isLoading ? (
+              {otherGraphQuery.isFetching ? (
                 <GraphLoader />
               ) : (
                 referrerData && <CommonChart data={referrerData} />
@@ -116,7 +128,7 @@ function Page() {
           </Card>
 
           {/* Location + System */}
-          {otherGraphQuery.isLoading ? (
+          {otherGraphQuery.isFetching ? (
             <LocationSystemChartsLoader />
           ) : (
             <>

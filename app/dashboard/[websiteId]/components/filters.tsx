@@ -1,8 +1,8 @@
-import { Select, SelectItem, SelectSection } from "@heroui/react";
+import { Favicon } from "@/components/favicon";
+import { Button, Select, SelectItem, SelectSection } from "@heroui/react";
 import Link from "next/link";
 import { IoSettingsSharp } from "react-icons/io5";
-
-import { Favicon } from "@/components/favicon";
+import { TfiReload } from "react-icons/tfi";
 export const durationOptions = [
   { key: "today", label: "Today" },
   { key: "yesterday", label: "Yesterday" },
@@ -19,14 +19,16 @@ function Filters({
   setDuration,
   data,
   isLoading,
-  isDemo,
+  refetchMain,
+  refetchOthers,
 }: {
   websiteId: string;
   duration: string;
   setDuration: (duration: string) => void;
   data: { $id: string; domain: string }[];
   isLoading: boolean;
-  isDemo?: boolean;
+  refetchMain?: () => void;
+  refetchOthers?: () => void;
 }) {
   return (
     <div className="flex gap-4 items-end">
@@ -39,15 +41,11 @@ function Filters({
           value: "font-semibold text-lg",
         }}
         placeholder="Select website"
-        defaultSelectedKeys={isDemo ? ["68c43d86288fed2fe824"] : [websiteId]}
+        defaultSelectedKeys={[websiteId]}
         disallowEmptySelection
         labelPlacement="outside-left"
         selectorIcon={<SelectorIcon />}
-        items={
-          isDemo
-            ? [{ $id: "68c43d86288fed2fe824", domain: "syncmate.xyz" }]
-            : data
-        }
+        items={data}
         isLoading={isLoading}
         maxListboxHeight={400}
         renderValue={(items) =>
@@ -96,7 +94,9 @@ function Filters({
         }}
         placeholder="Duration"
         selectedKeys={[duration]}
-        onSelectionChange={(keys) => setDuration(Array.from(keys)[0] as string)}
+        onSelectionChange={(keys) => {
+          setDuration(Array.from(keys)[0] as string);
+        }}
         labelPlacement="outside-left"
         disallowEmptySelection
       >
@@ -104,6 +104,17 @@ function Filters({
           <SelectItem key={d.key}>{d.label}</SelectItem>
         ))}
       </Select>
+      <Button
+        isLoading={isLoading}
+        onPress={() => {
+          if (refetchMain) refetchMain();
+          if (refetchOthers) refetchOthers();
+        }}
+        spinner={<TfiReload className="animate-spinner-ease-spin" />}
+        className="bg-transparent"
+      >
+        {!isLoading && <TfiReload />}
+      </Button>
     </div>
   );
 }

@@ -26,7 +26,7 @@ export const classNames = {
   tabList: ["bg-transparent p-3 "],
   tabContent: "group-data-[selected=true]:text-white",
   cursor: "bg-transparent",
-  panel: "p-0 h-full",
+  panel: "p-0 h-full overflow-x-hidden",
 };
 export default function LocationCharts({
   cityData,

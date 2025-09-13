@@ -9,6 +9,7 @@ import { Line, LineChart, ResponsiveContainer } from "recharts";
 
 import { account } from "@/appwrite/clientConfig";
 import { Favicon } from "@/components/favicon";
+import { useEffect } from "react";
 
 export default function Dashboard() {
   const getWebsitesQuery = useQuery({
@@ -21,8 +22,12 @@ export default function Dashboard() {
 
       return res.data?.websites;
     },
+    enabled: false,
   });
 
+  useEffect(() => {
+    getWebsitesQuery.refetch();
+  }, []);
   function getEventsByDay(events: any) {
     // Example: group by weekday
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -62,7 +67,7 @@ export default function Dashboard() {
 
         {/* Website cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {getWebsitesQuery.isLoading &&
+          {getWebsitesQuery.isFetching &&
             Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
@@ -116,13 +121,14 @@ export default function Dashboard() {
                     <span className="font-semibold text-white">
                       {website.events.length}
                     </span>
-                    visitors
+                    visitors in last 24h
                   </div>
                 </div>
               </Link>
             ))}
 
-          {Array.isArray(getWebsitesQuery.data) &&
+          {getWebsitesQuery.data &&
+            Array.isArray(getWebsitesQuery.data) &&
             getWebsitesQuery.data.length === 0 && (
               <p className="col-span-full text-center text-neutral-400">
                 No websites added yet. Click{" "}
