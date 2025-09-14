@@ -258,7 +258,7 @@ function MainGraph({
               dataKey="revenue"
               fill="#e78468"
               radius={[6, 6, 0, 0]}
-              barSize={30}
+              barSize={25}
             />
           </ComposedChart>
         </ResponsiveContainer>

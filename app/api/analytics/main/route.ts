@@ -27,7 +27,6 @@ export async function GET(req: NextRequest) {
 
       timestamp = row.rows?.[0]?.$createdAt;
     }
-    // row 2025-02-28T18:54:12.649+00:00
 
     // 1. Fetch events
     const eventsRes = await database.listRows({

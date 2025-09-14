@@ -38,7 +38,7 @@ function CommonTooltip({
             </ul>
             <ul className=" flex justify-between text-xs">
               <li>Conversion rate</li>
-              <li>${((data?.visitors / data?.revenue) * 100).toFixed(2)}</li>
+              <li>{((data?.visitors / data?.revenue) * 100).toFixed(2)}%</li>
             </ul>
           </>
         ) : (

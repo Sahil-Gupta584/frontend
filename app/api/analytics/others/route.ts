@@ -53,29 +53,29 @@ export async function GET(req: NextRequest) {
     ).slice(0, 1000);
 
     // 3. Fetch all revenues for these sessionIds
-    // const revenuesRes = await database.listRows({
-    //   databaseId,
-    //   tableId: "revenues",
-    //   queries: [
-    //     Query.equal("website", websiteId),
-    //     Query.greaterThan("$createdAt", new Date(timestamp).toISOString()),
-    //     Query.limit(10000000),
-    //   ],
-    // });
+    const revenuesRes = await database.listRows({
+      databaseId,
+      tableId: "revenues",
+      queries: [
+        Query.equal("website", websiteId),
+        Query.greaterThan("$createdAt", new Date(timestamp).toISOString()),
+        Query.limit(10000000),
+      ],
+    });
 
     // // then filter
-    // const revenues = revenuesRes.rows.filter((r) =>
-    //   sessionIds.includes(r.sessionId)
-    // );
+    const revenues = revenuesRes.rows.filter((r) =>
+      sessionIds.includes(r.sessionId)
+    );
 
     // Create a map for sessionId → total revenue
     const revenueMap = new Map<string, number>();
 
-    // revenues.forEach((r) => {
-    //   const prev = revenueMap.get(r.sessionId) || 0;
+    revenues.forEach((r) => {
+      const prev = revenueMap.get(r.sessionId) || 0;
 
-    //   revenueMap.set(r.sessionId, prev + (r.revenue || 0));
-    // });
+      revenueMap.set(r.sessionId, prev + (r.revenue || 0));
+    });
 
     // 4. Prepare buckets
     const pageMap = new Map<string, Metric>();
@@ -101,7 +101,9 @@ export async function GET(req: NextRequest) {
       const sessionRevenue = revenueMap.get(e.sessionId) || 0;
 
       // Page
-      const url = new URL(e.href);
+      const url = new URL(
+        e.href?.startsWith("/") ? `http://localhost:300${e.href}` : e.href
+      );
       const pathname = url.pathname;
       const page = pageMap.get(pathname);
 
