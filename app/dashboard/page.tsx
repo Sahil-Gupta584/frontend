@@ -107,7 +107,7 @@ export default function Dashboard() {
                     {/* Stats */}
                     <div className="flex items-center gap-2 text-sm text-neutral-400">
                       <span className="font-semibold text-white">
-                        {Array.isArray(website.events.length)
+                        {Array.isArray(website.events)
                           ? website.events.length
                           : 0}
                       </span>
