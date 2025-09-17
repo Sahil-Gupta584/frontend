@@ -231,3 +231,30 @@ export async function fetchRevenuesInChunks(
 
   return results;
 }
+
+export function normalizeBrowser(name?: string): string {
+  if (!name) return "unknown";
+  const lower = name.toLowerCase();
+
+  if (lower.includes("chrome")) return "chrome";
+  if (lower.includes("safari")) return "safari";
+  if (lower.includes("firefox")) return "firefox";
+  if (lower.includes("edge")) return "edge";
+  if (lower.includes("opera") || lower.includes("opr")) return "opera";
+  if (lower.includes("brave")) return "brave";
+
+  return lower.replace(/\s+/g, ""); // fallback: remove spaces
+}
+
+export function normalizeOS(name?: string): string {
+  if (!name) return "unknown";
+  const lower = name.toLowerCase();
+
+  if (lower.includes("windows")) return "windows";
+  if (lower.includes("mac")) return "macos";
+  if (lower.includes("ios")) return "ios";
+  if (lower.includes("android")) return "android";
+  if (lower.includes("linux")) return "linux";
+
+  return lower.replace(/\s+/g, "");
+}

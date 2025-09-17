@@ -55,7 +55,7 @@ export default function Home() {
             </div>
 
             <p className="absolute left-1/2 -translate-x-1/2 text-xs sm:text-sm text-neutral-500">
-              https://appwrite.insightly.networkk/
+              https://appwrite.insightly.network/
               <span className="text-white">syncmate.xyz</span>
             </p>
           </div>

@@ -53,40 +53,22 @@ function Page() {
     osData,
   } = otherGraphQuery.data || {};
 
-  const getWebsitesQuery = useQuery({
-    queryKey: ["getWebsites"],
-    queryFn: async () => {
-      const res = await axios("/api/website", {
-        params: { userId: "68c43d86288fed2fe824" },
-      });
-
-      return res.data?.websites;
-    },
-    enabled: false,
-  });
   useEffect(() => {
-    mainGraphQuery.refetch(),
-      otherGraphQuery.refetch(),
-      getWebsitesQuery.refetch();
+    mainGraphQuery.refetch();
+    otherGraphQuery.refetch();
   }, [duration]);
   return (
     <section className="mb-6 max-w-6xl mx-auto p-4">
       <ReactQueryProvider>
-        {getWebsitesQuery.data && (
-          <Filters
-            duration={duration}
-            setDuration={setDuration}
-            websiteId={"68c43d86288fed2fe824"}
-            data={[{ $id: "68c43d86288fed2fe824", domain: "syncmate.xyz" }]}
-            isLoading={
-              getWebsitesQuery.isFetching ||
-              mainGraphQuery.isFetching ||
-              otherGraphQuery.isFetching
-            }
-            refetchMain={mainGraphQuery.refetch}
-            refetchOthers={otherGraphQuery.refetch}
-          />
-        )}
+        <Filters
+          duration={duration}
+          setDuration={setDuration}
+          websiteId={"68c43d86288fed2fe824"}
+          data={[{ $id: "68c43d86288fed2fe824", domain: "syncmate.xyz" }]}
+          isLoading={mainGraphQuery.isFetching || otherGraphQuery.isFetching}
+          refetchMain={mainGraphQuery.refetch}
+          refetchOthers={otherGraphQuery.refetch}
+        />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-[minmax(459px,auto)]">
           {mainGraphQuery.isFetching ? (
             <MainGraphLoader />

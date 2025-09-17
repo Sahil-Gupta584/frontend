@@ -34,6 +34,8 @@ export async function GET(req: NextRequest) {
 
       timestamp = row.rows?.[0].$createdAt;
     }
+    // const estart = Date.now();
+
     // 1. Fetch all events
     const eventsRes = await database.listRows({
       databaseId,
@@ -44,14 +46,13 @@ export async function GET(req: NextRequest) {
         Query.limit(100000000),
       ],
     });
+    // console.log("Events time:", Date.now() - estart, "ms");
 
     const events = eventsRes.rows;
 
     // 2. Get unique sessionIds
-    const sessionIds = Array.from(
-      new Set(events.map((e) => e.sessionId))
-    ).slice(0, 1000);
-
+    const sessionIds = Array.from(new Set(events.map((e) => e.sessionId)));
+    // const rstart = Date.now();
     // 3. Fetch all revenues for these sessionIds
     const revenuesRes = await database.listRows({
       databaseId,
@@ -62,10 +63,11 @@ export async function GET(req: NextRequest) {
         Query.limit(10000000),
       ],
     });
+    // console.log("Revenues time:", Date.now() - rstart, "ms");
 
-    // // then filter
+    const sessionSet = new Set(sessionIds);
     const revenues = revenuesRes.rows.filter((r) =>
-      sessionIds.includes(r.sessionId)
+      sessionSet.has(r.sessionId)
     );
 
     // Create a map for sessionId → total revenue
@@ -95,11 +97,10 @@ export async function GET(req: NextRequest) {
     const browserMap = new Map<string, Metric>();
     const osMap = new Map<string, Metric>();
     const deviceMap = new Map<string, Metric>();
-
+    // const lstart = Date.now();
     // 5. Process events
     for (const e of events) {
       const sessionRevenue = revenueMap.get(e.sessionId) || 0;
-
       // Page
       const url = new URL(
         e.href?.startsWith("/") ? `http://localhost:300${e.href}` : e.href
@@ -196,13 +197,13 @@ export async function GET(req: NextRequest) {
       }
 
       // Browser
-      const browser = browserMap.get(e.browser);
+      const browser = browserMap.get(e.browser?.toLowerCase());
 
       if (browser) {
         browser.visitors += 1;
         browser.revenue += sessionRevenue;
       } else {
-        browserMap.set(e.browser, {
+        browserMap.set(e.browser?.toLowerCase(), {
           label: e.browser,
           visitors: 1,
           revenue: sessionRevenue,
@@ -211,35 +212,36 @@ export async function GET(req: NextRequest) {
       }
 
       // OS
-      const os = osMap.get(e.os);
+      const os = osMap.get(e.os?.toLowerCase());
 
       if (os) {
         os.visitors += 1;
         os.revenue += sessionRevenue;
       } else {
-        osMap.set(e.os, {
+        osMap.set(e.os?.toLowerCase(), {
           label: e.os,
           visitors: 1,
           revenue: sessionRevenue,
-          imageUrl: `/images/${e.os}.png`,
+          imageUrl: `/images/${e.os?.toLowerCase()}.png`,
         });
       }
 
       // Device
-      const device = deviceMap.get(e.device);
+      const device = deviceMap.get(e.device?.toLowerCase());
 
       if (device) {
         device.visitors += 1;
         device.revenue += sessionRevenue;
       } else {
-        deviceMap.set(e.device, {
-          label: e.device,
+        deviceMap.set(e.device?.toLowerCase(), {
+          label: e.device?.toLowerCase(),
           visitors: 1,
           revenue: sessionRevenue,
-          imageUrl: `/images/${e.device}.png`,
+          imageUrl: `/images/${e.device?.toLowerCase()}.png`,
         });
       }
     }
+    // console.log("Loop time:", Date.now() - lstart, "ms");
 
     // 6. Convert Maps to arrays
     const dataset = {
@@ -264,3 +266,12 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+// 1st
+// Events time: 6950 ms
+// Revenues time: 212 ms
+// Loop time: 9 ms
+
+// 2nd
+// Events time: 6605 ms
+// Revenues time: 347 ms
+// Loop time: 66 ms
