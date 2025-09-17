@@ -1,4 +1,3 @@
-import "@/styles/globals.css";
 import { Metadata } from "next";
 
 import { Providers } from "../providers";

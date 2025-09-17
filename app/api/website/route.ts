@@ -60,8 +60,6 @@ export async function GET(req: NextRequest) {
               Query.limit(1000000),
             ],
           });
-          console.log("eventsRes", eventsRes.rows.length);
-
           return { ...w, events: eventsRes.rows };
         })
       );

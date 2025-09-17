@@ -1,6 +1,6 @@
-import "@/styles/globals.css";
 import { Metadata } from "next";
 import localFont from "next/font/local";
+import "./globals.css";
 
 import { Providers } from "./providers";
 
@@ -50,21 +50,11 @@ export default function RootLayout({
     <html suppressHydrationWarning lang="en" className="dark:bg-[#19191C]">
       <head>
         <script
-  defer
-  data-website-id="68c55806002464fbde15"
-  data-domain="insightly.appwrite.network"
-  src="https://insightly.appwrite.network/script.js">
-  </script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-        window.__APP_CONFIG__ = {
-          HOSTNAME: "${process.env.NEXT_PUBLIC_HOSTNAME}",
-          other: "${process.env.HOSTNAME}"
-        }
-      `,
-          }}
-        />
+          defer
+          data-website-id="68ca7a100033b7c4e574"
+          data-domain="insightly.appwrite.network"
+          src="/script.js"
+        ></script>
       </head>
       <body className={sen.className}>
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>

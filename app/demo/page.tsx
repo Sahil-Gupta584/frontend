@@ -68,7 +68,7 @@ function Page() {
     mainGraphQuery.refetch(),
       otherGraphQuery.refetch(),
       getWebsitesQuery.refetch();
-  }, []);
+  }, [duration]);
   return (
     <section className="mb-6 max-w-6xl mx-auto p-4">
       <ReactQueryProvider>
@@ -88,7 +88,6 @@ function Page() {
           />
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-[minmax(459px,auto)]">
-          {/* Main Graph */}
           {mainGraphQuery.isFetching ? (
             <MainGraphLoader />
           ) : (
@@ -103,7 +102,6 @@ function Page() {
             )
           )}
 
-          {/* Pages */}
           <Card className="border border-[#373737]">
             <CardHeader>Page</CardHeader>
             <Divider />
@@ -114,7 +112,6 @@ function Page() {
             )}
           </Card>
 
-          {/* Referrer */}
           <Card className="border border-[#373737]">
             <CardHeader>Referrer</CardHeader>
             <Divider />
@@ -127,7 +124,6 @@ function Page() {
             </CardBody>
           </Card>
 
-          {/* Location + System */}
           {otherGraphQuery.isFetching ? (
             <LocationSystemChartsLoader />
           ) : (

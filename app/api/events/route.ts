@@ -49,6 +49,15 @@ export async function POST(req: NextRequest) {
     //   city: geo?.city,
     // });
     console.log({ device: device.type, os: os.name, browser: browser.name });
+    const website = await database.getRow({
+      databaseId,
+      rowId: websiteId,
+      tableId: "websites",
+    });
+    if (!website)
+      throw new Error(
+        "Website not found, please register it on  https://insightly.appwrite.network/dashboard/new "
+      );
 
     await database.createRow({
       databaseId: databaseId,

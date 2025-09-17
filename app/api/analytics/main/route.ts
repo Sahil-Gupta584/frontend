@@ -27,6 +27,19 @@ export async function GET(req: NextRequest) {
 
       timestamp = row.rows?.[0]?.$createdAt;
     }
+    const checkForEmpty = await database.listRows({
+      databaseId,
+      tableId: "events",
+      queries: [Query.equal("website", websiteId), Query.limit(1)],
+    });
+
+    if (checkForEmpty && !checkForEmpty.rows[0])
+      return NextResponse.json({
+        dataset: [],
+        avgSessionTime: 0,
+        bounceRate: 0,
+        isEmpty: true,
+      });
 
     // 1. Fetch events
     const eventsRes = await database.listRows({
@@ -38,7 +51,6 @@ export async function GET(req: NextRequest) {
         Query.limit(100000000),
       ],
     });
-    const isEmpty = eventsRes.rows.length === 0;
 
     // 2. Fetch revenues
     const revenuesRes = await database.listRows({
@@ -169,7 +181,7 @@ export async function GET(req: NextRequest) {
     const bounceRate =
       totalSessions > 0 ? ((bounceCount / totalSessions) * 100).toFixed(2) : 0;
 
-    return NextResponse.json({ dataset, avgSessionTime, bounceRate, isEmpty });
+    return NextResponse.json({ dataset, avgSessionTime, bounceRate });
   } catch (err) {
     console.error("main", err);
 

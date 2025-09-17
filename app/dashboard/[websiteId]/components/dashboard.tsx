@@ -3,7 +3,7 @@ import { Alert, Card, CardBody, CardHeader, Divider } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FiAlertTriangle } from "react-icons/fi";
 import { GoAlertFill } from "react-icons/go";
 
@@ -18,6 +18,7 @@ import { GraphLoader, LocationSystemChartsLoader } from "@/components/loaders";
 import MainGraphLoader from "@/components/loaders/mainGraph";
 import NextLink from "@/components/nextLink";
 
+export type TWebsite = { $id: string; domain: string };
 export default function Dashboard() {
   const { websiteId } = useParams<{ websiteId: string }>();
   const [duration, setDuration] = useState("last_7_days");
@@ -64,7 +65,7 @@ export default function Dashboard() {
         params: { userId: user.$id },
       });
 
-      return res.data?.websites;
+      return res.data?.websites as TWebsite[];
     },
     enabled: false,
   });
@@ -73,6 +74,11 @@ export default function Dashboard() {
       otherGraphQuery.refetch(),
       getWebsitesQuery.refetch();
   }, [duration]);
+  const currentWebsite = useMemo(() => {
+    return getWebsitesQuery.data
+      ? getWebsitesQuery.data.find((w) => w?.$id === websiteId)
+      : null;
+  }, [getWebsitesQuery.data]);
   return (
     <section className="mb-6">
       {mainGraphQuery.data && mainGraphQuery.data?.isEmpty && (
@@ -105,15 +111,9 @@ export default function Dashboard() {
                 <li>
                   Visit{" "}
                   <NextLink
-                    text={
-                      Array.isArray(getWebsitesQuery.data)
-                        ? getWebsitesQuery.data.find(
-                            (w) => w?.$id === websiteId
-                          )?.domain
-                        : ""
-                    }
+                    text={currentWebsite ? currentWebsite.domain : ""}
                     blank
-                    href={`https://${getWebsitesQuery.data ? getWebsitesQuery.data.domain : ""}`}
+                    href={`https://${currentWebsite ? currentWebsite.domain : ""}`}
                   />
                   to register the first event yourself
                 </li>

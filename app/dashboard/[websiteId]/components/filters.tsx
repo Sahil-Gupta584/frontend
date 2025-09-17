@@ -3,6 +3,7 @@ import { Button, Select, SelectItem, SelectSection } from "@heroui/react";
 import Link from "next/link";
 import { IoSettingsSharp } from "react-icons/io5";
 import { TfiReload } from "react-icons/tfi";
+import { TWebsite } from "./dashboard";
 export const durationOptions = [
   { key: "today", label: "Today" },
   { key: "yesterday", label: "Yesterday" },
@@ -25,20 +26,22 @@ function Filters({
   websiteId: string;
   duration: string;
   setDuration: (duration: string) => void;
-  data: { $id: string; domain: string }[];
+  data: TWebsite[];
   isLoading: boolean;
   refetchMain?: () => void;
   refetchOthers?: () => void;
 }) {
   return (
     <div className="flex gap-4 items-end">
-      {/* Website selector */}
       <Select
         variant="flat"
-        className="max-w-3xs "
         classNames={{
-          trigger: "bg-transparent cursor-pointer",
+          trigger: "bg-transparent cursor-pointer gap-4",
+          selectorIcon: "static",
+          spinner: "static",
           value: "font-semibold text-lg",
+          innerWrapper: "w-fit block",
+          base: "w-fit",
         }}
         placeholder="Select website"
         defaultSelectedKeys={[websiteId]}

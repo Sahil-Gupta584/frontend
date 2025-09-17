@@ -1,10 +1,11 @@
 import { faker } from "@faker-js/faker";
 import { Client, ID, TablesDB } from "node-appwrite";
-
 // ---- Appwrite Config ----
 
-const databaseId: string = process.env
-  .NEXT_PUBLIC_APPWRITE_DATABASE_ID as string; // your DB id
+const rawDatabaseId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
+if (!rawDatabaseId) throw new Error("Invalid envs");
+
+const databaseId: string = rawDatabaseId;
 const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID;
 const websitesTableId = "websites";
 const projectKey = process.env.APPWRITE_KEY;
@@ -21,7 +22,7 @@ const database = new TablesDB(client);
 const domain = "syncmate.xyz";
 const websiteId = "68c43ddf0011d1180361"; //jjugnee
 
-const startDate = new Date("2025-03-01");
+const startDate = new Date("2025-08-01");
 const endDate = new Date("2025-09-12"); // today
 const eventsPerMonth = 3000;
 const revenueEventsPerMonth = 50;
@@ -35,7 +36,13 @@ const countries = [
   { code: "DE", city: "Berlin", region: "BE" },
   { code: "GB", city: "London", region: "LN" },
 ];
-
+const referrers = [
+  "https://x.com",
+  "https://instagram.com",
+  "https://google.com",
+  "https://youtube.com",
+];
+const href = ["/auth", "/", "/dashboard"];
 // ---- Helpers ----
 function randomDateInMonth(year: number, month: number) {
   const start = new Date(year, month, 1);
@@ -68,7 +75,7 @@ let revenues: any[] = [];
 //     events.push({
 //       type: faker.helpers.arrayElement(eventTypes),
 //       website: websiteId,
-//       href: faker.internet.url(),
+//       href: `https://syncmate.xyz${href[faker.number.int({ min: 0, max: 2 })]}`,
 //       visitorId,
 //       sessionId,
 //       viewport: faker.helpers.arrayElement([
@@ -76,7 +83,7 @@ let revenues: any[] = [];
 //         "1366x768",
 //         "375x812",
 //       ]),
-//       referrer: faker.internet.url(),
+//       referrer: referrers[faker.number.int({ min: 0, max: 3 })],
 //       os: faker.helpers.arrayElement([
 //         "Linux",
 //         "Windows",
@@ -115,7 +122,7 @@ let revenues: any[] = [];
 
 // console.log(`Generated ${events.length} events & ${revenues.length} revenues`);
 
-// // ---- Save to JSON files ----
+// ---- Save to JSON files ----
 // fs.writeFileSync("events.json", JSON.stringify(events, null, 2));
 // fs.writeFileSync("revenues.json", JSON.stringify(revenues, null, 2));
 // console.log("Data saved to events.json and revenues.json");
@@ -123,7 +130,7 @@ let revenues: any[] = [];
 // ---- Seeder ----
 async function seed(tableId: string, data: any[]) {
   const chunkSize = 50;
-  for (let i = 11050; i < data.length; i += chunkSize) {
+  for (let i = 1350; i < data.length; i += chunkSize) {
     const chunk = data.slice(i, i + chunkSize);
     await Promise.all(
       chunk.map((row) =>
@@ -131,7 +138,7 @@ async function seed(tableId: string, data: any[]) {
           databaseId,
           tableId,
           rowId: ID.unique(),
-          data: row,
+          data: { ...row, type: "pageview" },
         })
       )
     );

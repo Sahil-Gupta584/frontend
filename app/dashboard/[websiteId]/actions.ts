@@ -9,7 +9,7 @@ export async function getLiveVisitors(websiteId: string) {
   try {
     const expiredRows = await database.listRows({
       databaseId,
-      tableId: "heartbeat",
+      tableId: "heartbeats",
       queries: [
         Query.lessThan(
           "$createdAt",
@@ -23,7 +23,7 @@ export async function getLiveVisitors(websiteId: string) {
         await database.deleteRow({
           databaseId,
           rowId: r.$id,
-          tableId: "heartbeat",
+          tableId: "heartbeats",
         });
       })
     );
@@ -31,7 +31,7 @@ export async function getLiveVisitors(websiteId: string) {
     return (
       await database.listRows({
         databaseId,
-        tableId: "heartbeat",
+        tableId: "heartbeats",
         queries: [
           Query.equal("website", websiteId),
           Query.select(["visitorId", "sessionId"]),

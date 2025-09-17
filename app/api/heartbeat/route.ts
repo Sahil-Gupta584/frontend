@@ -24,14 +24,14 @@ export async function POST(req: NextRequest) {
 
     const isExist = await database.listRows({
       databaseId,
-      tableId: "heartbeat",
+      tableId: "heartbeats",
       queries: [Query.equal("website", websiteId)],
     });
 
     if (!isExist.rows[0]) {
       await database.createRow({
         databaseId,
-        tableId: "heartbeat",
+        tableId: "heartbeats",
         data: {
           sessionId,
           visitorId,

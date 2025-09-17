@@ -70,7 +70,7 @@ function MainGraph({
       }
     });
     client.subscribe(
-      `databases.${databaseId}.tables.heartbeat.rows`,
+      `databases.${databaseId}.tables.heartbeats.rows`,
       ({ payload, events }: { payload: TLiveVisitor; events: string[] }) => {
         if (
           !events.includes(

@@ -10,7 +10,6 @@ import {
   Divider,
   Input,
 } from "@heroui/react";
-import router from "next/router";
 import { useEffect, useState } from "react";
 
 import { deleteWebsite, getWebsite, saveWebsiteData } from "../../actions";
@@ -20,6 +19,7 @@ import { Time } from "@/app/dashboard/new/components/newWebsite";
 import { useTimeZones } from "@/lib/hooks";
 import { tryCatchWrapper } from "@/lib/utils/client";
 import { addWebsiteSchema } from "@/lib/zodSchemas";
+import { useRouter } from "next/navigation";
 
 export interface TWebsiteData {
   domain: string;
@@ -32,31 +32,42 @@ function GeneralTab({ websiteId }: { websiteId: string }) {
     timezone: "",
   });
   const timeZones = useTimeZones();
-
+  const router = useRouter();
   useEffect(() => {
     async function init() {
-      const doc = await getWebsite(websiteId);
+      const website = await getWebsite(websiteId);
 
-      if (doc) setWebsiteData({ domain: doc.domain, timezone: doc.timezone });
+      if (website)
+        setWebsiteData({ domain: website.domain, timezone: website.timezone });
+      if (!website) {
+        addToast({
+          title: "Error",
+          description: "Website not found",
+          color: "danger",
+        });
+        router.push("/dashboard");
+      }
     }
     init();
   }, [websiteId]);
 
   async function handleDelete() {
-    const value = prompt(`Are you sure you want to delete this website?
-Please type 'delete' to confirm the deletion.
-      `);
+    tryCatchWrapper({
+      async callback() {
+        const value = prompt(`Are you sure you want to delete this website?
+          Please type 'delete' to confirm the deletion.
+          `);
 
-    setIsLoading(true);
-    await deleteWebsite(websiteId);
-    if (value == "delete") {
-      router.push("/dashboard");
-      addToast({
-        color: "primary",
-        description: "Website deleted successfully",
-      });
-    }
-    setIsLoading(false);
+        setIsLoading(true);
+        await deleteWebsite(websiteId);
+        if (value == "delete") {
+          router.push("/dashboard");
+        }
+        setIsLoading(false);
+      },
+      successMsg: "Website deleted successfully",
+      errorMsg: "Failed to delete message",
+    });
   }
 
   async function saveField({ field }: { field: "domain" | "timezone" }) {
