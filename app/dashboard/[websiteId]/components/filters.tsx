@@ -42,6 +42,7 @@ function Filters({
           value: "font-semibold text-lg",
           innerWrapper: "w-fit block",
           base: "w-fit",
+          popoverContent: "w-fit",
         }}
         placeholder="Select website"
         defaultSelectedKeys={[websiteId]}
@@ -55,6 +56,7 @@ function Filters({
           items.map((item) => {
             return (
               <div
+                // href={item.textValue || (item.data?.domain as string)}
                 className="font-semibold text-md flex items-center gap-2"
                 key={item.textValue}
               >
@@ -68,7 +70,12 @@ function Filters({
         <SelectSection showDivider>
           {data &&
             data.map((website) => (
-              <SelectItem key={website.$id} textValue={website.domain}>
+              <SelectItem
+                key={website.$id}
+                textValue={website.domain}
+                as={Link}
+                href={`/dashboard/${website.$id}`}
+              >
                 <div className="font-semibold text-md flex items-center gap-2">
                   <Favicon domain={website.domain} />
                   {website.domain}

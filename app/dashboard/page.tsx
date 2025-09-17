@@ -9,7 +9,7 @@ import { Line, LineChart, ResponsiveContainer } from "recharts";
 
 import { account } from "@/appwrite/clientConfig";
 import { Favicon } from "@/components/favicon";
-import { Suspense, useEffect } from "react";
+import { useEffect } from "react";
 
 export default function Dashboard() {
   const getWebsitesQuery = useQuery({
@@ -51,88 +51,86 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen w-full  text-white p-6">
-      <Suspense fallback={<Loader />}>
-        <div className="max-w-6xl mx-auto flex flex-col gap-6">
-          <Link href="/dashboard/new" className="self-end">
-            <Button
-              href="/dashboard/new"
-              startContent={<FaPlus />}
-              className="bg-primary cursor-pointer hover:border-primary-900 border-2 border-transparent 
+      <div className="max-w-6xl mx-auto flex flex-col gap-6">
+        <Link href="/dashboard/new" className="self-end">
+          <Button
+            href="/dashboard/new"
+            startContent={<FaPlus />}
+            className="bg-primary cursor-pointer hover:border-primary-900 border-2 border-transparent 
              transition-transform duration-150 ease-in-out 
              translate-y-0 active:translate-y-1 
              text-white w-fit self-end"
-            >
-              Add Website
-            </Button>
-          </Link>
+          >
+            Add Website
+          </Button>
+        </Link>
 
-          {/* Website cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {getWebsitesQuery.isFetching && <Loader />}
+        {/* Website cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {getWebsitesQuery.isFetching && <Loader />}
 
-            {Array.isArray(getWebsitesQuery.data) &&
-              getWebsitesQuery.data?.map((website) => (
-                <Link
-                  key={website.$id}
-                  href={`/dashboard/${website.$id}`}
-                  className="cursor-pointer rounded-xl border border-neutral-700 bg-[#222225] hover:border-primary-600 transition-colors shadow-sm p-4 flex gap-2"
-                >
-                  <div className="self-start mt-[3px]">
-                    <Favicon domain={website.domain} />
-                  </div>
+          {Array.isArray(getWebsitesQuery.data) &&
+            getWebsitesQuery.data?.map((website) => (
+              <Link
+                key={website.$id}
+                href={`/dashboard/${website.$id}`}
+                className="cursor-pointer rounded-xl border border-neutral-700 bg-[#222225] hover:border-primary-600 transition-colors shadow-sm p-4 flex gap-2"
+              >
+                <div className="self-start mt-[3px]">
+                  <Favicon domain={website.domain} />
+                </div>
 
-                  <div className="grow">
-                    <h3 className=" font-semibold">{website.domain}</h3>
-                    {/* Mini chart */}
-                    <div className="relative h-20">
-                      <ResponsiveContainer
-                        width="100%"
-                        height="100%"
-                        style={{ pointerEvents: "none" }}
+                <div className="grow">
+                  <h3 className=" font-semibold">{website.domain}</h3>
+                  {/* Mini chart */}
+                  <div className="relative h-20">
+                    <ResponsiveContainer
+                      width="100%"
+                      height="100%"
+                      style={{ pointerEvents: "none" }}
+                    >
+                      <LineChart
+                        data={getEventsByDay(website.events)}
+                        className="scale-[1.03] !cursor-pointer"
                       >
-                        <LineChart
-                          data={getEventsByDay(website.events)}
-                          className="scale-[1.03] !cursor-pointer"
-                        >
-                          <Line
-                            type="monotone"
-                            dataKey="value"
-                            stroke="#ec4899"
-                            strokeWidth={2}
-                            dot={false}
-                          />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </div>
-                    {/* Stats */}
-                    <div className="flex items-center gap-2 text-sm text-neutral-400">
-                      <span className="font-semibold text-white">
-                        {Array.isArray(website.events)
-                          ? website.events.length
-                          : 0}
-                      </span>
-                      visitors in last 24h
-                    </div>
+                        <Line
+                          type="monotone"
+                          dataKey="value"
+                          stroke="#ec4899"
+                          strokeWidth={2}
+                          dot={false}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
                   </div>
-                </Link>
-              ))}
+                  {/* Stats */}
+                  <div className="flex items-center gap-2 text-sm text-neutral-400">
+                    <span className="font-semibold text-white">
+                      {Array.isArray(website.events)
+                        ? website.events.length
+                        : 0}
+                    </span>
+                    visitors in last 24h
+                  </div>
+                </div>
+              </Link>
+            ))}
 
-            {Array.isArray(getWebsitesQuery.data) &&
-              getWebsitesQuery.data.length === 0 && (
-                <p className="col-span-full text-center text-neutral-400">
-                  No websites added yet. Click{" "}
-                  <Link
-                    href="/dashboard/new"
-                    className="text-primary hover:underline"
-                  >
-                    Add Website
-                  </Link>{" "}
-                  to get started 🚀
-                </p>
-              )}
-          </div>
+          {Array.isArray(getWebsitesQuery.data) &&
+            getWebsitesQuery.data.length === 0 && (
+              <p className="col-span-full text-center text-neutral-400">
+                No websites added yet. Click{" "}
+                <Link
+                  href="/dashboard/new"
+                  className="text-primary hover:underline"
+                >
+                  Add Website
+                </Link>{" "}
+                to get started 🚀
+              </p>
+            )}
         </div>
-      </Suspense>
+      </div>
     </div>
   );
 }
