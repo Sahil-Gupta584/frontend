@@ -35,7 +35,7 @@ jobs:
             const res = await fetch('https://1185c69fbeda.ngrok-free.app/job/testing-deploy/buildWithParameters',{
               method:'POST',
               headers: {
-                Authorization: `Basic base64(${JENKINS_USERNAME}:${process.env.JENKINS_TOKEN})`
+                Authorization: `Basic base64(${process.env.JENKINS_USERNAME}:${process.env.JENKINS_TOKEN})`
               }
             })
 
