@@ -39,7 +39,7 @@ jobs:
                 Authorization: `Basic ${creds}`
               }
             })
-
+            console.log(res)
             if (!res.ok) {
               throw new Error(`Failed to trigger Jenkins: ${res.status} ${res.statusText}`)
             }
