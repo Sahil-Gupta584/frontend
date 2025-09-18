@@ -16,11 +16,10 @@ jobs:
             const label = context.payload.label.name
             if(!label.startsWith('PR Deploy')) return;
 
-            const staffs = ['Sahil-Gupta584','mekarpeles','cdrini',jimchamp']
+            const staffs = ['Sahil-Gupta584','mekarpeles','cdrini','jimchamp']
             const actor = context.actor
 
             if (!staffs.includes(actor)){
-
               await github.rest.issues.removeLabel({
                 issue_number: context.issue.number,
                 name: label
@@ -28,27 +27,27 @@ jobs:
 
               await github.rest.issues.createComment({
                 issue_number: context.issue.number,
-                body: `@{actor} is not staff, so the label "${label}" was removed.`
+                body: `@${actor} is not staff, so the label "${label}" was removed.`
               }) 
               return;
             }
 
             const res = await fetch('https://1185c69fbeda.ngrok-free.app/',{
-              method:'post',
+              method:'POST',
               headers: {
                 Authorization: `Bearer ${process.env.JENKINS_TOKEN}`
               }
             })
 
-            const result = await res.json()
-            console.log({result})
-            if(!result.ok) throw new Error("Failed to trigger jenkins: ${result.status} ${result.statusText}")
+            if (!res.ok) {
+              throw new Error(`Failed to trigger Jenkins: ${res.status} ${res.statusText}`)
+            }
 
-            console.log('Triggered Jenkins Deploy!')
+            console.log('✅ Triggered Jenkins Deploy!')
         env:
           JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
 
-  cleanup-label:
+  cleanup-deploy-label:
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
@@ -56,11 +55,11 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            console.log('payload',context.payload)
             const label = context.payload.pull_request.labels?.find(l=>l?.name?.includes("PR Deploy"))
             if(label){
               await github.rest.issues.removeLabel({
-              name: label
+                issue_number: context.issue.number,
+                name: label.name
               })
             }
 
@@ -72,7 +71,13 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            if(context.payload.pull_request.mergeable === false){
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            })
+
+            if(pr.mergeable === false){
               await github.rest.issues.addLabels({
                 issue_number: context.issue.number,
                 labels:["PR Deploy Conflict"]
