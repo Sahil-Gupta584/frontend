@@ -1,13 +1,14 @@
 import { faker } from "@faker-js/faker";
 import { Client, ID, Query, TablesDB } from "node-appwrite";
 // ---- Appwrite Config ----
-const rawDatabaseId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
+const rawDatabaseId = "68cbc63100188b1cf674";
 if (!rawDatabaseId) throw new Error("Invalid envs");
 
 const databaseId: string = rawDatabaseId;
-const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID;
+const projectId = "68ad713f00087b77096f";
 const websitesTableId = "websites";
-const projectKey = process.env.APPWRITE_KEY;
+const projectKey =
+  "standard_0f5fb3432024560fe5f818d405fca7dcc6f62174013950cd6ee46836a308d608040b6bc6447cb5de7e39cd2117629f50554411b96f705fcd2dbd2e745bc20a1f48827e8fd022d13b2d5bbdcfef4e6c628ff8a2e84679a594afd5ff1baf1404dd98bbddd83e2a9c91a348f08866b98122bcdca0e6069ef7db5972b7703366ecb6";
 if (!projectId || !databaseId) throw new Error("Invalid envs");
 
 const client = new Client()

