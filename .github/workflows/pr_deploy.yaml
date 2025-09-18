@@ -16,7 +16,7 @@ jobs:
             const label = context.payload.label.name
             if(!label.startsWith('PR Deploy')) return;
 
-            const staffs = ['Sahil-Gupta584','mekarpeles']
+            const staffs = ['Sahil-Gupta584','mekarpeles','cdrini']
             const actor = context.actor
 
             if (!staffs.includes(actor)){
@@ -56,7 +56,8 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const label = context.payload.pull_request.labels?.find(l=>l?.includes("PR Deploy"))
+            console.log('payload',context.payload)
+            const label = context.payload.pull_request.labels?.find(l=>l?.name?.includes("PR Deploy"))
             if(label){
               await github.rest.issues.removeLabel({
               name: label
