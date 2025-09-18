@@ -1,7 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { Client, ID, TablesDB } from "node-appwrite";
+import { Client, ID, Query, TablesDB } from "node-appwrite";
 // ---- Appwrite Config ----
-
 const rawDatabaseId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
 if (!rawDatabaseId) throw new Error("Invalid envs");
 
@@ -22,8 +21,9 @@ const database = new TablesDB(client);
 const domain = "syncmate.xyz";
 const websiteId = "68c43ddf0011d1180361"; //jjugnee
 
-const startDate = new Date("2025-08-01");
-const endDate = new Date("2025-09-12"); // today
+const endDate = new Date(); // today
+const startDate = new Date();
+startDate.setMonth(endDate.getMonth() - 1);
 const eventsPerMonth = 3000;
 const revenueEventsPerMonth = 50;
 
@@ -58,79 +58,83 @@ function randomDateInRange(start: Date, end: Date) {
 let events: any[] = [];
 let revenues: any[] = [];
 
-// for (
-//   let d = new Date(startDate);
-//   d <= endDate;
-//   d = new Date(d.getFullYear(), d.getMonth() + 1, 1)
-// ) {
-//   const year = d.getFullYear();
-//   const month = d.getMonth();
+function generate() {
+  for (
+    let d = new Date(startDate);
+    d <= endDate;
+    d = new Date(d.getFullYear(), d.getMonth() + 1, 1)
+  ) {
+    const year = d.getFullYear();
+    const month = d.getMonth();
 
-//   // Events spread month by month
-//   for (let i = 0; i < eventsPerMonth; i++) {
-//     const visitorId = faker.string.uuid();
-//     const sessionId = faker.string.uuid();
-//     const country = faker.helpers.arrayElement(countries);
+    // Events spread month by month
+    for (let i = 0; i < eventsPerMonth; i++) {
+      const visitorId = faker.string.uuid();
+      const sessionId = faker.string.uuid();
+      const country = faker.helpers.arrayElement(countries);
 
-//     events.push({
-//       type: faker.helpers.arrayElement(eventTypes),
-//       website: websiteId,
-//       href: `https://syncmate.xyz${href[faker.number.int({ min: 0, max: 2 })]}`,
-//       visitorId,
-//       sessionId,
-//       viewport: faker.helpers.arrayElement([
-//         "1920x1080",
-//         "1366x768",
-//         "375x812",
-//       ]),
-//       referrer: referrers[faker.number.int({ min: 0, max: 3 })],
-//       os: faker.helpers.arrayElement([
-//         "Linux",
-//         "Windows",
-//         "macOS",
-//         "iOS",
-//         "Android",
-//       ]),
-//       browser: faker.helpers.arrayElement(browsers),
-//       countryCode: country.code,
-//       city: country.city,
-//       region: country.region,
-//       device: faker.helpers.arrayElement(devices),
-//       $createdAt: randomDateInMonth(year, month),
-//     });
-//   }
+      events.push({
+        type: faker.helpers.arrayElement(eventTypes),
+        website: websiteId,
+        href: `https://syncmate.xyz${href[faker.number.int({ min: 0, max: 2 })]}`,
+        visitorId,
+        sessionId,
+        viewport: faker.helpers.arrayElement([
+          "1920x1080",
+          "1366x768",
+          "375x812",
+        ]),
+        referrer: referrers[faker.number.int({ min: 0, max: 3 })],
+        os: faker.helpers.arrayElement([
+          "linux",
+          "windows",
+          "macos",
+          "ios",
+          "android",
+        ]),
+        browser: faker.helpers.arrayElement(browsers),
+        countryCode: country.code,
+        city: country.city,
+        region: country.region,
+        device: faker.helpers.arrayElement(devices),
+        $createdAt: randomDateInMonth(year, month),
+      });
+    }
 
-//   // Revenues spread across entire range
-//   for (let j = 0; j < revenueEventsPerMonth; j++) {
-//     const visitorId = faker.string.uuid();
-//     const sessionId = faker.string.uuid();
+    // Revenues spread across entire range
+    for (let j = 0; j < revenueEventsPerMonth; j++) {
+      const visitorId = faker.string.uuid();
+      const sessionId = faker.string.uuid();
 
-//     revenues.push({
-//       website: websiteId,
-//       eventType: "purchase",
-//       revenue: faker.number.int({ min: 10, max: 200 }),
-//       renewalRevenue: faker.number.int({ min: 0, max: 100 }),
-//       refundedRevenue: faker.number.int({ min: 0, max: 50 }),
-//       customers: 1,
-//       sales: 1,
-//       sessionId,
-//       visitorId,
-//       $createdAt: randomDateInRange(startDate, endDate),
-//     });
-//   }
-// }
+      revenues.push({
+        website: websiteId,
+        eventType: "purchase",
+        revenue: faker.number.int({ min: 10, max: 100 }),
+        renewalRevenue: faker.number.int({ min: 0, max: 100 }),
+        refundedRevenue: faker.number.int({ min: 0, max: 50 }),
+        customers: 1,
+        sales: 1,
+        sessionId,
+        visitorId,
+        $createdAt: randomDateInRange(startDate, endDate),
+      });
+    }
+  }
 
-// console.log(`Generated ${events.length} events & ${revenues.length} revenues`);
+  console.log(
+    `Generated ${events.length} events & ${revenues.length} revenues`
+  );
 
-// ---- Save to JSON files ----
-// fs.writeFileSync("events.json", JSON.stringify(events, null, 2));
-// fs.writeFileSync("revenues.json", JSON.stringify(revenues, null, 2));
-// console.log("Data saved to events.json and revenues.json");
-
+  // ---- Save to JSON files ----
+  // fs.writeFileSync("events.json", JSON.stringify(events, null, 2));
+  // fs.writeFileSync("revenues.json", JSON.stringify(revenues, null, 2));
+  console.log("Data saved to events.json and revenues.json");
+}
 // ---- Seeder ----
+
 async function seed(tableId: string, data: any[]) {
   const chunkSize = 50;
-  for (let i = 1350; i < data.length; i += chunkSize) {
+  for (let i = 0; i < data.length; i += chunkSize) {
     const chunk = data.slice(i, i + chunkSize);
     await Promise.all(
       chunk.map((row) =>
@@ -138,7 +142,7 @@ async function seed(tableId: string, data: any[]) {
           databaseId,
           tableId,
           rowId: ID.unique(),
-          data: { ...row, type: "pageview" },
+          data: row,
         })
       )
     );
@@ -147,11 +151,25 @@ async function seed(tableId: string, data: any[]) {
 }
 
 // Uncomment to seed into Appwrite
-// seed("events", eventsData);
+// seed("revenues", revenuesData);
 // seed("revenues", revenuesData);
 
 // async function replace() {
 //   await database.listRows({ databaseId, tableId: "events" });
 // }
 // replace();
+async function deleterows() {
+  const res = await database.deleteRows({
+    databaseId,
+    tableId: "events",
+    queries: [
+      Query.greaterThanEqual(
+        "$createdAt",
+        new Date("2025-09-18").toISOString()
+      ),
+    ],
+  });
+  console.log("deleted", res.total);
+}
+// deleterows();
 export { database, databaseId, websitesTableId };

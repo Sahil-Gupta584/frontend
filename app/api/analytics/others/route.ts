@@ -197,13 +197,13 @@ export async function GET(req: NextRequest) {
       }
 
       // Browser
-      const browser = browserMap.get(e.browser?.toLowerCase());
+      const browser = browserMap.get(e.browser);
 
       if (browser) {
         browser.visitors += 1;
         browser.revenue += sessionRevenue;
       } else {
-        browserMap.set(e.browser?.toLowerCase(), {
+        browserMap.set(e.browser, {
           label: e.browser,
           visitors: 1,
           revenue: sessionRevenue,
@@ -212,32 +212,32 @@ export async function GET(req: NextRequest) {
       }
 
       // OS
-      const os = osMap.get(e.os?.toLowerCase());
+      const os = osMap.get(e.os);
 
       if (os) {
         os.visitors += 1;
         os.revenue += sessionRevenue;
       } else {
-        osMap.set(e.os?.toLowerCase(), {
+        osMap.set(e.os, {
           label: e.os,
           visitors: 1,
           revenue: sessionRevenue,
-          imageUrl: `/images/${e.os?.toLowerCase()}.png`,
+          imageUrl: `/images/${e.os}.png`,
         });
       }
 
       // Device
-      const device = deviceMap.get(e.device?.toLowerCase());
+      const device = deviceMap.get(e.device);
 
       if (device) {
         device.visitors += 1;
         device.revenue += sessionRevenue;
       } else {
-        deviceMap.set(e.device?.toLowerCase(), {
-          label: e.device?.toLowerCase(),
+        deviceMap.set(e.device, {
+          label: e.device,
           visitors: 1,
           revenue: sessionRevenue,
-          imageUrl: `/images/${e.device?.toLowerCase()}.png`,
+          imageUrl: `/images/${e.device}.png`,
         });
       }
     }

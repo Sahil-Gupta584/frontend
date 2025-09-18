@@ -120,7 +120,6 @@ export async function GET(req: NextRequest) {
         };
       }
     }
-
     // --- Visitors ---
     for (const ev of events) {
       const date = getDateKey(ev.$createdAt, duration);
