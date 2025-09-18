@@ -1,0 +1,79 @@
+name: PR Deploy Automation
+
+on:
+  pull_request_target:
+    types: [labeled, closed, synchronize]
+
+jobs:
+  handle-label:
+    if: github.event.action == 'labeled'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Handle PR Deploy label
+        uses: actions/github-script@7
+        with:
+          script: |
+            const label = context.payload.label.name
+            if(!label.startsWith('PR Deploy')) return;
+
+            const staffs = ['Sahil-Gupta584']
+            const actor = context.actor
+
+            if (!staffs.includes(actor)){
+
+              await github.rest.issues.removeLabel({
+                issue_number: context.issue.number,
+                name: label
+              })
+
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                body: `@{actor} is not staff, so the label "${label}" was removed.`
+              }) 
+              return;
+            }
+
+            const res = await fetch('https://1185c69fbeda.ngrok-free.app/',{
+              method:'post',
+              headers: {
+                Authorization: `Bearer ${process.env.JENKINS_TOKEN}`
+              }
+            })
+
+            const result = await res.json()
+            console.log({result})
+            if(!result.ok) throw new Error("Failed to trigger jenkins: ${result.status} ${result.statusText}")
+
+            console.log('Triggered Jenkins Deploy!')
+        env:
+          JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
+
+  cleanup-label:
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Removing Deploy label
+        uses: actions/github-script@7
+        with:
+          script: |
+            const label = context.payload.pull_request.labels?.find(l=>l?.includes("PR Deploy"))
+            if(label){
+              await github.rest.issues.removeLabel({
+              name: label
+              })
+            }
+
+  conflict-label:
+    if: github.event.action == 'synchronize'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for conflict
+        uses: actions/github-script@7
+        with:
+          script: |
+            if(context.payload.pull_request.mergeable === false){
+              await github.rest.issues.addLabels({
+                issue_number: context.issue.number,
+                labels:["PR Deploy Conflict"]
+              })
+            }
