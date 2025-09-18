@@ -16,7 +16,7 @@ jobs:
             const label = context.payload.label.name
             if(!label.startsWith('PR Deploy')) return;
 
-            const staffs = ['Sahil-Gupta584','mekarpeles','cdrini']
+            const staffs = ['Sahil-Gupta584','mekarpeles','cdrini',jimchamp']
             const actor = context.actor
 
             if (!staffs.includes(actor)){
