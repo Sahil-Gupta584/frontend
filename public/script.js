@@ -155,18 +155,16 @@
     }
 
     function y(t, e, n) {
-        if (!d) return void (n && n({
-            status: 200
-        }));
+        if (!d) return void (n && n({ status: 200 }));
         const o = h();
-        o.type = "payment", "stripe" === t ? o.extraData = {
-            stripe_session_id: e
-        } : "lemonsqueezy" === t ? o.extraData = {
-            lemonsqueezy_order_id: e
-        } : "polar" === t && (o.extraData = {
-            polar_checkout_id: e
-        }), p(o, n)
+        o.type = "payment",
+            "stripe" === t ? o.extraData = { stripe_session_id: e }
+                : "lemonsqueezy" === t ? o.extraData = { lemonsqueezy_order_id: e }
+                    : "polar" === t ? o.extraData = { polar_checkout_id: e }
+                        : "dodo" === t && (o.extraData = { dodo_payment_id: e }),
+            p(o, n)
     }
+
 
     function b(t, e, n) {
         if (!d) return void (n && n({
@@ -415,6 +413,14 @@
                     t && !sessionStorage.getItem("insightly_lemonsqueezy_payment_sent_" + t) && (y("lemonsqueezy", t), sessionStorage.setItem("insightly_lemonsqueezy_payment_sent_" + t, "1"))
                 } catch (t) {
                     console.error("Error auto detecting Lemonsqueezy order ID:", t)
+                }
+            }(),
+            function () {
+                try {
+                    const t = new URL(window.location.href).searchParams.get("payment_id");
+                    t && !sessionStorage.getItem("insightly_dodo_payment_sent_" + t) && (y("dodo", t), sessionStorage.setItem("insightly_dodo_payment_sent_" + t, "1"))
+                } catch (t) {
+                    console.error("Error auto detecting DodoPayments payment ID:", t)
                 }
             }()
     }

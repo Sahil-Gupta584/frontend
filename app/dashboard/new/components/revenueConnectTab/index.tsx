@@ -1,15 +1,16 @@
 "use client";
 import { Tab, Tabs } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect } from "react";
 import { FaStripeS } from "react-icons/fa";
 
 import PolarForm from "./polarForm";
 import StripeForm from "./stripeForm";
 
-import { tryCatchWrapper } from "@/lib/utils/client";
-import PolarLogo from "@/components/polarLogo";
 import { getWebsite } from "@/app/dashboard/[websiteId]/actions";
+import PolarLogo from "@/components/polarLogo";
+import { tryCatchWrapper } from "@/lib/utils/client";
+import DodoForm from "./dodoForm";
 
 export default function RevenueConnectTab({
   websiteId,
@@ -31,6 +32,9 @@ export default function RevenueConnectTab({
     },
     enabled: false,
   });
+  useEffect(() => {
+    refetch();
+  }, []);
 
   function Title({ text, icon }: { text: string; icon: React.ReactNode }) {
     return (
@@ -74,6 +78,28 @@ export default function RevenueConnectTab({
           refetch={refetch}
           isConnected={
             connectedProviders ? connectedProviders.includes("Polar") : false
+          }
+        />
+      </Tab>
+      <Tab
+        key="Dodo"
+        title={
+          <Title
+            text="Dodo"
+            icon={
+              <img
+                src="https://yt3.ggpht.com/eLGtrPf7cslZZVYuREq-NcOdKdJrsTkODlZaJUv0jvP1fmK0gCDEOR-6K37OvnA5mpnkJDx2GeM=s68-c-k-c0x00ffffff-no-rj"
+                className="size-5 rounded-full"
+              />
+            }
+          />
+        }
+      >
+        <DodoForm
+          websiteId={websiteId}
+          refetch={refetch}
+          isConnected={
+            connectedProviders ? connectedProviders.includes("Dodo") : false
           }
         />
       </Tab>

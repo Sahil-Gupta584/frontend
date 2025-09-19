@@ -39,7 +39,7 @@ export default function RootLayout({
   }
 
   return (
-    <main className=" max-w-[68rem] mx-auto p-10">
+    <main className=" max-w-[68rem] mx-auto p-10 pt-2">
       <Suspense fallback={<div>Loading...</div>}>
         <Nav
           brandChild={
@@ -50,7 +50,7 @@ export default function RootLayout({
           endContent={<BackBtn pathname="/dashboard" text="Dashboard" />}
           className="mb-4"
         />
-        <div className="flex gap-10">
+        <div className="flex gap-10 mt-6">
           <ul className="flex flex-col gap-2">
             <Link
               href="/docs/revenue-attribution-guide"
@@ -59,6 +59,7 @@ export default function RootLayout({
               <LuDot className="stroke-[5px] absolute -left-[18px]" />
               Get Started
             </Link>
+
             <Anchor
               href="/docs/stripe-checkout-api"
               text="Stripe Checkout API"
@@ -67,11 +68,18 @@ export default function RootLayout({
               href="/docs/stripe-payment-links"
               text="Stripe Payment Links"
             />
+
             <Anchor href="/docs/polar-checkout-api" text="Polar Checkout API" />
             <Anchor
               href="/docs/polar-payment-links"
               text="Polar Payment Links"
             />
+
+            <Anchor
+              href="/docs/dodo-checkout-api"
+              text="DodoPayments Checkout API"
+            />
+            <Anchor href="/docs/dodo-payment-links" text="DodoPayment Links" />
           </ul>
           {children}
         </div>

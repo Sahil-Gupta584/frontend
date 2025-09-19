@@ -33,7 +33,7 @@ const Page = () => {
         className="rounded-2xl my-6"
       />
       <p className="text-gray-400!">
-        DataFast will automatically look for the
+        Insightly will automatically look for the
         <ChipComponent
           child="session_id"
           isMargin={true}

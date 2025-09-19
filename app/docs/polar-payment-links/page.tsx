@@ -28,7 +28,7 @@ const Page = () => {
         to the URL.
       </p>
       <img
-        src="/images/blog-payment-link-attribution-polar.png"
+        src="/images/payment-providers/checkout-images/polar"
         alt=""
         className="rounded-2xl my-6"
       />

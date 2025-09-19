@@ -7,6 +7,7 @@ import { useState } from "react";
 import CommonCards from "./components/commonCards";
 
 import LinkComponent from "@/components/link";
+import dodo from "@/public/images/payment-providers/icon-dodo.png";
 import polar from "@/public/images/payment-providers/icon-polar.webp";
 import stripe from "@/public/images/payment-providers/icon-stripe.webp";
 export default function GettingStarted() {
@@ -21,6 +22,11 @@ export default function GettingStarted() {
       cards: <CommonCards provider="Stripe" />,
     },
     { name: "Polar", src: polar.src, cards: <CommonCards provider="Polar" /> },
+    {
+      name: "DodoPayments",
+      src: dodo.src,
+      cards: <CommonCards provider="Dodo" />,
+    },
   ];
 
   return (
@@ -48,7 +54,7 @@ export default function GettingStarted() {
         <p className="text-xl font-medium mb-4">
           1. What payment provider do you use?
         </p>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           {providers.map((p) => (
             <div
               role="button"
@@ -59,7 +65,7 @@ export default function GettingStarted() {
               <img
                 src={p.src}
                 alt={p.name}
-                className={`grow rounded-3xl cursor-pointer transition p-1  ${selectedProvider === p.name ? "opacity-100 border-pink-400 border-3" : "opacity-50"} ${selectedProvider === "None" ? "opacity-100" : ""} object-fill hover:scale-[1.02]`}
+                className={`grow h-full rounded-3xl cursor-pointer transition p-1  ${selectedProvider === p.name ? "opacity-100 border-pink-400 border-3" : "opacity-50"} ${selectedProvider === "None" ? "opacity-100" : ""} object-fill hover:scale-[1.02]`}
               />
             </div>
           ))}

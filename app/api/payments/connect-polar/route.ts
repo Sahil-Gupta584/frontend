@@ -1,15 +1,19 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
-import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
+import {
+  database,
+  databaseId,
+  MODE,
+  websitesTableId,
+} from "@/appwrite/serverConfig";
 
-// const basePolarApi = "https://api.polar.sh/v1";
-const basePolarApi = "https://sandbox-api.polar.sh/v1";
+const basePolarApi = `https://${MODE == "prod" ? "" : "sandbox-"}api.polar.sh/v1`;
 
 async function fetchWithScopeCheck(
   endpoint: string,
   token: string,
-  scopeName: string,
+  scopeName: string
 ) {
   const res = await axios.get(`${basePolarApi}${endpoint}`, {
     headers: {
@@ -32,19 +36,19 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     // Reuse helper function
-    const organization = await fetchWithScopeCheck(
-      `/organizations/${body.orgId}`,
-      body.token,
-      "Organization",
-    );
+    // const organization = await fetchWithScopeCheck(
+    //   `/organizations/${body.orgId}`,
+    //   body.token,
+    //   "Organization",
+    // );
 
-    const orders = await fetchWithScopeCheck("/orders", body.token, "Orders");
+    // const orders = await fetchWithScopeCheck("/orders", body.token, "Orders");
 
-    const subscriptions = await fetchWithScopeCheck(
-      "/subscriptions",
-      body.token,
-      "Subscriptions",
-    );
+    // const subscriptions = await fetchWithScopeCheck(
+    //   "/subscriptions",
+    //   body.token,
+    //   "Subscriptions",
+    // );
 
     const addWebhookRes = await axios.post(
       basePolarApi + "/webhooks/endpoints",
@@ -66,7 +70,7 @@ export async function POST(req: NextRequest) {
           "Content-Type": "application/x-www-form-urlencoded",
         },
         validateStatus: () => true,
-      },
+      }
     );
 
     if (addWebhookRes.data?.error === "insufficient_scope") {
@@ -96,7 +100,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { error: (error as Error).message },
-      { status: 400 },
+      { status: 400 }
     );
   }
 }

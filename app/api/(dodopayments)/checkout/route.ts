@@ -1,9 +1,10 @@
 import axios from "axios";
-import { DodoPayments } from "dodopayments";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { MODE } from "@/appwrite/serverConfig";
 import { getGeo } from "@/lib/utils/server";
+import { cookies } from "next/headers";
 
 const productCartItemSchema = z.object({
   product_id: z.string().min(1, "Product ID is required"),
@@ -44,12 +45,14 @@ const checkoutSessionSchema = z.object({
   customer: customerSchema,
   billing_address: billingAddressSchema,
   return_url: z.string().url("Return URL must be a valid URL"),
-  customMetadata: z.record(z.string(), z.string()).optional(),
+  metadata: z.record(z.string(), z.string()).optional(),
 });
 
 export async function POST(request: Request) {
   try {
     let body = await request.json();
+    const cookieStore = await cookies();
+
     let ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "0.0.0.0";
 
     ip = ip === "::1" ? "103.190.15.171" : ip;
@@ -64,6 +67,10 @@ export async function POST(request: Request) {
       state: geo?.region || "Unknown",
       street: "N/A",
       zipcode: geo?.postal || "000000",
+    };
+    body.metadata = {
+      insightly_visitor_id: cookieStore.get("insightly_visitor_id")?.value,
+      insightly_session_id: cookieStore.get("insightly_session_id")?.value,
     };
 
     const validationResult = checkoutSessionSchema.safeParse(body);
@@ -81,22 +88,16 @@ export async function POST(request: Request) {
       );
     }
 
-    const {
-      productCart,
-      customer,
-      billing_address,
-      return_url,
-      customMetadata,
-    } = validationResult.data;
+    const { productCart, customer, billing_address, return_url, metadata } =
+      validationResult.data;
     const res = await axios.post(
-      "https://live.dodopayments.com/checkouts",
+      `https://${MODE === "prod" ? "live" : "test"}.dodopayments.com/checkouts`,
       {
         product_cart: productCart,
         customer: customer,
-        billing_address:
-          billing_address as DodoPayments.Payments.BillingAddress,
+        billing_address: billing_address,
         return_url: return_url,
-        metadata: customMetadata,
+        metadata,
       },
       {
         headers: {
@@ -106,7 +107,10 @@ export async function POST(request: Request) {
       }
     );
 
-    if (!res.data?.checkout_url) console.log("res", res.data);
+    if (!res.data?.checkout_url) {
+      console.log("res", res.data);
+      throw new Error("Failed to create checkout");
+    }
 
     return NextResponse.json({ ok: true, url: res.data?.checkout_url });
   } catch (error) {

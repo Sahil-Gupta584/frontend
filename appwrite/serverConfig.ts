@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { Client, ID, Query, TablesDB } from "node-appwrite";
+export const MODE = process.env.NEXT_PUBLIC_MODE;
 // ---- Appwrite Config ----
 const rawDatabaseId = "68cbc63100188b1cf674";
 if (!rawDatabaseId) throw new Error("Invalid envs");
@@ -132,7 +133,70 @@ function generate() {
   console.log("Data saved to events.json and revenues.json");
 }
 // ---- Seeder ----
+const sids = [
+  "5cb8431f-cf82-4cbf-8950-be60e4db3507",
+  "caf14091-d62b-435c-b5b2-660ea24bac66",
+  "6ac63a1a-b68f-40c8-b0ef-6ac0dec19d99",
+  "cd260f3a-3b79-4487-8714-3153c74e7bd8",
+  "eefcb2bc-841e-4914-8777-c97896ce9dc3",
+  "8fb61fc2-06db-4bc9-8187-25c829574f9e",
+  "fcdb2017-4ddf-4751-a558-8854f6f5ac2a",
+  "2362c2a3-c716-4002-b1e9-4aac76b566d3",
+  "79a36f0d-a4f2-4e4c-a821-3c60e9e85ff6",
+  "24a70ed1-9489-450a-9a01-ffef97206728",
+];
+const vids = [
+  "29ec95d9-b4ff-491b-9836-dc6067e54dd0",
+  "78a9dd80-a6aa-454d-afb9-1efc89a12268",
+  "e3febfc2-364e-4625-90e0-8252edcffdb9",
+  "4dfb9840-937e-4ee0-a23f-d39c81b4243c",
+  "659147f7-fdef-45e9-8669-bbd837963355",
+  "8a44c2dc-02ca-431b-8e2b-571109fb19ce",
+  "65e26d6e-789b-4cc2-b1e9-de1410663961",
+  "65e26d6e-789b-4cc2-b1e9-de1410663961",
+  "a85cf9a1-0364-4df9-b02e-6cd224b4f023",
+  "a5e8c86b-a04b-4563-9b7d-7baec7d049a4",
+];
 
+async function createvents() {
+  for (let i = 200; i >= 0; i--) {
+    const country = faker.helpers.arrayElement(countries);
+
+    await database.createRow({
+      databaseId,
+      tableId: "events",
+      rowId: ID.unique(),
+      data: {
+        type: faker.helpers.arrayElement(eventTypes),
+        website: websiteId,
+        href: `https://syncmate.xyz${href[faker.number.int({ min: 0, max: 2 })]}`,
+        visitorId: faker.helpers.arrayElement(vids),
+        sessionId: faker.helpers.arrayElement(sids),
+        viewport: faker.helpers.arrayElement([
+          "1920x1080",
+          "1366x768",
+          "375x812",
+        ]),
+        referrer: referrers[faker.number.int({ min: 0, max: 3 })],
+        os: faker.helpers.arrayElement([
+          "linux",
+          "windows",
+          "macos",
+          "ios",
+          "android",
+        ]),
+        browser: faker.helpers.arrayElement(browsers),
+        countryCode: country.code,
+        city: country.city,
+        region: country.region,
+        device: faker.helpers.arrayElement(devices),
+        $createdAt: new Date("2025-9-19").toISOString(),
+      },
+    });
+    console.log(`Inserted ${i}`);
+  }
+}
+// createvents();
 async function seed(tableId: string, data: any[]) {
   const chunkSize = 50;
   for (let i = 0; i < data.length; i += chunkSize) {
@@ -170,7 +234,7 @@ async function deleterows() {
       ),
     ],
   });
-  console.log("deleted", res.total);
+  // console.log("deleted", res.total);
 }
 // deleterows();
 export { database, databaseId, websitesTableId };

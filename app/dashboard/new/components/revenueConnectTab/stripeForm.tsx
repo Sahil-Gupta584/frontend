@@ -12,8 +12,9 @@ import { useForm } from "react-hook-form";
 
 import DisconnectProvider from "../disconnectProvider";
 
-import { stripeSchema, TStripeForm } from "@/lib/zodSchemas";
 import LinkComponent from "@/components/link";
+import NextLink from "@/components/nextLink";
+import { stripeSchema, TStripeForm } from "@/lib/zodSchemas";
 
 const stripeLink =
   "https://dashboard.stripe.com/apikeys/create?name=Insightly&permissions%5B%5D=rak_charge_read&permissions%5B%5D=rak_subscription_read&permissions%5B%5D=rak_customer_read&permissions%5B%5D=rak_payment_intent_read&permissions%5B%5D=rak_checkout_session_read&permissions%5B%5D=rak_invoice_read&permissions%5B%5D=rak_webhook_write";
@@ -41,7 +42,7 @@ export default function StripeForm({
         apiKey: data.apiKey,
         websiteId: data.websiteId,
       },
-      { validateStatus: () => true },
+      { validateStatus: () => true }
     );
 
     if (res.data.error) {
@@ -101,16 +102,17 @@ export default function StripeForm({
 
 export function LinkWithTraffic({ isDisabled }: { isDisabled: boolean }) {
   return (
-    <Card shadow="none" isDisabled={isDisabled} className="mt-4">
+    <Card shadow="none" isDisabled={isDisabled} className="mt-4 p-4 pt-0">
       <CardHeader className="font-bold px-0">2. Link with traffic</CardHeader>
       <CardFooter className="p-0">
         <p className="text-desc text-sm!">
           Make revenue-driven decisions by linking your revenue data with your
           traffic data.
-          <LinkComponent
+          <NextLink
             text="Get started here"
             href="/docs/revenue-attribution-guide"
-            isBold={true}
+            className="font-semibold text-white"
+            blank
           />
           <span>(it takes 2 minutes).</span>
         </p>

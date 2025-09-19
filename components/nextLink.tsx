@@ -1,19 +1,20 @@
+import { TClassName } from "@/lib/types";
 import Link from "next/link";
 
 function NextLink({
-  icon,
   text,
   blank,
   href,
+  className,
 }: {
+  className?: TClassName;
   text: string;
-  icon?: boolean;
   href: string;
   blank?: true;
 }) {
   return (
     <Link
-      className="underline mx-1 hover:text-white transition"
+      className={`underline mx-1 hover:text-white transition ${className}`}
       href={href}
       target={blank ? "_blank" : "_self"}
     >

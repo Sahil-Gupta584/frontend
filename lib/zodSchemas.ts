@@ -26,4 +26,10 @@ export const addWebsiteSchema = z.object({
   timezone: z.string().min(1, "Timezone is required"),
 });
 
+export const dodoSchema = z.object({
+  apiKey: z.string().min(1, "API key is required"),
+  websiteId: z.string().min(1, "Website Id is required"),
+});
+export type TDodoForm = z.infer<typeof dodoSchema>;
+
 export type TAddWebsiteForm = z.infer<typeof addWebsiteSchema>;

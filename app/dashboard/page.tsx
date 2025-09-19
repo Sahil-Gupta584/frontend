@@ -70,6 +70,7 @@ export default function Dashboard() {
           {getWebsitesQuery.isFetching && <Loader />}
 
           {Array.isArray(getWebsitesQuery.data) &&
+            !getWebsitesQuery.isFetching &&
             getWebsitesQuery.data?.map((website) => (
               <Link
                 key={website.$id}

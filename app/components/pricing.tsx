@@ -2,6 +2,7 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
+import { MODE } from "@/appwrite/serverConfig";
 import { PricingTableOne } from "@/components/billingsdk/pricing-table-one";
 import { plans } from "@/lib/billingsdk-config";
 import { User } from "@/lib/types";
@@ -26,8 +27,10 @@ export default function Pricing({ user }: { user: User | null }) {
         const res = await axios.post("/api/checkout", {
           productCart: [
             {
-              product_id: "pdt_FCjy9waPRfLCYi4A9GOE9", //live
-              // product_id: "pdt_DSA9O6S2nmuxXO00BJo8U", //test
+              product_id:
+                MODE === "dev"
+                  ? "pdt_DSA9O6S2nmuxXO00BJo8U"
+                  : "pdt_FCjy9waPRfLCYi4A9GOE9",
               quantity: 1,
               amount: 9,
             },
