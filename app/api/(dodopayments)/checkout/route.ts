@@ -69,8 +69,8 @@ export async function POST(request: Request) {
       zipcode: geo?.postal || "000000",
     };
     body.metadata = {
-      insightly_visitor_id: cookieStore.get("datafast_visitor_id")?.value,
-      insightly_session_id: cookieStore.get("datafast_session_id")?.value,
+      datafast_visitor_id: cookieStore.get("datafast_visitor_id")?.value,
+      datafast_session_id: cookieStore.get("datafast_session_id")?.value,
     };
 
     const validationResult = checkoutSessionSchema.safeParse(body);
@@ -107,8 +107,12 @@ export async function POST(request: Request) {
       }
     );
 
+    console.log("res", res.data);
+    console.log(
+      "uri",
+      `https://${MODE === "prod" ? "live" : "test"}.dodopayments.com/checkouts`
+    );
     if (!res.data?.checkout_url) {
-      console.log("res", res.data);
       throw new Error("Failed to create checkout");
     }
 
