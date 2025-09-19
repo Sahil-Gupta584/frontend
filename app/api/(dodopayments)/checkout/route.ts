@@ -69,8 +69,8 @@ export async function POST(request: Request) {
       zipcode: geo?.postal || "000000",
     };
     body.metadata = {
-      insightly_visitor_id: cookieStore.get("insightly_visitor_id")?.value,
-      insightly_session_id: cookieStore.get("insightly_session_id")?.value,
+      insightly_visitor_id: cookieStore.get("datafast_visitor_id")?.value,
+      insightly_session_id: cookieStore.get("datafast_session_id")?.value,
     };
 
     const validationResult = checkoutSessionSchema.safeParse(body);
