@@ -69,8 +69,8 @@ export async function POST(request: Request) {
       zipcode: geo?.postal || "000000",
     };
     body.metadata = {
-      datafast_visitor_id: cookieStore.get("datafast_visitor_id")?.value,
-      datafast_session_id: cookieStore.get("datafast_session_id")?.value,
+      insightly_visitor_id: cookieStore.get("insightly_visitor_id")?.value,
+      insightly_session_id: cookieStore.get("insightly_session_id")?.value,
     };
 
     const validationResult = checkoutSessionSchema.safeParse(body);
@@ -106,12 +106,30 @@ export async function POST(request: Request) {
         validateStatus: () => true,
       }
     );
+    const datafast_visitor_id = cookieStore.get("datafast_visitor_id")?.value;
+    console.log("datafast_visitor_id", { datafast_visitor_id });
 
     console.log("res", res.data);
     console.log(
       "uri",
       `https://${MODE === "prod" ? "live" : "test"}.dodopayments.com/checkouts`
     );
+    // Send payment data to DataFast's API
+    const ress = await fetch("https://datafa.st/api/v1/payments", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.DATAFAST_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        amount: 9,
+        currency: "USD",
+        transaction_id: "txn_98hj",
+        datafast_visitor_id: datafast_visitor_id, // available in the cookie, like request.cookies.datafast_visitor_id
+      }),
+    });
+    console.log("df res", await ress.text());
+
     if (!res.data?.checkout_url) {
       throw new Error("Failed to create checkout");
     }
