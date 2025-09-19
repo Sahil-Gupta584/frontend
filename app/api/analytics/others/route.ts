@@ -64,19 +64,18 @@ export async function GET(req: NextRequest) {
     });
     // console.log("Revenues time:", Date.now() - rstart, "ms");
 
-    const sessionSet = new Set(sessionIds);
-
-    const revenueMap = new Map<string, number>();
     const seenPaymentIds = new Set<string>();
+    const revenueMap = new Map<string, number>(); // visitorId → total revenue
 
     for (const r of revenuesRes.rows) {
       const pid = r.payment_id ?? r.paymentId ?? r.$id;
       if (pid && seenPaymentIds.has(pid)) continue;
       if (pid) seenPaymentIds.add(pid);
 
-      const sid = r.sessionId ?? r.sessionId; // match your schema
-      const revNum = Number(r.revenue ?? r.total_amount ?? 0); // ensure numeric
-      revenueMap.set(sid, (revenueMap.get(sid) || 0) + revNum);
+      const vid = r.visitorId ?? r.sessionId; // <-- fallback if visitorId missing
+      const revNum = Number(r.revenue ?? r.total_amount ?? 0);
+
+      revenueMap.set(vid, (revenueMap.get(vid) || 0) + revNum);
     }
 
     // 2) Group events by sessionId
@@ -122,7 +121,8 @@ export async function GET(req: NextRequest) {
 
     // const lstart = Date.now();
     for (const [sid, evts] of sessions.entries()) {
-      const sessionRevenue = revenueMap.get(sid) || 0;
+      const visitorId = evts[0]?.visitorId;
+      const visitorRevenue = visitorId ? revenueMap.get(visitorId) || 0 : 0;
 
       const uniquePages = new Set(evts.map((e) => getPathname(e.href)));
       const uniqueReferrers = new Set(
@@ -138,16 +138,18 @@ export async function GET(req: NextRequest) {
       const uniqueDevices = new Set(evts.map((e) => e.device || "UNKNOWN"));
 
       // Pages
+      const perPageRevenue = visitorRevenue / uniquePages.size || 0;
+
       for (const pathname of uniquePages) {
         const page = pageMap.get(pathname);
         if (page) {
           page.visitors += 1;
-          page.revenue += sessionRevenue;
+          page.revenue += perPageRevenue;
         } else {
           pageMap.set(pathname, {
             label: pathname,
             visitors: 1,
-            revenue: sessionRevenue,
+            revenue: perPageRevenue,
           });
         }
       }
@@ -157,12 +159,12 @@ export async function GET(req: NextRequest) {
         const ref = referrerMap.get(refDomain);
         if (ref) {
           ref.visitors += 1;
-          ref.revenue += sessionRevenue;
+          ref.revenue += visitorRevenue;
         } else {
           referrerMap.set(refDomain, {
             label: refDomain,
             visitors: 1,
-            revenue: sessionRevenue,
+            revenue: visitorRevenue,
             imageUrl: `https://icons.duckduckgo.com/ip3/${refDomain}.ico`,
           });
         }
@@ -173,12 +175,12 @@ export async function GET(req: NextRequest) {
         const m = mapMap.get(countryCode);
         if (m) {
           m.visitors += 1;
-          m.revenue += sessionRevenue;
+          m.revenue += visitorRevenue;
         } else {
           mapMap.set(countryCode, {
             countryCode,
             visitors: 1,
-            revenue: sessionRevenue,
+            revenue: visitorRevenue,
             imageUrl: `https://purecatamphetamine.github.io/country-flag-icons/3x2/${countryCode}.svg`,
           });
         }
@@ -186,12 +188,12 @@ export async function GET(req: NextRequest) {
         const country = countryMap.get(countryCode);
         if (country) {
           country.visitors += 1;
-          country.revenue += sessionRevenue;
+          country.revenue += visitorRevenue;
         } else {
           countryMap.set(countryCode, {
             label: countryCode,
             visitors: 1,
-            revenue: sessionRevenue,
+            revenue: visitorRevenue,
             imageUrl: `https://purecatamphetamine.github.io/country-flag-icons/3x2/${countryCode}.svg`,
           });
         }
@@ -202,12 +204,12 @@ export async function GET(req: NextRequest) {
         const rg = regionMap.get(region);
         if (rg) {
           rg.visitors += 1;
-          rg.revenue += sessionRevenue;
+          rg.revenue += visitorRevenue;
         } else {
           regionMap.set(region, {
             label: region,
             visitors: 1,
-            revenue: sessionRevenue,
+            revenue: visitorRevenue,
             imageUrl: `/images/${region}.png`,
           });
         }
@@ -218,12 +220,12 @@ export async function GET(req: NextRequest) {
         const ct = cityMap.get(city);
         if (ct) {
           ct.visitors += 1;
-          ct.revenue += sessionRevenue;
+          ct.revenue += visitorRevenue;
         } else {
           cityMap.set(city, {
             label: city,
             visitors: 1,
-            revenue: sessionRevenue,
+            revenue: visitorRevenue,
             imageUrl: `/images/${city}.png`,
           });
         }
@@ -234,12 +236,12 @@ export async function GET(req: NextRequest) {
         const browser = browserMap.get(b);
         if (browser) {
           browser.visitors += 1;
-          browser.revenue += sessionRevenue;
+          browser.revenue += visitorRevenue;
         } else {
           browserMap.set(b, {
             label: b,
             visitors: 1,
-            revenue: sessionRevenue,
+            revenue: visitorRevenue,
             imageUrl: `https://cdnjs.cloudflare.com/ajax/libs/browser-logos/74.1.0/${String(b).toLowerCase()}/${String(b).toLowerCase()}_64x64.png`,
           });
         }
@@ -249,12 +251,12 @@ export async function GET(req: NextRequest) {
         const os = osMap.get(o);
         if (os) {
           os.visitors += 1;
-          os.revenue += sessionRevenue;
+          os.revenue += visitorRevenue;
         } else {
           osMap.set(o, {
             label: o,
             visitors: 1,
-            revenue: sessionRevenue,
+            revenue: visitorRevenue,
             imageUrl: `/images/${o}.png`,
           });
         }
@@ -264,12 +266,12 @@ export async function GET(req: NextRequest) {
         const device = deviceMap.get(d);
         if (device) {
           device.visitors += 1;
-          device.revenue += sessionRevenue;
+          device.revenue += visitorRevenue;
         } else {
           deviceMap.set(d, {
             label: d,
             visitors: 1,
-            revenue: sessionRevenue,
+            revenue: visitorRevenue,
             imageUrl: `/images/${d}.png`,
           });
         }
