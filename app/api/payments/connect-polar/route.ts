@@ -1,12 +1,7 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
-import {
-  database,
-  databaseId,
-  MODE,
-  websitesTableId,
-} from "@/appwrite/serverConfig";
+import { database, databaseId, MODE } from "@/appwrite/serverConfig";
 
 const basePolarApi = `https://${MODE == "prod" ? "" : "sandbox-"}api.polar.sh/v1`;
 
@@ -79,7 +74,7 @@ export async function POST(req: NextRequest) {
 
     const website = await database.getRow({
       databaseId,
-      tableId: websitesTableId,
+      tableId: "websites",
       rowId: body.websiteId,
     });
 
@@ -87,7 +82,7 @@ export async function POST(req: NextRequest) {
 
     await database.updateRow({
       databaseId,
-      tableId: websitesTableId,
+      tableId: "websites",
       rowId: body.websiteId,
       data: {
         paymentProviders: website.paymentProviders,

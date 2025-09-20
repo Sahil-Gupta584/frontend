@@ -2,14 +2,14 @@
 
 import { ID, Query } from "node-appwrite";
 
-import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
+import { database, databaseId } from "@/appwrite/serverConfig";
 import { TPaymentProviders } from "@/lib/types";
 
 export async function isDomainExists(domain: string) {
   try {
     return await database.listRows({
       databaseId,
-      tableId: websitesTableId,
+      tableId: "websites",
       queries: [Query.equal("domain", domain)],
     });
   } catch (error) {
@@ -21,7 +21,7 @@ export async function createDomain(data: any) {
   try {
     return await database.createRow({
       databaseId: databaseId,
-      tableId: websitesTableId,
+      tableId: "websites",
       rowId: ID.unique(),
       data,
     });
@@ -32,25 +32,25 @@ export async function createDomain(data: any) {
 
 export async function disconnectProvider(
   websiteId: string,
-  provider: TPaymentProviders,
+  provider: TPaymentProviders
 ) {
   try {
     const website = await database.getRow({
       databaseId,
       rowId: websiteId,
-      tableId: websitesTableId,
+      tableId: "websites",
       queries: [Query.select(["paymentProviders"])],
     });
 
     const updatedProviders = (website.paymentProviders || []).filter(
-      (p: string) => p !== provider,
+      (p: string) => p !== provider
     );
 
     // update row
     await database.updateRow({
       databaseId,
       rowId: websiteId,
-      tableId: websitesTableId,
+      tableId: "websites",
       data: {
         paymentProviders: updatedProviders,
       },

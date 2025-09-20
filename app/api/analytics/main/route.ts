@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
       ],
     });
 
-    // 2. Fetch revenues
+    // // 2. Fetch revenues
     const revenuesRes = await database.listRows({
       databaseId,
       tableId: "revenues",
@@ -123,7 +123,15 @@ export async function GET(req: NextRequest) {
     // --- Visitors ---
     for (const ev of events) {
       const date = getDateKey(ev.$createdAt, duration);
-
+      if (!buckets[date]) {
+        console.log("🚨 Missing bucket for event:", {
+          eventCreatedAt: ev.$createdAt,
+          parsedDateKey: date,
+          loopStart: startDate.toISOString(),
+          loopEnd: endDate.toISOString(),
+          allBucketKeys: Object.keys(buckets),
+        });
+      }
       buckets[date].visitors += 1;
     }
 

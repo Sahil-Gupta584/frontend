@@ -1,12 +1,7 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
-import {
-  database,
-  databaseId,
-  MODE,
-  websitesTableId,
-} from "@/appwrite/serverConfig";
+import { database, databaseId, MODE } from "@/appwrite/serverConfig";
 import { dodoSchema } from "@/lib/zodSchemas";
 
 export async function POST(req: NextRequest) {
@@ -34,7 +29,7 @@ export async function POST(req: NextRequest) {
 
     const website = await database.getRow({
       databaseId,
-      tableId: websitesTableId,
+      tableId: "websites",
       rowId: body.websiteId,
     });
 
@@ -42,7 +37,7 @@ export async function POST(req: NextRequest) {
 
     await database.updateRow({
       databaseId,
-      tableId: websitesTableId,
+      tableId: "websites",
       rowId: body.websiteId,
       data: {
         paymentProviders: website.paymentProviders,

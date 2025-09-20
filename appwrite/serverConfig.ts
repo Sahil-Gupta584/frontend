@@ -1,92 +1,155 @@
 import { faker } from "@faker-js/faker";
+// import fs from "fs";
 import { Client, ID, Query, TablesDB } from "node-appwrite";
-export const MODE = process.env.NEXT_PUBLIC_MODE;
-// ---- Appwrite Config ----
-const rawDatabaseId = "68cbc63100188b1cf674";
-if (!rawDatabaseId) throw new Error("Invalid envs");
 
+const rawDatabaseId = "68cbc63100188b1cf674";
 const databaseId: string = rawDatabaseId;
 const projectId = "68ad713f00087b77096f";
-const websitesTableId = "websites";
 const projectKey =
-  "standard_0f5fb3432024560fe5f818d405fca7dcc6f62174013950cd6ee46836a308d608040b6bc6447cb5de7e39cd2117629f50554411b96f705fcd2dbd2e745bc20a1f48827e8fd022d13b2d5bbdcfef4e6c628ff8a2e84679a594afd5ff1baf1404dd98bbddd83e2a9c91a348f08866b98122bcdca0e6069ef7db5972b7703366ecb6";
-if (!projectId || !databaseId) throw new Error("Invalid envs");
+  "standard_0f5fb3432024560fe5f818d405fca7dcc6f62174013950cd6ee46836a308d608040b6bc6447cb5de7e39cd2117629f50554411b96f705fcd2dbd2e745bc20a1f48827e8fd022d13b2d5bbdcfef4e6c628ff8a2e84679a594afd5ff1baf1404dd98bbddd83e2a9c91a348f08866b98122bcdca0e6069ef7db5972b7703366ecb6"; // keep your real key
 
 const client = new Client()
   .setEndpoint("https://fra.cloud.appwrite.io/v1")
   .setProject(projectId)
-  .setKey(projectKey!);
+  .setKey(projectKey);
 
 const database = new TablesDB(client);
+const websiteId = "68c43ddf0011d1180361";
 
-// ---- Config for dummy data ----
-const domain = "syncmate.xyz";
-const websiteId = "68c43ddf0011d1180361"; //jjugnee
+const startDate = new Date("2025-09-13");
+const endDate = new Date();
 
-const endDate = new Date(); // today
-const startDate = new Date();
-startDate.setMonth(endDate.getMonth() - 1);
-const eventsPerMonth = 3000;
-const revenueEventsPerMonth = 50;
+const baseEventsPerDay = 300;
+const revenueChance = 0.2; // 5% of sessions generate revenue
 
-const eventTypes = ["pageview", "click", "signup", "purchase"];
+const eventTypes = [
+  { type: "pageview", weight: 70 },
+  { type: "click", weight: 20 },
+  { type: "signup", weight: 5 },
+  { type: "purchase", weight: 5 },
+];
+
+const countries = [
+  { code: "IN", city: "Delhi", region: "DL", weight: 70 },
+  { code: "US", city: "New York", region: "NY", weight: 10 },
+  { code: "DE", city: "Berlin", region: "BE", weight: 10 },
+  { code: "GB", city: "London", region: "LN", weight: 10 },
+];
+
+const hrefs = [
+  { href: "/dashboard", weight: 50 },
+  { href: "/", weight: 30 },
+  { href: "/auth", weight: 20 },
+];
+
 const browsers = ["Chrome", "Firefox", "Safari", "Edge"];
 const devices = ["desktop", "mobile", "tablet"];
-const countries = [
-  { code: "US", city: "New York", region: "NY" },
-  { code: "IN", city: "Delhi", region: "DL" },
-  { code: "DE", city: "Berlin", region: "BE" },
-  { code: "GB", city: "London", region: "LN" },
-];
+const viewports: Record<string, string[]> = {
+  desktop: ["1920x1080", "1366x768", "1600x900"],
+  mobile: ["375x667", "414x896", "360x800"],
+  tablet: ["768x1024", "800x1280", "834x1112"],
+};
 const referrers = [
   "https://x.com",
   "https://instagram.com",
   "https://google.com",
   "https://youtube.com",
 ];
-const href = ["/auth", "/", "/dashboard"];
-// ---- Helpers ----
-function randomDateInMonth(year: number, month: number) {
-  const start = new Date(year, month, 1);
-  const end = new Date(year, month + 1, 0, 23, 59, 59);
-  return faker.date.between({ from: start, to: end }).toISOString();
+
+// Weighted random helper
+function weightedRandom<T extends { weight: number }>(arr: T[]) {
+  const totalWeight = arr.reduce((sum, item) => sum + item.weight, 0);
+  let rnd = Math.random() * totalWeight;
+  for (const item of arr) {
+    if (rnd < item.weight) return item;
+    rnd -= item.weight;
+  }
+  return arr[0];
 }
 
-function randomDateInRange(start: Date, end: Date) {
-  return faker.date.between({ from: start, to: end }).toISOString();
+// Random date with peak traffic (10 AM – 10 PM)
+function randomDateWithPeak(dayStart: Date, dayEnd: Date) {
+  const peakHour = faker.number.int({ min: 10, max: 22 });
+  const minutes = faker.number.int({ min: 0, max: 59 });
+  const seconds = faker.number.int({ min: 0, max: 59 });
+  return new Date(
+    dayStart.getFullYear(),
+    dayStart.getMonth(),
+    dayStart.getDate(),
+    peakHour,
+    minutes,
+    seconds
+  ).toISOString();
 }
 
-// ---- Generate events & revenues ----
-let events: any[] = [];
-let revenues: any[] = [];
-
-function generate() {
+async function generateDummyData() {
+  const events: any[] = [];
+  const revenues: any[] = [];
   for (
-    let d = new Date(startDate);
+    let d = new Date(
+      startDate.getFullYear(),
+      startDate.getMonth(),
+      startDate.getDate()
+    );
     d <= endDate;
-    d = new Date(d.getFullYear(), d.getMonth() + 1, 1)
+    d.setDate(d.getDate() + 1)
   ) {
-    const year = d.getFullYear();
-    const month = d.getMonth();
+    // Random daily visitors (more fluctuation)
+    const visitorsToday = Array.from(
+      { length: faker.number.int({ min: 10, max: 80 }) }, // wider range
+      () => faker.string.uuid()
+    );
 
-    // Events spread month by month
-    for (let i = 0; i < eventsPerMonth; i++) {
-      const visitorId = faker.string.uuid();
-      const sessionId = faker.string.uuid();
-      const country = faker.helpers.arrayElement(countries);
+    const sessionsToday = Array.from(
+      {
+        length: faker.number.int({
+          min: visitorsToday.length,
+          max: visitorsToday.length * 3,
+        }),
+      }, // 1–3 sessions per visitor
+      () => faker.string.uuid()
+    );
 
-      events.push({
-        type: faker.helpers.arrayElement(eventTypes),
+    // Events per day proportional to sessions + random spike
+    const eventsToday =
+      sessionsToday.length * faker.number.int({ min: 3, max: 6 }); // 3–6 events per session
+
+    const dayStart = new Date(
+      d.getFullYear(),
+      d.getMonth(),
+      d.getDate(),
+      0,
+      0,
+      0,
+      0
+    );
+    const dayEnd = new Date(
+      d.getFullYear(),
+      d.getMonth(),
+      d.getDate(),
+      23,
+      59,
+      59,
+      999
+    );
+
+    for (let i = 0; i < eventsToday; i++) {
+      const visitorId = faker.helpers.arrayElement(visitorsToday);
+      const sessionId = faker.helpers.arrayElement(sessionsToday);
+
+      const country = weightedRandom(countries);
+      const eventType = weightedRandom(eventTypes).type;
+      const href = weightedRandom(hrefs).href;
+      const device = faker.helpers.arrayElement(devices);
+      const viewport = faker.helpers.arrayElement(viewports[device]);
+
+      const event = {
+        type: eventType,
         website: websiteId,
-        href: `https://syncmate.xyz${href[faker.number.int({ min: 0, max: 2 })]}`,
+        href: `https://syncmate.xyz${href}`,
         visitorId,
         sessionId,
-        viewport: faker.helpers.arrayElement([
-          "1920x1080",
-          "1366x768",
-          "375x812",
-        ]),
-        referrer: referrers[faker.number.int({ min: 0, max: 3 })],
+        referrer: faker.helpers.arrayElement(referrers),
         os: faker.helpers.arrayElement([
           "linux",
           "windows",
@@ -98,143 +161,105 @@ function generate() {
         countryCode: country.code,
         city: country.city,
         region: country.region,
-        device: faker.helpers.arrayElement(devices),
-        $createdAt: randomDateInMonth(year, month),
-      });
-    }
+        device,
+        viewport,
+        $createdAt: randomDateWithPeak(dayStart, dayEnd),
+      };
 
-    // Revenues spread across entire range
-    for (let j = 0; j < revenueEventsPerMonth; j++) {
-      const visitorId = faker.string.uuid();
-      const sessionId = faker.string.uuid();
+      events.push(event);
+      if (Math.random() < revenueChance && eventType === "purchase") {
+        const baseRevenue = faker.number.int({ min: 10, max: 100 });
 
-      revenues.push({
-        website: websiteId,
-        eventType: "purchase",
-        revenue: faker.number.int({ min: 10, max: 100 }),
-        renewalRevenue: faker.number.int({ min: 0, max: 100 }),
-        refundedRevenue: faker.number.int({ min: 0, max: 50 }),
-        customers: 1,
-        sales: 1,
-        sessionId,
-        visitorId,
-        $createdAt: randomDateInRange(startDate, endDate),
-      });
+        // Renewal revenue (20–50% of the base revenue, but not always present)
+        const hasRenewal = Math.random() < 0.3; // ~30% of purchases lead to renewal
+        const renewalRevenue = hasRenewal
+          ? Math.round(baseRevenue * faker.number.float({ min: 0.2, max: 0.5 }))
+          : 0;
+
+        // Refunded revenue (rare, 5% chance)
+        const isRefunded = Math.random() < 0.05;
+        const refundedRevenue = isRefunded
+          ? Math.round(baseRevenue * faker.number.float({ min: 0.2, max: 1.0 }))
+          : 0;
+
+        // Customers (simulate 1–3 new customers per purchase event)
+        const customers = faker.number.int({ min: 1, max: 3 });
+
+        // Sales = base + renewal - refund
+        const sales = baseRevenue + renewalRevenue - refundedRevenue;
+
+        revenues.push({
+          website: websiteId,
+          sessionId,
+          visitorId,
+          revenue: baseRevenue,
+          renewalRevenue,
+          refundedRevenue,
+          customers,
+          sales,
+          eventType: "purchase",
+          $createdAt: event.$createdAt,
+        });
+      }
     }
   }
+
+  // Save to files (optional)
+  // fs.writeFileSync(
+  //   "events.ts",
+  //   `export const eventsData =${JSON.stringify(events, null, 2)}`
+  // );
+  // fs.writeFileSync(
+  //   "revenues.ts",
+  //   `export const revenuesData =${JSON.stringify(revenues, null, 2)}`
+  // );
 
   console.log(
     `Generated ${events.length} events & ${revenues.length} revenues`
   );
-
-  // ---- Save to JSON files ----
-  // fs.writeFileSync("events.json", JSON.stringify(events, null, 2));
-  // fs.writeFileSync("revenues.json", JSON.stringify(revenues, null, 2));
-  console.log("Data saved to events.json and revenues.json");
 }
-// ---- Seeder ----
-const sids = [
-  "5cb8431f-cf82-4cbf-8950-be60e4db3507",
-  "caf14091-d62b-435c-b5b2-660ea24bac66",
-  "6ac63a1a-b68f-40c8-b0ef-6ac0dec19d99",
-  "cd260f3a-3b79-4487-8714-3153c74e7bd8",
-  "eefcb2bc-841e-4914-8777-c97896ce9dc3",
-  "8fb61fc2-06db-4bc9-8187-25c829574f9e",
-  "fcdb2017-4ddf-4751-a558-8854f6f5ac2a",
-  "2362c2a3-c716-4002-b1e9-4aac76b566d3",
-  "79a36f0d-a4f2-4e4c-a821-3c60e9e85ff6",
-  "24a70ed1-9489-450a-9a01-ffef97206728",
-];
-const vids = [
-  "29ec95d9-b4ff-491b-9836-dc6067e54dd0",
-  "78a9dd80-a6aa-454d-afb9-1efc89a12268",
-  "e3febfc2-364e-4625-90e0-8252edcffdb9",
-  "4dfb9840-937e-4ee0-a23f-d39c81b4243c",
-  "659147f7-fdef-45e9-8669-bbd837963355",
-  "8a44c2dc-02ca-431b-8e2b-571109fb19ce",
-  "65e26d6e-789b-4cc2-b1e9-de1410663961",
-  "65e26d6e-789b-4cc2-b1e9-de1410663961",
-  "a85cf9a1-0364-4df9-b02e-6cd224b4f023",
-  "a5e8c86b-a04b-4563-9b7d-7baec7d049a4",
-];
-
-async function createvents() {
-  for (let i = 200; i >= 0; i--) {
-    const country = faker.helpers.arrayElement(countries);
-
-    await database.createRow({
-      databaseId,
-      tableId: "events",
-      rowId: ID.unique(),
-      data: {
-        type: faker.helpers.arrayElement(eventTypes),
-        website: websiteId,
-        href: `https://syncmate.xyz${href[faker.number.int({ min: 0, max: 2 })]}`,
-        visitorId: faker.helpers.arrayElement(vids),
-        sessionId: faker.helpers.arrayElement(sids),
-        viewport: faker.helpers.arrayElement([
-          "1920x1080",
-          "1366x768",
-          "375x812",
-        ]),
-        referrer: referrers[faker.number.int({ min: 0, max: 3 })],
-        os: faker.helpers.arrayElement([
-          "linux",
-          "windows",
-          "macos",
-          "ios",
-          "android",
-        ]),
-        browser: faker.helpers.arrayElement(browsers),
-        countryCode: country.code,
-        city: country.city,
-        region: country.region,
-        device: faker.helpers.arrayElement(devices),
-        $createdAt: new Date("2025-9-19").toISOString(),
-      },
-    });
-    console.log(`Inserted ${i}`);
-  }
-}
-// createvents();
 async function seed(tableId: string, data: any[]) {
   const chunkSize = 50;
-  for (let i = 0; i < data.length; i += chunkSize) {
-    const chunk = data.slice(i, i + chunkSize);
-    await Promise.all(
-      chunk.map((row) =>
-        database.createRow({
-          databaseId,
-          tableId,
-          rowId: ID.unique(),
-          data: row,
-        })
-      )
-    );
-    console.log(`Inserted ${i + chunk.length}/${data.length} into ${tableId}`);
+  // for (let i = 0; i < data.length; i += chunkSize) {
+  //   const chunk = data.slice(i, i + chunkSize);
+  //   await Promise.all(
+  //     chunk.map((row) => {
+  //       delete row?.viewport;
+  //       delete row?.$createdAt;
+  //       database.createRow({
+  //         databaseId,
+  //         tableId,
+  //         rowId: ID.unique(),
+  //         data: row,
+  //       });
+  //     })
+  //   );
+  //   console.log(`Inserted ${i + chunk.length}/${data.length} into ${tableId}`);
+  // }
+  for (let [i, row] of data?.entries()) {
+    // delete row?.viewport;
+    if (row?.$createdAt > new Date().toISOString()) continue;
+    await database.createRow({
+      databaseId,
+      tableId,
+      rowId: ID.unique(),
+      data: row,
+    });
+    console.log(`Inserted ${i} into ${tableId}`);
   }
 }
 
-// Uncomment to seed into Appwrite
-// seed("revenues", revenuesData);
-// seed("revenues", revenuesData);
-
-// async function replace() {
-//   await database.listRows({ databaseId, tableId: "events" });
-// }
-// replace();
 async function deleterows() {
   const res = await database.deleteRows({
     databaseId,
     tableId: "events",
-    queries: [
-      Query.greaterThanEqual(
-        "$createdAt",
-        new Date("2025-09-18").toISOString()
-      ),
-    ],
+    queries: [Query.equal("website", websiteId)],
   });
-  // console.log("deleted", res.total);
+  console.log("Deleted events:", res.total);
 }
 // deleterows();
-export { database, databaseId, websitesTableId };
+// generateDummyData();
+// seed("revenues", revenuesData);
+// seed('revenues', (await generateDummyData()).revenues);
+const MODE = process.env.MODE || "dev";
+export { database, databaseId, MODE };

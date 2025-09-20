@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Query } from "node-appwrite";
 
 import { account } from "@/appwrite/clientConfig";
-import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
+import { database, databaseId } from "@/appwrite/serverConfig";
 
 export async function POST(req: NextRequest) {
   try {
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
 
     const websiteRes = await database.listRows({
       databaseId: databaseId,
-      tableId: websitesTableId,
+      tableId: "websites",
       queries: [Query.equal("userId", userId)],
     });
     let websites = websiteRes.rows;

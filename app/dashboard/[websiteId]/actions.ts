@@ -3,7 +3,7 @@ import { Query } from "node-appwrite";
 
 import { TWebsiteData } from "./settings/components/generalTab";
 
-import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
+import { database, databaseId } from "@/appwrite/serverConfig";
 
 export async function getLiveVisitors(websiteId: string) {
   try {
@@ -47,7 +47,7 @@ export async function getWebsite(websiteId: string) {
   try {
     const res = await database.getRow({
       databaseId,
-      tableId: websitesTableId,
+      tableId: "websites",
       rowId: websiteId,
     });
 
@@ -66,7 +66,7 @@ export async function saveWebsiteData({
   try {
     await database.updateRow({
       databaseId,
-      tableId: websitesTableId,
+      tableId: "websites",
       rowId: $id,
       data: {
         domain,
@@ -82,7 +82,7 @@ export async function deleteWebsite($id: string) {
   try {
     await database.deleteRow({
       databaseId,
-      tableId: websitesTableId,
+      tableId: "websites",
       rowId: $id,
     });
   } catch (error) {

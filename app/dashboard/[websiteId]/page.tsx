@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 import Dashboard from "./components/dashboard";
 
-import { database, databaseId, websitesTableId } from "@/appwrite/serverConfig";
+import { database, databaseId } from "@/appwrite/serverConfig";
 
 export default function Page() {
   return <Dashboard />;
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const param = await params;
   const website = await database.getRow({
     databaseId,
-    tableId: websitesTableId,
+    tableId: "websites",
     rowId: param.websiteId,
   });
 
