@@ -9,6 +9,7 @@ import {
   YAxis,
 } from "recharts";
 
+import { Metric } from "@/lib/types";
 import CommonTooltip from "./commonTooltip";
 
 function CustomBarShape({ x, y, width, height, bar, payload }: any) {
@@ -30,12 +31,7 @@ function CustomBarShape({ x, y, width, height, bar, payload }: any) {
 }
 
 export interface CommonChartProps {
-  data: {
-    label: string;
-    visitors: number;
-    revenue: number;
-    imageUrl?: string;
-  }[];
+  data: Metric[];
 }
 export function CommonChart({ data }: CommonChartProps) {
   return (

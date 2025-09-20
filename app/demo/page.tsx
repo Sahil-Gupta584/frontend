@@ -80,6 +80,7 @@ function Page() {
                 avgSessionTime={mainGraphQuery.data?.avgSessionTime}
                 bounceRate={mainGraphQuery.data?.bounceRate}
                 websiteId={websiteId}
+                conversionRate={otherGraphQuery.data?.overallConversionRate}
               />
             )
           )}
@@ -112,7 +113,6 @@ function Page() {
             <>
               {countryData && cityData && regionData && (
                 <LocationCharts
-                  mapData={mapData}
                   countryData={countryData}
                   regionData={regionData}
                   cityData={cityData}

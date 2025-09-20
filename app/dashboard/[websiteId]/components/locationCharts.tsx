@@ -11,13 +11,7 @@ const geoUrl =
   "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson";
 
 interface LocationChartProps {
-  mapData: {
-    countryCode: string;
-    visitors: number;
-    revenue: number;
-    imageUrl: string;
-  }[];
-  countryData: CommonChartProps["data"];
+  countryData: (CommonChartProps["data"][0] & { countryCode: string })[];
   regionData: CommonChartProps["data"];
   cityData: CommonChartProps["data"];
 }
@@ -32,15 +26,14 @@ export default function LocationCharts({
   cityData,
   countryData,
   regionData,
-  mapData,
 }: LocationChartProps) {
   const getCountryDetails = (countryCode: string) => {
-    const country = mapData.find((c) => c.countryCode == countryCode);
+    const country = countryData.find((c) => c.countryCode == countryCode);
     let color = "#1d1d21"; // No traffic - dark gray
 
     if (country) {
       // Color intensity based on visitor count
-      const maxVisitors = Math.max(...mapData.map((c) => c.visitors));
+      const maxVisitors = Math.max(...countryData.map((c) => c.visitors));
       const intensity = country.visitors / maxVisitors;
 
       if (intensity > 0.7)
@@ -51,10 +44,8 @@ export default function LocationCharts({
     }
 
     return {
-      visitors: country ? country.visitors : 0,
       color,
-      revenue: country?.revenue,
-      imageUrl: country?.imageUrl,
+      ...country,
     };
   };
   const getCountryName = (code: string) => {
@@ -125,9 +116,7 @@ export default function LocationCharts({
                         data-tooltip-id="map-tooltip" // <-- connect tooltip
                         data-tooltip-content={JSON.stringify({
                           countryCode,
-                          visitors: countryDetails.visitors,
-                          revenue: countryDetails.revenue,
-                          imageUrl: countryDetails.imageUrl,
+                          ...countryDetails,
                         })}
                       />
                     );
@@ -135,7 +124,6 @@ export default function LocationCharts({
                 }
               </Geographies>
             </ComposableMap>
-            {/* <Tooltip id="map-tooltip" render={() => <span>sasas</span>} /> */}
 
             <Tooltip
               id="map-tooltip"
@@ -145,8 +133,6 @@ export default function LocationCharts({
                 background: "transparent",
               }}
               render={({ content }) => {
-                // if (!content) return null;
-
                 let parsed: any;
 
                 try {

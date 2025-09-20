@@ -48,7 +48,6 @@ export default function Dashboard() {
   const {
     pageData,
     referrerData,
-    mapData,
     countryData,
     regionData,
     cityData,
@@ -157,6 +156,7 @@ export default function Dashboard() {
               avgSessionTime={mainGraphQuery.data?.avgSessionTime}
               bounceRate={mainGraphQuery.data?.bounceRate}
               websiteId={websiteId}
+              conversionRate={otherGraphQuery.data?.overallConversionRate}
             />
           )
         )}
@@ -189,7 +189,6 @@ export default function Dashboard() {
           <>
             {countryData && cityData && regionData && (
               <LocationCharts
-                mapData={mapData}
                 countryData={countryData}
                 regionData={regionData}
                 cityData={cityData}

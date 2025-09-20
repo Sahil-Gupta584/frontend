@@ -9,6 +9,9 @@ type Metric = {
   visitors: number;
   revenue: number;
   imageUrl?: string;
+  convertingVisitors?: number;
+  countryCode?: string;
+  conversionRate?: number;
 };
 
 export async function GET(req: NextRequest) {
@@ -31,12 +34,10 @@ export async function GET(req: NextRequest) {
           Query.orderAsc("$createdAt"),
         ],
       });
-
       timestamp = row.rows?.[0].$createdAt;
     }
-    // const estart = Date.now();
 
-    // 1. Fetch all events
+    // Fetch events
     const eventsRes = await database.listRows({
       databaseId,
       tableId: "events",
@@ -46,13 +47,10 @@ export async function GET(req: NextRequest) {
         Query.limit(100000000),
       ],
     });
-    // console.log("Events time:", Date.now() - estart, "ms");
-
     const events = eventsRes.rows;
 
+    // Fetch revenues
     const sessionIds = Array.from(new Set(events.map((e) => e.sessionId)));
-    // const rstart = Date.now();
-
     const revenuesRes = await database.listRows({
       databaseId,
       tableId: "revenues",
@@ -62,43 +60,21 @@ export async function GET(req: NextRequest) {
         Query.limit(10000000),
       ],
     });
-    // console.log("Revenues time:", Date.now() - rstart, "ms");
+    const sessionSet = new Set(sessionIds);
+    const revenues = revenuesRes.rows.filter((r) =>
+      sessionSet.has(r.sessionId)
+    );
 
-    const seenPaymentIds = new Set<string>();
-    const revenueMap = new Map<string, number>(); // visitorId → total revenue
+    // Map session → revenue
+    const revenueMap = new Map<string, number>();
+    revenues.forEach((r) => {
+      const prev = revenueMap.get(r.sessionId) || 0;
+      revenueMap.set(r.sessionId, prev + (r.revenue || 0));
+    });
 
-    for (const r of revenuesRes.rows) {
-      const pid = r.payment_id ?? r.paymentId ?? r.$id;
-      if (pid && seenPaymentIds.has(pid)) continue;
-      if (pid) seenPaymentIds.add(pid);
-
-      const vid = r.visitorId ?? r.sessionId; // <-- fallback if visitorId missing
-      const revNum = Number(r.revenue ?? r.total_amount ?? 0);
-
-      revenueMap.set(vid, (revenueMap.get(vid) || 0) + revNum);
-    }
-
-    // 2) Group events by sessionId
-    const sessions = new Map<string, typeof events>();
-    for (const e of events) {
-      const sid = e.sessionId;
-      if (!sid) continue;
-      if (!sessions.has(sid)) sessions.set(sid, []);
-      sessions.get(sid)!.push(e);
-    }
-
-    // 3) Prepare bucket maps (same as yours)
+    // Buckets
     const pageMap = new Map<string, Metric>();
     const referrerMap = new Map<string, Metric>();
-    const mapMap = new Map<
-      string,
-      {
-        countryCode: string;
-        visitors: number;
-        revenue: number;
-        imageUrl: string;
-      }
-    >();
     const countryMap = new Map<string, Metric>();
     const regionMap = new Map<string, Metric>();
     const cityMap = new Map<string, Metric>();
@@ -106,195 +82,101 @@ export async function GET(req: NextRequest) {
     const osMap = new Map<string, Metric>();
     const deviceMap = new Map<string, Metric>();
 
-    // small helper to safely parse URL and fix your localhost port bug
-    const getPathname = (href?: string) => {
-      try {
-        if (!href) return "/";
-        const safeHref = href.startsWith("/")
-          ? `http://localhost:3000${href}`
-          : href;
-        return new URL(safeHref).pathname;
-      } catch {
-        return href ?? "/";
-      }
-    };
+    const seenSessions = new Set<string>();
 
-    // const lstart = Date.now();
-    for (const [sid, evts] of sessions.entries()) {
-      const visitorId = evts[0]?.visitorId;
-      const visitorRevenue = visitorId ? revenueMap.get(visitorId) || 0 : 0;
+    // Global totals for overall conversion rate
+    let totalVisitors = 0;
+    let totalConvertingVisitors = 0;
 
-      const uniquePages = new Set(evts.map((e) => getPathname(e.href)));
-      const uniqueReferrers = new Set(
-        evts.map((e) => normalizeReferrer(e.referrer))
-      );
-      const uniqueCountries = new Set(
-        evts.map((e) => e.countryCode || "UNKNOWN")
-      );
-      const uniqueRegions = new Set(evts.map((e) => e.region || "UNKNOWN"));
-      const uniqueCities = new Set(evts.map((e) => e.city || "UNKNOWN"));
-      const uniqueBrowsers = new Set(evts.map((e) => e.browser || "UNKNOWN"));
-      const uniqueOS = new Set(evts.map((e) => e.os || "UNKNOWN"));
-      const uniqueDevices = new Set(evts.map((e) => e.device || "UNKNOWN"));
+    // Process events
+    for (const e of events) {
+      const sessionTotalRevenue = revenueMap.get(e.sessionId) || 0;
+      const giveRevenue = !seenSessions.has(e.sessionId);
+      if (giveRevenue) seenSessions.add(e.sessionId);
 
-      // Pages
-      const perPageRevenue = visitorRevenue / uniquePages.size || 0;
+      // Count global visitors
+      totalVisitors += 1;
+      if (giveRevenue && sessionTotalRevenue > 0) totalConvertingVisitors += 1;
 
-      for (const pathname of uniquePages) {
-        const page = pageMap.get(pathname);
-        if (page) {
-          page.visitors += 1;
-          page.revenue += perPageRevenue;
+      // Helper function to update bucket
+      const updateBucket = (
+        map: Map<string, Metric>,
+        key: string,
+        extra?: Partial<Metric>
+      ) => {
+        const bucket = map.get(key);
+        if (bucket) {
+          bucket.visitors += 1;
+          if (giveRevenue && sessionTotalRevenue > 0) {
+            bucket.convertingVisitors = (bucket.convertingVisitors || 0) + 1;
+            bucket.revenue += sessionTotalRevenue;
+          }
         } else {
-          pageMap.set(pathname, {
-            label: pathname,
+          map.set(key, {
+            label: key,
             visitors: 1,
-            revenue: perPageRevenue,
+            revenue:
+              giveRevenue && sessionTotalRevenue > 0 ? sessionTotalRevenue : 0,
+            convertingVisitors: giveRevenue && sessionTotalRevenue > 0 ? 1 : 0,
+            ...extra,
           });
         }
-      }
+      };
 
-      // Referrers
-      for (const refDomain of uniqueReferrers) {
-        const ref = referrerMap.get(refDomain);
-        if (ref) {
-          ref.visitors += 1;
-          ref.revenue += visitorRevenue;
-        } else {
-          referrerMap.set(refDomain, {
-            label: refDomain,
-            visitors: 1,
-            revenue: visitorRevenue,
-            imageUrl: `https://icons.duckduckgo.com/ip3/${refDomain}.ico`,
-          });
-        }
-      }
+      // --- Page ---
+      const pathname = new URL(
+        e.href?.startsWith("/") ? `http://localhost:300${e.href}` : e.href
+      ).pathname;
+      updateBucket(pageMap, pathname);
 
-      // Countries / map
-      for (const countryCode of uniqueCountries) {
-        const m = mapMap.get(countryCode);
-        if (m) {
-          m.visitors += 1;
-          m.revenue += visitorRevenue;
-        } else {
-          mapMap.set(countryCode, {
-            countryCode,
-            visitors: 1,
-            revenue: visitorRevenue,
-            imageUrl: `https://purecatamphetamine.github.io/country-flag-icons/3x2/${countryCode}.svg`,
-          });
-        }
+      // --- Referrer ---
+      const refDomain = normalizeReferrer(e.referrer);
+      updateBucket(referrerMap, refDomain, {
+        imageUrl: `https://icons.duckduckgo.com/ip3/${refDomain}.ico`,
+      });
 
-        const country = countryMap.get(countryCode);
-        if (country) {
-          country.visitors += 1;
-          country.revenue += visitorRevenue;
-        } else {
-          countryMap.set(countryCode, {
-            label: countryCode,
-            visitors: 1,
-            revenue: visitorRevenue,
-            imageUrl: `https://purecatamphetamine.github.io/country-flag-icons/3x2/${countryCode}.svg`,
-          });
-        }
-      }
+      // --- Country ---
+      updateBucket(countryMap, e.countryCode, {
+        imageUrl: `https://purecatamphetamine.github.io/country-flag-icons/3x2/${e.countryCode}.svg`,
+        countryCode: e.countryCode,
+      });
 
-      // Regions
-      for (const region of uniqueRegions) {
-        const rg = regionMap.get(region);
-        if (rg) {
-          rg.visitors += 1;
-          rg.revenue += visitorRevenue;
-        } else {
-          regionMap.set(region, {
-            label: region,
-            visitors: 1,
-            revenue: visitorRevenue,
-            imageUrl: `/images/${region}.png`,
-          });
-        }
-      }
-
-      // Cities
-      for (const city of uniqueCities) {
-        const ct = cityMap.get(city);
-        if (ct) {
-          ct.visitors += 1;
-          ct.revenue += visitorRevenue;
-        } else {
-          cityMap.set(city, {
-            label: city,
-            visitors: 1,
-            revenue: visitorRevenue,
-            imageUrl: `/images/${city}.png`,
-          });
-        }
-      }
-
-      // Browser / OS / Device
-      for (const b of uniqueBrowsers) {
-        const browser = browserMap.get(b);
-        if (browser) {
-          browser.visitors += 1;
-          browser.revenue += visitorRevenue;
-        } else {
-          browserMap.set(b, {
-            label: b,
-            visitors: 1,
-            revenue: visitorRevenue,
-            imageUrl: `https://cdnjs.cloudflare.com/ajax/libs/browser-logos/74.1.0/${String(b).toLowerCase()}/${String(b).toLowerCase()}_64x64.png`,
-          });
-        }
-      }
-
-      for (const o of uniqueOS) {
-        const os = osMap.get(o);
-        if (os) {
-          os.visitors += 1;
-          os.revenue += visitorRevenue;
-        } else {
-          osMap.set(o, {
-            label: o,
-            visitors: 1,
-            revenue: visitorRevenue,
-            imageUrl: `/images/${o}.png`,
-          });
-        }
-      }
-
-      for (const d of uniqueDevices) {
-        const device = deviceMap.get(d);
-        if (device) {
-          device.visitors += 1;
-          device.revenue += visitorRevenue;
-        } else {
-          deviceMap.set(d, {
-            label: d,
-            visitors: 1,
-            revenue: visitorRevenue,
-            imageUrl: `/images/${d}.png`,
-          });
-        }
-      }
+      // --- Region ---
+      updateBucket(regionMap, e.region);
+      // --- City ---
+      updateBucket(cityMap, e.city);
+      // --- Browser ---
+      updateBucket(browserMap, e.browser);
+      // --- OS ---
+      updateBucket(osMap, e.os);
+      // --- Device ---
+      updateBucket(deviceMap, e.device);
     }
 
-    // console.log("Loop time:", Date.now() - lstart, "ms");
+    // Finalize: compute per-bucket conversion rates
+    const finalizeMetrics = (map: Map<string, Metric>) =>
+      Array.from(map.values()).map((m) => ({
+        ...m,
+        conversionRate:
+          m.visitors > 0 ? ((m.convertingVisitors || 0) / m.visitors) * 100 : 0,
+      }));
+
     const dataset = {
-      pageData: Array.from(pageMap.values()),
-      referrerData: Array.from(referrerMap.values()),
-      mapData: Array.from(mapMap.values()),
-      countryData: Array.from(countryMap.values()),
-      regionData: Array.from(regionMap.values()),
-      cityData: Array.from(cityMap.values()),
-      browserData: Array.from(browserMap.values()),
-      osData: Array.from(osMap.values()),
-      deviceData: Array.from(deviceMap.values()),
+      pageData: finalizeMetrics(pageMap),
+      referrerData: finalizeMetrics(referrerMap),
+      countryData: finalizeMetrics(countryMap),
+      regionData: finalizeMetrics(regionMap),
+      cityData: finalizeMetrics(cityMap),
+      browserData: finalizeMetrics(browserMap),
+      osData: finalizeMetrics(osMap),
+      deviceData: finalizeMetrics(deviceMap),
+      overallConversionRate:
+        totalVisitors > 0 ? (totalConvertingVisitors / totalVisitors) * 100 : 0,
     };
 
     return NextResponse.json(dataset);
   } catch (err) {
     console.error("others", err);
-
     return NextResponse.json(
       { error: (err as Error).message },
       { status: 500 }

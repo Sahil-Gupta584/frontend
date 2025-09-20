@@ -34,11 +34,11 @@ function CommonTooltip({
             <Divider className="my-2" />
             <ul className=" flex justify-between text-xs">
               <li>Revenue/visitor</li>
-              <li>${(data?.visitors / data?.revenue).toFixed(2)}</li>
+              <li>${(data?.revenue / data?.visitors).toFixed(2)}</li>
             </ul>
             <ul className=" flex justify-between text-xs">
               <li>Conversion rate</li>
-              <li>{((data?.visitors / data?.revenue) * 100).toFixed(2)}%</li>
+              <li>{(Number(data?.conversionRate) || 0).toFixed(2)}%</li>
             </ul>
           </>
         ) : (

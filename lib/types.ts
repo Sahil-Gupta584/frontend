@@ -9,3 +9,13 @@ export interface User {
   email?: string;
   image?: string;
 }
+
+export type Metric = {
+  label: string;
+  visitors: number;
+  revenue: number;
+  imageUrl?: string;
+  convertingVisitors?: number;
+  countryCode?: string;
+  conversionRate?: number;
+};

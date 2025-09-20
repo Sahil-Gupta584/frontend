@@ -37,14 +37,19 @@ type MainGraphProps = {
   bounceRate: string;
   avgSessionTime: number;
   websiteId: string;
+  conversionRate: number;
 };
-type TLiveVisitor = { visitorId: string; sessionId: string };
+type TLiveVisitor = {
+  visitorId: string;
+  sessionId: string;
+};
 function MainGraph({
   chartData,
   duration,
   avgSessionTime,
   bounceRate,
   websiteId,
+  conversionRate,
 }: MainGraphProps) {
   const [isVisitorsSelected, setIsVisitorsSelected] = useState(true);
   const [isRevenueSelected, setIsRevenueSelected] = useState(true);
@@ -161,8 +166,7 @@ function MainGraph({
     },
     {
       name: "Conversion rate",
-      value:
-        visitors > 0 ? ((revenue / visitors) * 100).toFixed(2) + "%" : "0%",
+      value: (conversionRate || 0).toFixed(2) + "%",
     },
     {
       name: "Bounce rate",

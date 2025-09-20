@@ -68,10 +68,10 @@ export async function POST(request: Request) {
       street: "N/A",
       zipcode: geo?.postal || "000000",
     };
-    // body.metadata = {
-    //   insightly_visitor_id: cookieStore.get("insightly_visitor_id")?.value,
-    //   insightly_session_id: cookieStore.get("insightly_session_id")?.value,
-    // };
+    body.metadata = {
+      insightly_visitor_id: cookieStore.get("insightly_visitor_id")?.value,
+      insightly_session_id: cookieStore.get("insightly_session_id")?.value,
+    };
 
     const validationResult = checkoutSessionSchema.safeParse(body);
 
@@ -107,13 +107,7 @@ export async function POST(request: Request) {
       }
     );
     const datafast_visitor_id = cookieStore.get("datafast_visitor_id")?.value;
-    console.log("datafast_visitor_id", { datafast_visitor_id });
 
-    console.log("res", res.data);
-    console.log(
-      "uri",
-      `https://${MODE === "prod" ? "live" : "test"}.dodopayments.com/checkouts`
-    );
     // Send payment data to DataFast's API
     const ress = await fetch("https://datafa.st/api/v1/payments", {
       method: "POST",
@@ -128,7 +122,6 @@ export async function POST(request: Request) {
         datafast_visitor_id: datafast_visitor_id, // available in the cookie, like request.cookies.datafast_visitor_id
       }),
     });
-    console.log("df res", await ress.text());
 
     if (!res.data?.checkout_url) {
       throw new Error("Failed to create checkout");
