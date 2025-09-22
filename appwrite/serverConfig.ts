@@ -11,17 +11,17 @@ const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID;
 const projectKey = process.env.APPWRITE_KEY;
 if (!projectId)
   throw new Error("Missing NEXT_PUBLIC_APPWRITE_PROJECT_ID in .env");
-if (!projectKey) throw new Error("Missing APPWRITE_KEY in .env");
 
 const client = new Client()
   .setEndpoint("https://fra.cloud.appwrite.io/v1")
   .setProject(projectId)
-  .setKey(projectKey);
+  .setKey(projectKey!);
 
 const database = new TablesDB(client);
-const websiteId = "68c43ddf0011d1180361";
+// const websiteId = "68c43ddf0011d1180361";
+const websiteId = "68d124eb001034bd8493"; //sahil99
 
-const startDate = new Date("2025-09-13");
+const startDate = new Date("2025-09-15");
 const endDate = new Date();
 
 const baseEventsPerDay = 300;
@@ -167,7 +167,6 @@ async function generateDummyData() {
         city: country.city,
         region: country.region,
         device,
-        viewport,
         $createdAt: randomDateWithPeak(dayStart, dayEnd),
       };
 
@@ -225,22 +224,6 @@ async function generateDummyData() {
 }
 async function seed(tableId: string, data: any[]) {
   const chunkSize = 50;
-  // for (let i = 0; i < data.length; i += chunkSize) {
-  //   const chunk = data.slice(i, i + chunkSize);
-  //   await Promise.all(
-  //     chunk.map((row) => {
-  //       delete row?.viewport;
-  //       delete row?.$createdAt;
-  //       database.createRow({
-  //         databaseId,
-  //         tableId,
-  //         rowId: ID.unique(),
-  //         data: row,
-  //       });
-  //     })
-  //   );
-  //   console.log(`Inserted ${i + chunk.length}/${data.length} into ${tableId}`);
-  // }
   for (let [i, row] of data?.entries()) {
     // delete row?.viewport;
     if (row?.$createdAt > new Date().toISOString()) continue;
@@ -264,6 +247,7 @@ async function deleterows() {
 }
 // deleterows();
 // generateDummyData();
+// seed("events", eventsData);
 // seed("revenues", revenuesData);
 // seed('revenues', (await generateDummyData()).revenues);
 const MODE = process.env.MODE || "dev";
