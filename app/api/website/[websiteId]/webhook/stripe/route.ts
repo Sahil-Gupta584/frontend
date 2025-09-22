@@ -6,71 +6,67 @@ import { database, databaseId } from "@/appwrite/serverConfig";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ websiteId: string }> },
+  { params }: { params: Promise<{ websiteId: string }> }
 ) {
   try {
     const body = await req.json();
 
-    console.log("Stripe webhook body", body);
+    // console.log("Stripe webhook body", JSON.stringify(body));
 
     const websiteId = (await params).websiteId;
 
     const eventType = body?.type;
     const data = body?.data?.object;
-
+    let visitorId =
+      //from subscription
+      data.lines?.data?.[0]?.metadata?.insightly_visitor_id ||
+      //from paymentintent
+      data.metadata?.insightly_visitor_id;
+    let sessionId =
+      data.lines?.data?.[0]?.metadata?.insightly_session_id ||
+      data.metadata?.insightly_session_id;
+    if (
+      eventType === "invoice.payment_succeeded"
+      // data.lines?.data?.[0]?.parent?.subscription_item_details?.subscription ==
+      // "sub_1SACVo1tNDBT2PI2y9sy67t4"
+    ) {
+      console.log("here:", JSON.stringify(data));
+    }
+    if (!visitorId || !sessionId) {
+      console.log("No visitorId or sessionId in metadata", {
+        websiteId,
+        body: JSON.stringify(body),
+      });
+      return NextResponse.json({ ok: true }, { status: 400 });
+    }
     let revenue = 0;
     let renewalRevenue = 0;
     let refundedRevenue = 0;
-    let customers = 0;
     let sales = 0;
 
     switch (eventType) {
-      case "checkout.session.completed":
-        // Subscription or one-time checkout
-        revenue = data?.amount_total ? data.amount_total / 100 : 0;
-        sales = 1;
-        customers = 1;
+      case "payment_intent.succeeded":
+        revenue = data.amount || 0;
+        sales = revenue > 0 ? 1 : 0;
         break;
 
       case "invoice.payment_succeeded":
-        // Can be initial or renewal
-        revenue = data?.amount_paid ? data.amount_paid / 100 : 0;
-        sales = 1;
+        // if (!visitorId || !sessionId) {
+        //   const meta = await getMetafromSubscription(data.subscription);
+        // }
+        revenue = data?.amount_paid || 0;
+        sales = revenue > 0 ? 1 : 0;
         break;
-
-      case "invoice.payment_failed":
-        // no revenue, maybe flag failed payments
-        break;
-
-      case "customer.subscription.created":
-        revenue = data?.plan?.amount ? data.plan.amount / 100 : 0;
-        sales = 1;
-        customers = 1;
-        break;
-
-      case "customer.subscription.updated":
-        renewalRevenue = data?.plan?.amount ? data.plan.amount / 100 : 0;
-        break;
-
-      case "customer.subscription.deleted":
-        // churn event, no direct revenue
-        break;
-
-      case "charge.refunded":
+      case "refund.created":
         refundedRevenue = data?.amount_refunded
           ? data.amount_refunded / 100
           : 0;
         break;
 
-      case "charge.succeeded":
-        revenue = data?.amount ? data.amount / 100 : 0;
-        sales = 1;
-        customers = 1;
-        break;
-
       default:
         console.log("Unhandled Stripe event", eventType);
     }
+    console.log({ revenue });
 
     await database.createRow({
       databaseId,
@@ -78,13 +74,13 @@ export async function POST(
       rowId: ID.unique(),
       data: {
         website: websiteId,
-        eventType,
-        revenue,
+        eventType: "purchase",
+        revenue: Number((revenue / 100).toFixed()),
         renewalRevenue,
         refundedRevenue,
-        customers,
+        sessionId,
+        visitorId,
         sales,
-        timestamp: new Date().toISOString(),
       },
     });
 
@@ -94,7 +90,7 @@ export async function POST(
 
     return NextResponse.json(
       { error: (err as Error).message },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
