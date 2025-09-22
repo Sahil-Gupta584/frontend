@@ -2,11 +2,16 @@ import { faker } from "@faker-js/faker";
 // import fs from "fs";
 import { Client, ID, Query, TablesDB } from "node-appwrite";
 
-const rawDatabaseId = "68cbc63100188b1cf674";
+const rawDatabaseId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
+if (!rawDatabaseId)
+  throw new Error("Missing NEXT_PUBLIC_APPWRITE_DATABASE_ID in .env");
+
 const databaseId: string = rawDatabaseId;
-const projectId = "68ad713f00087b77096f";
-const projectKey =
-  "standard_0f5fb3432024560fe5f818d405fca7dcc6f62174013950cd6ee46836a308d608040b6bc6447cb5de7e39cd2117629f50554411b96f705fcd2dbd2e745bc20a1f48827e8fd022d13b2d5bbdcfef4e6c628ff8a2e84679a594afd5ff1baf1404dd98bbddd83e2a9c91a348f08866b98122bcdca0e6069ef7db5972b7703366ecb6"; // keep your real key
+const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID;
+const projectKey = process.env.APPWRITE_KEY;
+if (!projectId)
+  throw new Error("Missing NEXT_PUBLIC_APPWRITE_PROJECT_ID in .env");
+if (!projectKey) throw new Error("Missing APPWRITE_KEY in .env");
 
 const client = new Client()
   .setEndpoint("https://fra.cloud.appwrite.io/v1")
