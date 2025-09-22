@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
     // Determine device from UA first, fallback to viewport width
     let device = parser.getDevice().type || "desktop";
-    if (!device || device === "unknown") {
+    if (!device) {
       const width = viewport?.width || 0;
       if (width <= 768) device = "mobile";
       else if (width <= 1024) device = "tablet";
