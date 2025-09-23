@@ -17,7 +17,7 @@ import NextLink from "@/components/nextLink";
 import { stripeSchema, TStripeForm } from "@/lib/zodSchemas";
 
 const stripeLink =
-  "https://dashboard.stripe.com/apikeys/create?name=Insightly&permissions%5B%5D=rak_charge_read&permissions%5B%5D=rak_subscription_read&permissions%5B%5D=rak_customer_read&permissions%5B%5D=rak_payment_intent_read&permissions%5B%5D=rak_checkout_session_read&permissions%5B%5D=rak_invoice_read&permissions%5B%5D=rak_webhook_write";
+  "https://dashboard.stripe.com/apikeys/create?name=Insightly&permissions%5B%5D=rak_webhook_write";
 
 export type TProviderFormProps = {
   websiteId: string;
@@ -74,6 +74,7 @@ export default function StripeForm({
                 text="restricted API key"
                 isBold={false}
                 isIcon
+                blank
               />
               (do not change any permissions) and paste the API key below:
             </p>

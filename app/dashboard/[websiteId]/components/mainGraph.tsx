@@ -140,29 +140,29 @@ function MainGraph({
     ...(revenue > 0
       ? [
           {
-            name: "",
-            icon: (
-              <Checkbox
-                color="secondary"
-                radius="sm"
-                classNames={{
-                  base: "p-0 m-0  ",
-                  label: "text-neutral-400",
-                }}
-                size="sm"
-                isSelected={isRevenueSelected}
-                onValueChange={setIsRevenueSelected}
-              >
-                Revenue
-              </Checkbox>
-            ),
-            value: "$" + revenue,
+            name: "Revenue/visitor",
+            value: visitors > 0 ? "$" + (revenue / visitors).toFixed(2) : "$0",
           },
         ]
       : []),
     {
-      name: "Revenue/visitor",
-      value: visitors > 0 ? "$" + (revenue / visitors).toFixed(2) : "$0",
+      name: "",
+      icon: (
+        <Checkbox
+          color="secondary"
+          radius="sm"
+          classNames={{
+            base: "p-0 m-0  ",
+            label: "text-neutral-400",
+          }}
+          size="sm"
+          isSelected={isRevenueSelected}
+          onValueChange={setIsRevenueSelected}
+        >
+          Revenue
+        </Checkbox>
+      ),
+      value: "$" + revenue,
     },
     {
       name: "Conversion rate",

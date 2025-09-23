@@ -109,7 +109,7 @@ export async function POST(request: Request) {
     const datafast_visitor_id = cookieStore.get("datafast_visitor_id")?.value;
 
     // Send payment data to DataFast's API
-    const ress = await fetch("https://datafa.st/api/v1/payments", {
+    await fetch("https://datafa.st/api/v1/payments", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${process.env.DATAFAST_API_KEY}`,

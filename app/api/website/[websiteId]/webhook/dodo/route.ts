@@ -2,6 +2,7 @@
 import { ID } from "appwrite";
 import { NextRequest, NextResponse } from "next/server";
 
+import { isFirstRenewalDodo } from "@/app/api/actions";
 import { database, databaseId } from "@/appwrite/serverConfig";
 
 export async function POST(
@@ -12,27 +13,63 @@ export async function POST(
     const body = await req.json();
 
     const websiteId = (await params).websiteId;
+    // console.log("body:", JSON.stringify(body));
 
     const eventType = body?.type;
     const data = body?.data;
-    const visitorId = data?.metadata?.insightly_visitor_id;
-    const sessionId = data?.metadata?.insightly_session_id;
+    let visitorId = data?.metadata?.insightly_visitor_id;
+    let sessionId = data?.metadata?.insightly_session_id;
     let revenue = 0;
     let renewalRevenue = 0;
     let refundedRevenue = 0;
-    let customers = 0;
     let sales = 0;
 
     switch (eventType) {
+      case "subscription.renewed":
+        visitorId = data?.metadata?.insightly_visitor_id;
+        sessionId = data?.metadata?.insightly_session_id;
+
+        if (!visitorId || !sessionId) {
+          console.log(
+            "No visitorId or sessionId found in metadata for dodo subscription.renewed",
+            { websiteId }
+          );
+          return NextResponse.json(
+            { ok: true, msg: "metadata not found" },
+            { status: 400 }
+          );
+        }
+        const firstRenewal = await isFirstRenewalDodo({
+          subId: data?.subscription_id,
+          websiteId,
+        });
+        firstRenewal
+          ? (revenue = data?.recurring_pre_tax_amount)
+          : (renewalRevenue = data?.recurring_pre_tax_amount);
+        sales = 1;
+        console.log("Subscription renewed for:", {
+          websiteId,
+          subId: data?.subscription_id,
+        });
+        break;
       case "payment.succeeded":
+        if (data?.subscription_id) {
+          console.log("Payment is for a subscription, ignoring", {
+            websiteId,
+            subsId: data?.subscription_id,
+          });
+          return NextResponse.json({ ok: true });
+        }
         revenue =
           (data?.settlement_amount &&
             (data?.settlement_amount - data?.settlement_tax) / 100) ||
           0;
         sales = 1;
-        customers = 1;
+        console.log("Payment recorded for:", {
+          websiteId,
+          pay: data?.payment_id,
+        });
         break;
-
       case "refund.succeeded":
         refundedRevenue =
           (data?.refunds && data.refunds[0] && data.refunds[0]?.amount) || 0;
@@ -47,11 +84,11 @@ export async function POST(
       rowId: ID.unique(),
       data: {
         website: websiteId,
-        eventType,
-        revenue,
-        renewalRevenue,
+        eventType: "purchase",
+        revenue: revenue > 0 ? Number((revenue / 100).toFixed()) : 0,
+        renewalRevenue:
+          renewalRevenue > 0 ? Number((renewalRevenue / 100).toFixed()) : 0,
         refundedRevenue,
-        customers,
         sales,
         visitorId,
         sessionId,
@@ -60,8 +97,7 @@ export async function POST(
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error(err);
-
+    console.error("Dodo Webhook Err:", err);
     return NextResponse.json(
       { error: (err as Error).message },
       { status: 500 }

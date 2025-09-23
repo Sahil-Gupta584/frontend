@@ -1,15 +1,15 @@
 import { addToast, Button, Input } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { useForm } from "react-hook-form";
 import { MdArrowRightAlt } from "react-icons/md";
-import axios from "axios";
 
 import DisconnectProvider from "../disconnectProvider";
 
 import { LinkWithTraffic, TProviderFormProps } from "./stripeForm";
 
+import LinkComponent from "@/components/link";
 import { polarSchema, TPolarForm } from "@/lib/zodSchemas";
-import NextLink from "@/components/nextLink";
 
 export default function PolarForm({
   websiteId,
@@ -29,7 +29,7 @@ export default function PolarForm({
         orgId: data.organizationId,
         websiteId: data.websiteId,
       },
-      { validateStatus: () => true },
+      { validateStatus: () => true }
     );
 
     if (res.data.error) {
@@ -67,8 +67,11 @@ export default function PolarForm({
               description={
                 <p className="flex flex-wrap items-center gap-1">
                   Go to your
-                  <NextLink
+                  <LinkComponent
                     href="https://polar.sh/dashboard"
+                    isBold={false}
+                    isIcon
+                    blank
                     text="Polar Dashboard"
                   />
                   <MdArrowRightAlt />

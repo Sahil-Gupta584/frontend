@@ -55,6 +55,7 @@ export default function DodoForm({
                 text="API key"
                 isBold={false}
                 isIcon
+                blank
               />
               and paste it below:
             </p>

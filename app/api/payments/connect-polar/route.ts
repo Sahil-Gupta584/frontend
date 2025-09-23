@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
       {
         format: "raw",
         // url: `https://insightly.appwrite.network/api/website/${body.websiteId}/webhook/polar`,
-        url: `https://d4c3b54a2cbb.ngrok-free.app/api/website/${body.websiteId}/webhook/polar`,
+        url: `https://d6475d804a66.ngrok-free.app/api/website/${body.websiteId}/webhook/polar`,
         events: [
           "order.created",
           "order.refunded",

@@ -1,5 +1,6 @@
-import { database, databaseId } from "@/appwrite/serverConfig";
+import { database, databaseId, MODE } from "@/appwrite/serverConfig";
 import { Query } from "node-appwrite";
+import { TPaymentProviders } from "../types";
 
 export function getFaviconUrl(domain: string) {
   return `https://icons.duckduckgo.com/ip3/${domain}.ico`;
@@ -258,3 +259,17 @@ export function normalizeOS(name?: string): string {
 
   return lower.replace(/\s+/g, "");
 }
+export function getWebhookUrl(provider: TPaymentProviders, websiteId: string) {
+  const domain = "insightly-three.vercel.app";
+  switch (provider) {
+    case "Dodo":
+      return `https://${MODE === "dev" ? "3dd19dc05842.ngrok-free.app" : domain}/api/website/${websiteId}/webhook/dodo`;
+    case "Polar":
+      return `https://${MODE === "dev" ? "3dd19dc05842.ngrok-free.app" : domain}/api/website/${websiteId}/webhook/polar`;
+    case "Stripe":
+      return `https://${MODE === "dev" ? "3dd19dc05842.ngrok-free.app" : domain}/api/website/${websiteId}/webhook/stripe`;
+  }
+}
+
+export const dodoApiBaseUrl = `https://${MODE === "prod" ? "live" : "test"}.dodopayments.com`;
+export const stripeApiBaseUrl = "https://api.stripe.com/v1";

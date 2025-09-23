@@ -1,7 +1,8 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
-import { database, databaseId, MODE } from "@/appwrite/serverConfig";
+import { database, databaseId } from "@/appwrite/serverConfig";
+import { dodoApiBaseUrl, getWebhookUrl } from "@/lib/utils/server";
 import { dodoSchema } from "@/lib/zodSchemas";
 
 export async function POST(req: NextRequest) {
@@ -10,10 +11,14 @@ export async function POST(req: NextRequest) {
     const formdata = await dodoSchema.parseAsync(body);
 
     const addWebhookRes = await axios.post(
-      `https://${MODE === "prod" ? "live" : "test"}.dodopayments.com/webhooks`,
+      dodoApiBaseUrl + `/webhooks`,
       {
-        url: `https://2d48021762e3.ngrok-free.app/api/website/${formdata.websiteId}/webhook/dodo`,
-        events: ["payment.succeeded", "refund.succeeded"],
+        url: getWebhookUrl("Dodo", formdata.websiteId) || "",
+        events: [
+          "payment.succeeded",
+          "refund.succeeded",
+          "subscription.renewed",
+        ],
       },
       {
         headers: {
@@ -24,15 +29,24 @@ export async function POST(req: NextRequest) {
     );
 
     if (addWebhookRes.data?.code) {
-      throw new Error("Failed to add webhook for dodopayments :(");
+      throw new Error(
+        "Failed to add webhook for dodopayments :(, Please check your API key or contact us."
+      );
     }
+    await database.upsertRow({
+      databaseId,
+      tableId: "keys",
+      rowId: body.websiteId,
+      data: {
+        dodo: formdata.apiKey,
+      },
+    });
 
     const website = await database.getRow({
       databaseId,
       tableId: "websites",
       rowId: body.websiteId,
     });
-
     website.paymentProviders.push("Dodo");
 
     await database.updateRow({

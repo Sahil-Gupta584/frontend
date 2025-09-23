@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
+import { MODE } from "@/appwrite/serverConfig";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
@@ -51,8 +52,9 @@ export default function RootLayout({
       <head>
         <script
           defer
-          data-website-id="68cd0d5300158ec6c0b5"
+          data-website-id="68d2611f0011c3785cb2"
           data-domain="insightly.appwrite.network"
+          data-allow-localhost={MODE === "prod" ? "false" : "true"}
           src="/script.js"
         ></script>
         <script

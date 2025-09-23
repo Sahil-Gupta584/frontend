@@ -2,6 +2,7 @@
 import { ID } from "appwrite";
 import { NextRequest, NextResponse } from "next/server";
 
+import { getSessionMetaFromStripe } from "@/app/api/actions";
 import { database, databaseId } from "@/appwrite/serverConfig";
 
 export async function POST(
@@ -17,45 +18,29 @@ export async function POST(
 
     const eventType = body?.type;
     const data = body?.data?.object;
-    let visitorId =
-      //from subscription
-      data.lines?.data?.[0]?.metadata?.insightly_visitor_id ||
-      //from paymentintent
-      data.metadata?.insightly_visitor_id;
-    let sessionId =
-      data.lines?.data?.[0]?.metadata?.insightly_session_id ||
-      data.metadata?.insightly_session_id;
-    if (
-      eventType === "invoice.payment_succeeded"
-      // data.lines?.data?.[0]?.parent?.subscription_item_details?.subscription ==
-      // "sub_1SACVo1tNDBT2PI2y9sy67t4"
-    ) {
-      console.log("here:", JSON.stringify(data));
-    }
-    if (!visitorId || !sessionId) {
-      console.log("No visitorId or sessionId in metadata", {
-        websiteId,
-        body: JSON.stringify(body),
-      });
-      return NextResponse.json({ ok: true }, { status: 400 });
-    }
+    let visitorId = data?.metadata?.insightly_visitor_id;
+    let sessionId = data.metadata?.insightly_session_id;
     let revenue = 0;
     let renewalRevenue = 0;
     let refundedRevenue = 0;
     let sales = 0;
-
     switch (eventType) {
       case "payment_intent.succeeded":
-        revenue = data.amount || 0;
-        sales = revenue > 0 ? 1 : 0;
-        break;
+        const metadata = await getSessionMetaFromStripe(data?.id, websiteId);
+        if (!metadata)
+          return NextResponse.json(
+            { ok: true, msg: "No metadata found in checkout session" },
+            { status: 400 }
+          );
 
-      case "invoice.payment_succeeded":
-        // if (!visitorId || !sessionId) {
-        //   const meta = await getMetafromSubscription(data.subscription);
-        // }
-        revenue = data?.amount_paid || 0;
+        visitorId = metadata.visitorId;
+        sessionId = metadata.sessionId;
+        revenue = data?.amount || 0;
         sales = revenue > 0 ? 1 : 0;
+        console.log("Stripe Payment completed for for mode:", metadata?.mode, {
+          websiteId,
+          paymentInt: body?.id,
+        });
         break;
       case "refund.created":
         refundedRevenue = data?.amount_refunded
@@ -66,7 +51,13 @@ export async function POST(
       default:
         console.log("Unhandled Stripe event", eventType);
     }
-    console.log({ revenue });
+    if (!visitorId || !sessionId) {
+      console.log("No visitorId or sessionId in stripe hook", {
+        websiteId,
+        eventType,
+      });
+      return NextResponse.json({ ok: true }, { status: 200 });
+    }
 
     await database.createRow({
       databaseId,

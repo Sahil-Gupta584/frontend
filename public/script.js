@@ -161,7 +161,8 @@
             "stripe" === t ? o.extraData = { stripe_session_id: e }
                 : "lemonsqueezy" === t ? o.extraData = { lemonsqueezy_order_id: e }
                     : "polar" === t ? o.extraData = { polar_checkout_id: e }
-                        : "dodo" === t && (o.extraData = { dodo_payment_id: e }),
+                        : "dodo_subscription" === t ? (o.extraData = { dodo_subscription_id: e })
+                            : "dodo_payment" === t && (o.extraData = { dodo_payment_id: e }),
             p(o, n)
     }
 
@@ -417,8 +418,16 @@
             }(),
             function () {
                 try {
+                    const t = new URL(window.location.href).searchParams.get("subscription_id");
+                    t && !sessionStorage.getItem("insightly_dodo_subscription_sent_" + t) && (y("dodo_subscription", t), sessionStorage.setItem("insightly_dodo_subscription_sent_" + t, "1"))
+                } catch (t) {
+                    console.error("Error auto detecting DodoPayments subscription ID:", t)
+                }
+            }(),
+            function () {
+                try {
                     const t = new URL(window.location.href).searchParams.get("payment_id");
-                    t && !sessionStorage.getItem("insightly_dodo_payment_sent_" + t) && (y("dodo", t), sessionStorage.setItem("insightly_dodo_payment_sent_" + t, "1"))
+                    t && !sessionStorage.getItem("insightly_dodo_payment_sent_" + t) && (y("dodo_payment", t), sessionStorage.setItem("insightly_dodo_payment_sent_" + t, "1"))
                 } catch (t) {
                     console.error("Error auto detecting DodoPayments payment ID:", t)
                 }
