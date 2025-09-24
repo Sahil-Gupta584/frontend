@@ -9,7 +9,17 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const formdata = await stripeSchema.parseAsync(body);
+    const res = await axios.get(stripeApiBaseUrl + `/checkout/sessions`, {
+      headers: { Authorization: `Bearer ${formdata.apiKey}` },
+      validateStatus: () => true,
+    });
+    if (res.data?.error?.type === "invalid_request_error") {
+      console.log(res.data);
 
+      throw new Error(
+        "rak_checkout_session_read scope not found for given key. Please use the link given in the form. "
+      );
+    }
     const params = new URLSearchParams();
 
     params.append("url", getWebhookUrl("Stripe", formdata.websiteId) || "");
@@ -28,14 +38,16 @@ export async function POST(req: NextRequest) {
     );
 
     if (webhookRes.data?.error?.type === "invalid_request_error") {
-      throw new Error("webhook:write scope not found for given key.");
+      throw new Error(
+        "webhook:write scope not found for given key. Please use the link given in the form."
+      );
     }
     if (webhookRes.status !== 200) {
       console.log(webhookRes.data);
       throw new Error("Failed to connect for stripe :(");
     }
 
-    await database.upsertRow({
+    const key = await database.upsertRow({
       databaseId,
       tableId: "keys",
       rowId: body.websiteId,
@@ -43,6 +55,7 @@ export async function POST(req: NextRequest) {
         stripe: formdata.apiKey,
       },
     });
+    console.log("Stripe key stored with id:", JSON.stringify(key));
 
     const website = await database.getRow({
       databaseId,

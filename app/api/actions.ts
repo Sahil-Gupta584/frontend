@@ -67,9 +67,10 @@ export async function getSessionMetaFromStripe(
     );
     const sessionData = res?.data?.data?.[0];
     if (!sessionData) {
-      console.log("Unable to find session from paymentIntent", {
+      console.log("Unable to find session using paymentIntent", {
         payIntId,
         websiteId,
+        sessionData: res.data,
       });
       return;
     }

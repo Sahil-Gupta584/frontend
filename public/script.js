@@ -4,10 +4,15 @@
         e = "data-",
         n = t.getAttribute.bind(t);
 
+    const allowLocalhost = n(e + "allow-localhost") === "true";
+
     function o(t) {
         if (!t) return !1;
         const e = t.toLowerCase();
-        return !!["localhost", "127.0.0.1", "::1"].includes(e) || (!!/^127(\.[0-9]+){0,3}$/.test(e) || (!!/^(\[)?::1?\]?$/.test(e) || !(!e.endsWith(".local") && !e.endsWith(".localhost"))))
+        return !!["localhost", "127.0.0.1", "::1"].includes(e)
+            || !!/^127(\.[0-9]+){0,3}$/.test(e)
+            || !!/^(\[)?::1?\]?$/.test(e)
+            || (!(!e.endsWith(".local") && !e.endsWith(".localhost")))
     }
 
     function a() {
@@ -70,8 +75,13 @@
     window.insightly && window.insightly.q && Array.isArray(window.insightly.q) && (l = window.insightly.q.map((t => Array.from(t))));
     let d = !0,
         u = "";
-    // d && a() && (d = !1, u = "Tracking disabled - bot detected"), d && (o(window.location.hostname) || "file:" === window.location.protocol) && (d = !1, u = "Tracking disabled on localhost, file protocol");
+    d && a() && (d = !1, u = "Tracking disabled - bot detected");
+    if (!allowLocalhost && (o(window.location.hostname) || "file:" === window.location.protocol)) {
+        d = !1;
+        u = "Tracking disabled on localhost (use data-allow-localhost='true' to enable)";
+    }
     const f = "true" === n(e + "debug");
+
     d && window !== window.parent && !f && (d = !1, u = "Tracking disabled inside an iframe");
     const m = n(e + "website-id"),
         g = n(e + "domain");
@@ -240,7 +250,7 @@
                 console.error("insightly: Error processing queued call:", e, t)
             }
         }
-    }(), !d) return void console.warn(`insightly: ${u}`);
+    }(), !d) return void console.warn(`Insightly: ${u}`);
 
     function E(t) {
         t && t.href && function (t) {

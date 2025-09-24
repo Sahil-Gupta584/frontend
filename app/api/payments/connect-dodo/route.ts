@@ -30,7 +30,8 @@ export async function POST(req: NextRequest) {
 
     if (addWebhookRes.data?.code) {
       throw new Error(
-        "Failed to add webhook for dodopayments :(, Please check your API key or contact us."
+        "Failed to connect dodopayments :(, Please check your API key or contact us." +
+          addWebhookRes.data?.code
       );
     }
     await database.upsertRow({
