@@ -53,7 +53,7 @@ export default function RootLayout({
         <script
           defer
           data-website-id="68d2611f0011c3785cb2"
-          data-domain="insightly.appwrite.network"
+          data-domain="insightly-three.vercel.app"
           data-allow-localhost={MODE === "prod" ? "false" : "true"}
           src="/script.js"
         ></script>
