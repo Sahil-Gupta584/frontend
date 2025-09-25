@@ -50,6 +50,8 @@ const checkoutSessionSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    console.log({ MODE });
+
     let body = await request.json();
     const cookieStore = await cookies();
 
