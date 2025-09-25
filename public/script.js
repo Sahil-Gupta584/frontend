@@ -35,13 +35,16 @@
     }
 
     function s(t, e, n) {
+        console.log('called with', { t, e, n });
+
         let a = "";
         if (n) {
             const t = new Date;
             t.setTime(t.getTime() + 24 * n * 60 * 60 * 1e3), a = "; expires=" + t.toUTCString()
         }
         let s = t + "=" + (e || "") + a + "; path=/";
-        g && !o(window.location.hostname) && "file:" !== window.location.protocol && (s += "; domain=." + g.replace(/^\./, "")), document.cookie = s
+        g && !o(window.location.hostname) && "file:" !== window.location.protocol && (s += "; domain=." + g.replace(/^\./, "")), document.cookie = s && console.log({ s });
+
     }
 
     function r(t) {
