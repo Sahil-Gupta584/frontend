@@ -92,6 +92,8 @@ export default function Pricing({ user }: { user: User | null }) {
 
               return;
             }
+            console.log({ MODE });
+
             const res = await axios.post("/api/checkout", {
               productCart: [
                 {
