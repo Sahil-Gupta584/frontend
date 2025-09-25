@@ -1,0 +1,322 @@
+{
+  "projectId": "68d11fc50036ddd8b1d1",
+  "endpoint": "https://fra.cloud.appwrite.io/v1",
+  "tablesDB": [
+    {
+      "$id": "68cbc63100188b1cf674",
+      "name": "Insightly",
+      "enabled": true
+    }
+  ],
+  "tables": [
+    {
+      "$id": "websites",
+      "$permissions": [],
+      "databaseId": "68cbc63100188b1cf674",
+      "name": "websites",
+      "enabled": true,
+      "columns": [
+        {
+          "key": "domain",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "timezone",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "userId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "paymentProviders",
+          "type": "string",
+          "required": false,
+          "array": true,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "$id": "events",
+      "$permissions": [],
+      "databaseId": "68cbc63100188b1cf674",
+      "name": "events",
+      "enabled": true,
+      "columns": [
+        {
+          "key": "type",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "website",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "href",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "visitorId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "sessionId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "referrer",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "os",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "device",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "browser",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "countryCode",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "city",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "region",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "index_1",
+          "type": "key",
+          "status": "available",
+          "orders": ["ASC"]
+        },
+        {
+          "key": "index_2",
+          "type": "key",
+          "status": "available",
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "heartbeats",
+      "$permissions": [],
+      "databaseId": "68cbc63100188b1cf674",
+      "name": "heartbeats",
+      "enabled": true,
+      "columns": [
+        {
+          "key": "sessionId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "visitorId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "website",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "$id": "revenues",
+      "$permissions": [],
+      "databaseId": "68cbc63100188b1cf674",
+      "name": "revenues",
+      "enabled": true,
+      "columns": [
+        {
+          "key": "website",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "eventType",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "revenue",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "max": 100000000,
+          "default": null
+        },
+        {
+          "key": "renewalRevenue",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "max": 100000000,
+          "default": null
+        },
+        {
+          "key": "refundedRevenue",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "max": 10000000,
+          "default": null
+        },
+        {
+          "key": "sales",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "max": 10000000,
+          "default": null
+        },
+        {
+          "key": "sessionId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "visitorId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "index_1",
+          "type": "key",
+          "status": "available",
+          "orders": ["ASC"]
+        },
+        {
+          "key": "index_2",
+          "type": "key",
+          "status": "available",
+          "orders": ["ASC"]
+        }
+      ]
+    }
+  ]
+}
