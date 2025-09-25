@@ -22,15 +22,9 @@ export default function PolarForm({
   });
 
   const onPolarSubmit = async (data: TPolarForm) => {
-    const res = await axios.post(
-      "/api/payments/connect-polar",
-      {
-        token: data.accessToken,
-        orgId: data.organizationId,
-        websiteId: data.websiteId,
-      },
-      { validateStatus: () => true }
-    );
+    const res = await axios.post("/api/payments/connect-polar", data, {
+      validateStatus: () => true,
+    });
 
     if (res.data.error) {
       addToast({
@@ -56,35 +50,6 @@ export default function PolarForm({
             <h2 className="font-bold">1. Connect Polar</h2>
 
             <Input
-              {...polarForm.register("organizationId")}
-              variant="bordered"
-              placeholder="your-organization-id"
-              label="Organization ID"
-              labelPlacement="outside-top"
-              isInvalid={!!polarForm.formState.errors.organizationId}
-              errorMessage={polarForm.formState.errors.organizationId?.message}
-              classNames={{ description: "text-sm text-desc" }}
-              description={
-                <p className="flex flex-wrap items-center gap-1">
-                  Go to your
-                  <LinkComponent
-                    href="https://polar.sh/dashboard"
-                    isBold={false}
-                    isIcon
-                    blank
-                    text="Polar Dashboard"
-                  />
-                  <MdArrowRightAlt />
-                  Settings
-                  <MdArrowRightAlt />
-                  General
-                  <MdArrowRightAlt />
-                  Profile and find "identifier"
-                </p>
-              }
-            />
-
-            <Input
               {...polarForm.register("accessToken")}
               variant="bordered"
               placeholder="polar_pat_************"
@@ -95,8 +60,17 @@ export default function PolarForm({
               classNames={{ description: "text-sm text-desc" }}
               description={
                 <p className="text-sm text-desc">
-                  Go to your Settings <MdArrowRightAlt className="inline" />
+                  Go to your
+                  <LinkComponent
+                    href="https://polar.sh/dashboard"
+                    isBold={false}
+                    isIcon
+                    blank
+                    text="Polar Dashboard"
+                  />
+                  Settings <MdArrowRightAlt className="inline" />
                   General <MdArrowRightAlt className="inline" /> Developer
+                  (scroll)
                   <MdArrowRightAlt className="inline" />
                   <span className="whitespace-normal break-words">
                     Token (no expiration, select "All Scopes")

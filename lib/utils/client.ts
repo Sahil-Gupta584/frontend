@@ -5,10 +5,12 @@ export async function tryCatchWrapper<T>({
   callback,
   errorMsg,
   successMsg,
+  warningMsg,
 }: {
   callback: () => T;
   errorMsg?: string;
   successMsg?: string;
+  warningMsg?: string;
 }) {
   try {
     const res = await callback();
@@ -41,5 +43,12 @@ export async function tryCatchWrapper<T>({
         description: errorMsg || "Server Error",
       });
     }
+  }
+  if (warningMsg) {
+    addToast({
+      color: "warning",
+      title: "Warning",
+      description: errorMsg || "Server Warning",
+    });
   }
 }

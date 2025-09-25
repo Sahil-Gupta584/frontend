@@ -5,8 +5,8 @@ import { RxCross2 } from "react-icons/rx";
 
 import { disconnectProvider } from "../actions";
 
-import { tryCatchWrapper } from "@/lib/utils/client";
 import { TPaymentProviders } from "@/lib/types";
+import { tryCatchWrapper } from "@/lib/utils/client";
 
 function DisconnectProvider({
   websiteId,
@@ -25,7 +25,7 @@ function DisconnectProvider({
           await disconnectProvider(websiteId, provider);
           refetch();
         },
-        successMsg: `${provider} removed successfully`,
+        warningMsg: `${provider} removed successfully`,
       }),
   });
 

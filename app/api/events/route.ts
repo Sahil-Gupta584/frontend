@@ -8,7 +8,8 @@ import { getGeo, normalizeBrowser, normalizeOS } from "@/lib/utils/server";
 import {
   handleDodoPaymentLink,
   handleDodoSubscriptionLink,
-  updateStripeCheckSession,
+  handleStripePaymentLinks,
+  updatePolarCustomer,
 } from "../actions";
 
 export async function POST(req: NextRequest) {
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
 
     if (extraData) {
       if (extraData.stripe_session_id) {
-        await updateStripeCheckSession({
+        await handleStripePaymentLinks({
           csid: extraData.stripe_session_id,
           sId: sessionId,
           vId: visitorId,
@@ -47,6 +48,14 @@ export async function POST(req: NextRequest) {
           payId: extraData.dodo_payment_id,
           vId: visitorId,
           websiteId,
+        });
+      }
+      if (extraData.polar_checkout_id) {
+        await updatePolarCustomer({
+          chId: extraData.polar_checkout_id,
+          websiteId,
+          vId: visitorId,
+          sId: sessionId,
         });
       }
     }
@@ -89,7 +98,7 @@ export async function POST(req: NextRequest) {
       rowId: ID.unique(),
       data: {
         website: websiteId,
-        href,
+        href: href.split("?")[0],
         referrer: referrer ? new URL(referrer).hostname : null,
         visitorId,
         sessionId,

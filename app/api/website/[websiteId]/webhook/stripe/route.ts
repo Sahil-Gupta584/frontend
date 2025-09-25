@@ -28,10 +28,10 @@ export async function POST(
       case "payment_intent.succeeded":
         const metadata = await getSessionMetaFromStripe(data?.id, websiteId);
         if (!metadata)
-          return NextResponse.json(
-            { ok: true, msg: "No metadata found in checkout session" },
-            { status: 400 }
-          );
+          return NextResponse.json({
+            ok: true,
+            msg: "No metadata found in stripe checkout session",
+          });
 
         visitorId = metadata.visitorId;
         sessionId = metadata.sessionId;
@@ -56,7 +56,6 @@ export async function POST(
         websiteId,
         eventType,
       });
-      return NextResponse.json({ ok: true }, { status: 200 });
     }
 
     await database.createRow({

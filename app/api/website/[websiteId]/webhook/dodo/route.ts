@@ -24,11 +24,16 @@ export async function POST(
     let refundedRevenue = 0;
     let sales = 0;
 
+    if (!visitorId || !sessionId) {
+      console.log("No visitorId or sessionId in dodo hook", {
+        websiteId,
+        eventType,
+        id: data?.id,
+      });
+      return NextResponse.json({ ok: true }, { status: 200 });
+    }
     switch (eventType) {
       case "subscription.renewed":
-        visitorId = data?.metadata?.insightly_visitor_id;
-        sessionId = data?.metadata?.insightly_session_id;
-
         if (!visitorId || !sessionId) {
           console.log(
             "No visitorId or sessionId found in metadata for dodo subscription.renewed",
@@ -65,7 +70,7 @@ export async function POST(
             (data?.settlement_amount - data?.settlement_tax) / 100) ||
           0;
         sales = 1;
-        console.log("Payment recorded for:", {
+        console.log("Dodo Payment recorded for:", {
           websiteId,
           pay: data?.payment_id,
         });

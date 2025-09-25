@@ -263,13 +263,14 @@ export function getWebhookUrl(provider: TPaymentProviders, websiteId: string) {
   const domain = "insightly-three.vercel.app";
   switch (provider) {
     case "Dodo":
-      return `https://${MODE === "dev" ? "3dd19dc05842.ngrok-free.app" : domain}/api/website/${websiteId}/webhook/dodo`;
+      return `https://${MODE === "dev" ? "5ecc1b2f29d8.ngrok-free.app" : domain}/api/website/${websiteId}/webhook/dodo`;
     case "Polar":
-      return `https://${MODE === "dev" ? "3dd19dc05842.ngrok-free.app" : domain}/api/website/${websiteId}/webhook/polar`;
+      return `https://${MODE === "dev" ? "5ecc1b2f29d8.ngrok-free.app" : domain}/api/website/${websiteId}/webhook/polar`;
     case "Stripe":
-      return `https://${MODE === "dev" ? "3dd19dc05842.ngrok-free.app" : domain}/api/website/${websiteId}/webhook/stripe`;
+      return `https://${MODE === "dev" ? "5ecc1b2f29d8.ngrok-free.app" : domain}/api/website/${websiteId}/webhook/stripe`;
   }
 }
 
 export const dodoApiBaseUrl = `https://${MODE === "prod" ? "live" : "test"}.dodopayments.com`;
 export const stripeApiBaseUrl = "https://api.stripe.com/v1";
+export const polarBaseUrl = `https://${MODE == "prod" ? "" : "sandbox-"}api.polar.sh/v1`;

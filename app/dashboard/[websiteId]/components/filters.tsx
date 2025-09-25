@@ -42,7 +42,7 @@ function Filters({
           value: "font-semibold text-lg",
           innerWrapper: "w-fit block",
           base: "w-fit",
-          popoverContent: "w-fit",
+          popoverContent: "w-fit border border-gray-600",
         }}
         placeholder="Select website"
         defaultSelectedKeys={[websiteId]}

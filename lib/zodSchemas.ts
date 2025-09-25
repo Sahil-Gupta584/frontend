@@ -1,7 +1,6 @@
 import z from "zod";
 
 export const polarSchema = z.object({
-  organizationId: z.string().min(1, "Organization ID is required"),
   accessToken: z.string().min(1, "Access Token is required"),
   websiteId: z.string().min(1, "Website Id is required"),
 });

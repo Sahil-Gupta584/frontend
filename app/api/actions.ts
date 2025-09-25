@@ -1,10 +1,14 @@
 import { database, databaseId } from "@/appwrite/serverConfig";
 import { TPaymentProviders } from "@/lib/types";
-import { dodoApiBaseUrl, stripeApiBaseUrl } from "@/lib/utils/server";
+import {
+  dodoApiBaseUrl,
+  polarBaseUrl,
+  stripeApiBaseUrl,
+} from "@/lib/utils/server";
 import axios from "axios";
 import { ID, Query } from "node-appwrite";
 
-export async function updateStripeCheckSession({
+export async function handleStripePaymentLinks({
   csid,
   sId,
   vId,
@@ -18,31 +22,61 @@ export async function updateStripeCheckSession({
   try {
     const key = await getWebsiteKey(websiteId, "Stripe");
     if (!key) return;
+
     const params = new URLSearchParams();
     params.append("metadata[insightly_visitor_id]", vId);
     params.append("metadata[insightly_session_id]", sId);
-    const res = await axios.post(
+    const checkoutRes = await axios(
       stripeApiBaseUrl + `/checkout/sessions/${csid}`,
-      params,
       {
-        headers: { Authorization: `Bearer ${key.rows[0].stripe}` },
+        headers: { Authorization: `Bearer ${key}` },
         validateStatus: () => true,
       }
     );
-    // console.log("updateStripeCheckSession:", JSON.stringify(res?.data));
-
-    if (!res?.data?.id) {
-      console.log("Failed to update checkout stripe checkout session", {
-        websiteId,
-        csid,
-        res: res.data,
-      });
-      return;
+    if (checkoutRes.data.mode === "subscription") {
+      const updateSessionRes = await axios.post(
+        stripeApiBaseUrl + `/checkout/sessions/${csid}`,
+        params,
+        {
+          headers: { Authorization: `Bearer ${key}` },
+          validateStatus: () => true,
+        }
+      );
+      if (!updateSessionRes?.data?.id) {
+        console.log("Failed to update checkout stripe checkout session", {
+          websiteId,
+          csid,
+          res: updateSessionRes.data,
+        });
+        return;
+      } else {
+        console.log("updated stripe checkout session", {
+          csid,
+          websiteId,
+        });
+      }
     }
-    console.log("updated stripe checkout session", {
-      csid,
-      websiteId,
+    await database.createRow({
+      databaseId,
+      tableId: "revenues",
+      rowId: ID.unique(),
+      data: {
+        website: websiteId,
+        eventType: "purchase",
+        revenue: Number((checkoutRes.data?.amount_subtotal / 100).toFixed()),
+        renewalRevenue: 0,
+        refundedRevenue: 0,
+        sessionId: sId,
+        visitorId: vId,
+        sales: 1,
+      },
     });
+    console.log("Handled stripe link for mode:", checkoutRes.data?.mode, {
+      websiteId,
+      csid,
+    });
+
+    // console.log("updateStripeCheckSession:", JSON.stringify(res?.data));
   } catch (error) {
     console.log("Error updating stripe session metadata", error, {
       csid,
@@ -51,6 +85,7 @@ export async function updateStripeCheckSession({
     return;
   }
 }
+
 export async function getSessionMetaFromStripe(
   payIntId: string,
   websiteId: string
@@ -61,7 +96,7 @@ export async function getSessionMetaFromStripe(
     const res = await axios.get(
       stripeApiBaseUrl + `/checkout/sessions?payment_intent=${payIntId}`,
       {
-        headers: { Authorization: `Bearer ${key.rows[0].stripe}` },
+        headers: { Authorization: `Bearer ${key}` },
         validateStatus: () => true,
       }
     );
@@ -79,7 +114,7 @@ export async function getSessionMetaFromStripe(
       !sessionData?.metadata?.insightly_session_id ||
       !sessionData?.metadata?.insightly_visitor_id
     ) {
-      console.log("No metadata found in checkout session", {
+      console.log("No metadata found in stripe checkout session", {
         payIntId,
         websiteId,
       });
@@ -107,11 +142,11 @@ export async function isFirstRenewalDodo({
   websiteId: string;
 }) {
   try {
-    const key = await getWebsiteKey(websiteId, "Stripe");
+    const key = await getWebsiteKey(websiteId, "Dodo");
     if (!key) return;
     const paymentsRes = await axios.get(
       dodoApiBaseUrl + `/payments?subscription_id=${subId}`,
-      { headers: { Authorization: `Bearer ${key.rows[0].dodo}` } }
+      { headers: { Authorization: `Bearer ${key}` } }
     );
     console.log("paymentsRes:", JSON.stringify(paymentsRes.data));
     return paymentsRes.data?.items?.length === 1;
@@ -136,11 +171,11 @@ export async function handleDodoSubscriptionLink({
   sId: string;
 }) {
   try {
-    const key = await getWebsiteKey(websiteId, "Stripe");
+    const key = await getWebsiteKey(websiteId, "Dodo");
     if (!key) return;
 
     const subRes = await axios.get(dodoApiBaseUrl + `/subscriptions/${subId}`, {
-      headers: { Authorization: `Bearer ${key.rows[0].dodo}` },
+      headers: { Authorization: `Bearer ${key}` },
     });
     const subscription = subRes.data;
     const isMetadataExists =
@@ -178,7 +213,7 @@ export async function handleDodoSubscriptionLink({
           insightly_session_id: sId,
         },
       },
-      { headers: { Authorization: `Bearer ${key.rows[0].dodo}` } }
+      { headers: { Authorization: `Bearer ${key}` } }
     );
     if (!res?.data?.subscription_id) {
       console.log(
@@ -188,7 +223,7 @@ export async function handleDodoSubscriptionLink({
         websiteId
       );
     }
-    console.log("handled dodo subscription link", {
+    console.log("Dodo Subscription recorded", {
       sId,
       subId,
       vId,
@@ -215,21 +250,17 @@ export async function handleDodoPaymentLink({
   sId: string;
 }) {
   try {
-    console.log("handleDodoPaymentLink", { sId, payId, vId, websiteId });
-
-    const key = await getWebsiteKey(websiteId, "Stripe");
+    const key = await getWebsiteKey(websiteId, "Dodo");
     if (!key) return;
-    console.log("key", key.rows[0]);
-
     const payRes = await axios.get(dodoApiBaseUrl + `/payments/${payId}`, {
-      headers: { Authorization: `Bearer ${key.rows[0].dodo}` },
+      headers: { Authorization: `Bearer ${key}` },
     });
     const payment = payRes.data;
     const isMetadataExists =
       payment?.metadata?.insightly_session_id &&
       payment?.metadata?.insightly_visitor_id;
     if (isMetadataExists) {
-      console.log("Metadata already exists for dodo subscription", {
+      console.log("Metadata already exists for dodo Payment", {
         payId,
         websiteId,
       });
@@ -258,9 +289,9 @@ export async function handleDodoPaymentLink({
         eventType: "purchase",
       },
     });
-    console.log("handled dodo payment link", { sId, payId, vId, websiteId });
+    console.log("Dodo payment recorded", { sId, payId, vId, websiteId });
   } catch (error) {
-    console.log("handleDodoSubscriptionLink Error", error, {
+    console.log("handleDodoPaymentLink Error", error, {
       sId,
       payId,
       websiteId,
@@ -268,15 +299,96 @@ export async function handleDodoPaymentLink({
   }
 }
 
-async function getWebsiteKey(websiteId: string, provider: TPaymentProviders) {
+export async function updatePolarCustomer({
+  chId,
+  sId,
+  vId,
+  websiteId,
+}: {
+  chId: string;
+  websiteId: string;
+  vId: string;
+  sId: string;
+}) {
+  try {
+    const key = await getWebsiteKey(websiteId, "Polar");
+    if (!key) return;
+
+    // First, get the checkout to retrieve customer_id
+    const checkoutRes = await axios.get(polarBaseUrl + `/checkouts/${chId}`, {
+      headers: {
+        Authorization: `Bearer ${key}`,
+      },
+      validateStatus: () => true,
+    });
+
+    if (!checkoutRes.data?.customer_id) {
+      console.log("Failed to get customer_id from checkout", {
+        chId,
+        websiteId,
+        res: JSON.stringify(checkoutRes.data),
+      });
+      return;
+    }
+
+    // Update customer metadata
+    const updateCustomerRes = await axios.patch(
+      polarBaseUrl + `/customers/${checkoutRes.data.customer_id}`,
+      {
+        metadata: {
+          [`${websiteId}_insightlyVisitorId`]: vId,
+          [`${websiteId}_insightlySessionId`]: sId,
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${key}`,
+        },
+        validateStatus: () => true,
+      }
+    );
+
+    if (!updateCustomerRes.data?.id) {
+      console.log("Failed to update polar customer metadata", {
+        chId,
+        websiteId,
+        customer_id: checkoutRes.data.customer_id,
+        res: JSON.stringify(updateCustomerRes.data),
+      });
+    } else {
+      console.log("Successfully updated polar customer metadata", {
+        chId,
+        websiteId,
+        customer_id: checkoutRes.data.customer_id,
+      });
+    }
+  } catch (error) {
+    console.log(
+      "Unhandled error in updatePolarCheckout",
+      {
+        chId,
+        websiteId,
+      },
+      error
+    );
+  }
+}
+
+export async function getWebsiteKey(
+  websiteId: string,
+  provider: TPaymentProviders
+) {
   const res = await database.listRows({
     databaseId,
     tableId: "keys",
     queries: [Query.equal("$id", websiteId)],
   });
   if (!res.rows[0]?.[provider.toLowerCase()]) {
-    console.log("No stripe key found for website", { websiteId });
+    console.log(`No ${provider.toLowerCase()} key found for website`, {
+      websiteId,
+      res: JSON.stringify(res),
+    });
     return;
   }
-  return res;
+  return res.rows[0]?.[provider.toLowerCase()] as string;
 }

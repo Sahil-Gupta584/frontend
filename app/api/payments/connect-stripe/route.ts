@@ -9,21 +9,41 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const formdata = await stripeSchema.parseAsync(body);
-    const res = await axios.get(stripeApiBaseUrl + `/checkout/sessions`, {
-      headers: { Authorization: `Bearer ${formdata.apiKey}` },
-      validateStatus: () => true,
-    });
+
+    const res = await axios.post(
+      stripeApiBaseUrl + `/checkout/sessions`,
+      {
+        mode: "payment",
+        line_items: [
+          {
+            price_data: {
+              currency: "usd",
+              product_data: { name: "Test Product" },
+              unit_amount: 100,
+            },
+            quantity: 1,
+          },
+        ],
+        success_url: "https://example.com/success",
+        cancel_url: "https://example.com/cancel",
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${formdata.apiKey}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        validateStatus: () => true,
+      }
+    );
     if (res.data?.error?.type === "invalid_request_error") {
       console.log(res.data);
-
       throw new Error(
-        "rak_checkout_session_read scope not found for given key. Please use the link given in the form. "
+        "rak_checkout_session_write scope not found for given key. Please use the link given in the form. "
       );
     }
+
     const params = new URLSearchParams();
-
     params.append("url", getWebhookUrl("Stripe", formdata.websiteId) || "");
-
     ["payment_intent.succeeded", "refund.created"].forEach((event) => {
       params.append("enabled_events[]", event);
     });
@@ -46,8 +66,7 @@ export async function POST(req: NextRequest) {
       console.log(webhookRes.data);
       throw new Error("Failed to connect for stripe :(");
     }
-
-    const key = await database.upsertRow({
+    await database.upsertRow({
       databaseId,
       tableId: "keys",
       rowId: body.websiteId,
@@ -55,7 +74,6 @@ export async function POST(req: NextRequest) {
         stripe: formdata.apiKey,
       },
     });
-    console.log("Stripe key stored with id:", JSON.stringify(key));
 
     const website = await database.getRow({
       databaseId,
