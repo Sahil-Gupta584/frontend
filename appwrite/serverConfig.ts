@@ -259,6 +259,6 @@ async function deleterows() {
 // seed("events", eventsData);
 // seed("revenues", revenuesData);
 // seed('revenues', (await generateDummyData()).revenues);
-const MODE = process.env.MODE || "dev";
+const MODE = process.env.NEXT_PUBLIC_MODE || "dev";
 
 export { database, databaseId, MODE };
