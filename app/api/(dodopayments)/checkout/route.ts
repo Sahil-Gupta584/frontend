@@ -1,10 +1,10 @@
 import axios from "axios";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { MODE } from "@/appwrite/serverConfig";
 import { getGeo } from "@/lib/utils/server";
-import { cookies } from "next/headers";
 
 const productCartItemSchema = z.object({
   product_id: z.string().min(1, "Product ID is required"),
@@ -124,7 +124,13 @@ export async function POST(request: Request) {
     });
 
     if (!res.data?.checkout_url) {
-      throw new Error("Failed to create checkout");
+      console.log(
+        "res",
+        res.data,
+        MODE,
+        `https://${MODE === "prod" ? "live" : "test"}.dodopayments.com/checkouts`
+      );
+      // throw new Error("Failed to create checkout");
     }
 
     return NextResponse.json({ ok: true, url: res.data?.checkout_url });
