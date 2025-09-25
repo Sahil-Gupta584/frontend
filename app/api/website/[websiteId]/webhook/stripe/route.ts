@@ -24,9 +24,11 @@ export async function POST(
     let renewalRevenue = 0;
     let refundedRevenue = 0;
     let sales = 0;
+
     switch (eventType) {
       case "payment_intent.succeeded":
         const metadata = await getSessionMetaFromStripe(data?.id, websiteId);
+
         if (!metadata)
           return NextResponse.json({
             ok: true,

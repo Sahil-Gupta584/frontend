@@ -4,13 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { FaStripeS } from "react-icons/fa";
 
+import DodoForm from "./dodoForm";
 import PolarForm from "./polarForm";
 import StripeForm from "./stripeForm";
 
 import { getWebsite } from "@/app/dashboard/[websiteId]/actions";
 import PolarLogo from "@/components/polarLogo";
 import { tryCatchWrapper } from "@/lib/utils/client";
-import DodoForm from "./dodoForm";
 
 export default function RevenueConnectTab({
   websiteId,
@@ -32,6 +32,7 @@ export default function RevenueConnectTab({
     },
     enabled: false,
   });
+
   useEffect(() => {
     refetch();
   }, []);
@@ -90,6 +91,7 @@ export default function RevenueConnectTab({
               <img
                 src="https://yt3.ggpht.com/eLGtrPf7cslZZVYuREq-NcOdKdJrsTkODlZaJUv0jvP1fmK0gCDEOR-6K37OvnA5mpnkJDx2GeM=s68-c-k-c0x00ffffff-no-rj"
                 className="size-5 rounded-full"
+                alt=""
               />
             }
           />

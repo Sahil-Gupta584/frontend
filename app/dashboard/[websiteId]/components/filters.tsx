@@ -1,9 +1,11 @@
-import { Favicon } from "@/components/favicon";
 import { Button, Select, SelectItem, SelectSection } from "@heroui/react";
 import Link from "next/link";
 import { IoSettingsSharp } from "react-icons/io5";
 import { TfiReload } from "react-icons/tfi";
+
 import { TWebsite } from "./dashboard";
+
+import { Favicon } from "@/components/favicon";
 export const durationOptions = [
   { key: "today", label: "Today" },
   { key: "yesterday", label: "Yesterday" },
@@ -25,6 +27,7 @@ function Filters({
 }: {
   websiteId: string;
   duration: string;
+  // eslint-disable-next-line no-unused-vars
   setDuration: (duration: string) => void;
   data: TWebsite[];
   isLoading: boolean;

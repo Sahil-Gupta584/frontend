@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
         validateStatus: () => true,
       }
     );
+
     if (customerRes.data?.error === "insufficient_scope") {
       throw new Error("customer:write scope not found for given token.");
     }
@@ -57,6 +58,7 @@ export async function POST(req: NextRequest) {
         validateStatus: () => true,
       }
     );
+
     if (addWebhookRes.data?.error === "insufficient_scope") {
       throw new Error("webhook:write scope not found for given token.");
     }
@@ -79,6 +81,7 @@ export async function POST(req: NextRequest) {
       tableId: "websites",
       rowId: formdata.websiteId,
     });
+
     website.paymentProviders.push("Polar");
     await database.updateRow({
       databaseId,

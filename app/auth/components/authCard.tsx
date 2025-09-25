@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
+import { OAuthProvider } from "appwrite";
 
 import { account } from "@/appwrite/clientConfig";
 import Logo from "@/components/logo";
-import { OAuthProvider } from "appwrite";
 
 function AuthCard() {
   const [domain, setDomain] = useState("");

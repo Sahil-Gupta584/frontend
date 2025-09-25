@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
           Query.orderAsc("$createdAt"),
         ],
       });
+
       timestamp = row.rows?.[0].$createdAt;
     }
 
@@ -67,8 +68,10 @@ export async function GET(req: NextRequest) {
 
     // Map session → revenue
     const revenueMap = new Map<string, number>();
+
     revenues.forEach((r) => {
       const prev = revenueMap.get(r.sessionId) || 0;
+
       revenueMap.set(r.sessionId, prev + (r.revenue || 0));
     });
 
@@ -92,6 +95,7 @@ export async function GET(req: NextRequest) {
     for (const e of events) {
       const sessionTotalRevenue = revenueMap.get(e.sessionId) || 0;
       const giveRevenue = !seenSessions.has(e.sessionId);
+
       if (giveRevenue) seenSessions.add(e.sessionId);
 
       // Count global visitors
@@ -105,6 +109,7 @@ export async function GET(req: NextRequest) {
         extra?: Partial<Metric>
       ) => {
         const bucket = map.get(key);
+
         if (bucket) {
           bucket.visitors += 1;
           if (giveRevenue && sessionTotalRevenue > 0) {
@@ -127,10 +132,12 @@ export async function GET(req: NextRequest) {
       const pathname = new URL(
         e.href?.startsWith("/") ? `http://localhost:300${e.href}` : e.href
       ).pathname;
+
       updateBucket(pageMap, pathname);
 
       // --- Referrer ---
       const refDomain = normalizeReferrer(e.referrer);
+
       updateBucket(referrerMap, refDomain, {
         imageUrl: `https://icons.duckduckgo.com/ip3/${refDomain}.ico`,
       });
@@ -177,6 +184,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(dataset);
   } catch (err) {
     console.error("others", err);
+
     return NextResponse.json(
       { error: (err as Error).message },
       { status: 500 }

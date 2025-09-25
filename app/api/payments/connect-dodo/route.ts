@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
       tableId: "websites",
       rowId: body.websiteId,
     });
+
     website.paymentProviders.push("Dodo");
 
     await database.updateRow({

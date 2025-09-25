@@ -1,5 +1,6 @@
-import { TClassName } from "@/lib/types";
 import Link from "next/link";
+
+import { TClassName } from "@/lib/types";
 
 function NextLink({
   text,

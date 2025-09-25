@@ -1,5 +1,7 @@
 "use client";
+import axios from "axios";
 import { useRouter } from "next/navigation";
+import Stripe from "stripe";
 
 import { MODE } from "@/appwrite/serverConfig";
 import { PricingTableOne } from "@/components/billingsdk/pricing-table-one";
@@ -7,8 +9,6 @@ import { plans } from "@/lib/billingsdk-config";
 import { User } from "@/lib/types";
 import { tryCatchWrapper } from "@/lib/utils/client";
 import { polarBaseUrl } from "@/lib/utils/server";
-import axios from "axios";
-import Stripe from "stripe";
 async function createCheckoutSession(mode: string) {
   try {
     const stripe = new Stripe(
@@ -35,10 +35,12 @@ async function createCheckoutSession(mode: string) {
         insightly_session_id: "s60250873-e2f6-4243-aaff-5643b4b28657",
       },
     });
+
     console.log("Checkout session created:", session.id);
     if (session.url) {
       window.location.href = session.url;
     }
+
     return session;
   } catch (error) {
     console.error("Error creating checkout session:", error);
@@ -51,6 +53,11 @@ export default function Pricing({ user }: { user: User | null }) {
   async function handleCheckout(plan: string) {
     tryCatchWrapper({
       callback: async () => {
+        if (plan === "starter") {
+          router.push("/dashboard");
+
+          return;
+        }
         const res = await axios.post(
           polarBaseUrl + "/checkouts",
           {
@@ -67,6 +74,7 @@ export default function Pricing({ user }: { user: User | null }) {
             },
           }
         );
+
         if (res.data?.url) {
           window.location.href = res.data.url;
         }
@@ -79,12 +87,9 @@ export default function Pricing({ user }: { user: User | null }) {
       <div className="flex flex-col md:flex-row gap-6 justify-center">
         <button
           onClick={async () => {
-            // if (plan === "starter") {
-            //   router.push("/dashboard");
-            //   return;
-            // }
             if (!user?.$id) {
               router.push(`/auth?redirect=${encodeURIComponent("/#pricing")}`);
+
               return;
             }
             const res = await axios.post("/api/checkout", {
@@ -105,6 +110,7 @@ export default function Pricing({ user }: { user: User | null }) {
               },
               return_url: window.location.origin + "/dashboard",
             });
+
             // if (res.data.error) throw new Error(res.data.error);
             // if (!res.data.url) throw new Error("Failed to create checkout session");
             // window.location.href = res.data.url;
@@ -125,11 +131,11 @@ export default function Pricing({ user }: { user: User | null }) {
             //     },
             //   }
             // );
-            // if (res.data?.url) {
-            //   window.location.href = res.data.url;
-            // } else {
-            //   console.log(res.data);
-            // }
+            if (res.data?.url) {
+              window.location.href = res.data.url;
+            } else {
+              console.log(res.data);
+            }
             // const res = await createCheckoutSession();
             // if (res.url) {
             //   window.location.href = res.url;
@@ -142,6 +148,7 @@ export default function Pricing({ user }: { user: User | null }) {
           onClick={async () => {
             if (!user?.$id) {
               router.push(`/auth?redirect=${encodeURIComponent("/#pricing")}`);
+
               return;
             }
             const res = await axios.post("/api/checkout", {
@@ -162,6 +169,12 @@ export default function Pricing({ user }: { user: User | null }) {
               },
               return_url: window.location.origin + "/dashboard",
             });
+
+            if (res.data?.url) {
+              window.location.href = res.data.url;
+            } else {
+              console.log(res.data);
+            }
           }}
         >
           dodo onetime
@@ -190,6 +203,7 @@ export default function Pricing({ user }: { user: User | null }) {
                 },
               }
             );
+
             if (res.data?.url) {
               window.location.href = res.data.url;
             }
@@ -215,6 +229,7 @@ export default function Pricing({ user }: { user: User | null }) {
                 },
               }
             );
+
             if (res.data?.url) {
               window.location.href = res.data.url;
             }

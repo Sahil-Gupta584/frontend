@@ -1,6 +1,8 @@
-import { database, databaseId, MODE } from "@/appwrite/serverConfig";
 import { Query } from "node-appwrite";
+
 import { TPaymentProviders } from "../types";
+
+import { database, databaseId, MODE } from "@/appwrite/serverConfig";
 
 export function getFaviconUrl(domain: string) {
   return `https://icons.duckduckgo.com/ip3/${domain}.ico`;
@@ -261,6 +263,7 @@ export function normalizeOS(name?: string): string {
 }
 export function getWebhookUrl(provider: TPaymentProviders, websiteId: string) {
   const domain = "insightly-three.vercel.app";
+
   switch (provider) {
     case "Dodo":
       return `https://${MODE === "dev" ? "5ecc1b2f29d8.ngrok-free.app" : domain}/api/website/${websiteId}/webhook/dodo`;

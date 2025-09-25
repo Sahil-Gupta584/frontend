@@ -2,15 +2,16 @@ import { ID } from "appwrite";
 import { NextRequest, NextResponse } from "next/server";
 import { UAParser } from "ua-parser-js";
 
-import { database, databaseId } from "@/appwrite/serverConfig";
-import { headers } from "@/lib/constants";
-import { getGeo, normalizeBrowser, normalizeOS } from "@/lib/utils/server";
 import {
   handleDodoPaymentLink,
   handleDodoSubscriptionLink,
   handleStripePaymentLinks,
   updatePolarCustomer,
 } from "../actions";
+
+import { database, databaseId } from "@/appwrite/serverConfig";
+import { headers } from "@/lib/constants";
+import { getGeo, normalizeBrowser, normalizeOS } from "@/lib/utils/server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -66,14 +67,17 @@ export async function POST(req: NextRequest) {
     const os = normalizeOS(parser.getOS().name);
 
     let device = parser.getDevice().type || "desktop";
+
     if (!device) {
       const width = viewport?.width || 0;
+
       if (width <= 768) device = "mobile";
       else if (width <= 1024) device = "tablet";
       else device = "desktop";
     }
 
     let ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "0.0.0.0";
+
     ip = ip === "::1" ? "103.190.15.171" : ip;
 
     const geo = await getGeo(ip);
@@ -115,6 +119,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true }, { headers });
   } catch (error) {
     console.error(error);
+
     return NextResponse.json(
       { ok: false, error: (error as Error).message },
       { status: 500 }

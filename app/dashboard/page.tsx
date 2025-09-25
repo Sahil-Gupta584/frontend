@@ -6,10 +6,10 @@ import axios from "axios";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import { Line, LineChart, ResponsiveContainer } from "recharts";
+import { useEffect } from "react";
 
 import { account } from "@/appwrite/clientConfig";
 import { Favicon } from "@/components/favicon";
-import { useEffect } from "react";
 
 export default function Dashboard() {
   const getWebsitesQuery = useQuery({

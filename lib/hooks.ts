@@ -26,19 +26,11 @@ export const useTimeZones = () => {
             hour12: true,
           });
 
-          // Format the timezone name for display
-          const parts = timeZone.split("/");
-          let displayName = timeZone.replace(/_/g, " ");
-
-          if (parts.length > 1) {
-            displayName = `${parts[0]} - ${parts[parts.length - 1].replace(/_/g, " ")}`;
-          }
-
           return {
             value: timeZone,
             label: timeStr,
           };
-        } catch (e) {
+        } catch {
           return {
             value: timeZone,
             label: timeZone,
@@ -91,7 +83,7 @@ export function useUser() {
               headers: {
                 Authorization: `Bearer ${session.providerAccessToken}`,
               },
-            },
+            }
           );
           const profile = await res.json();
 

@@ -1,5 +1,7 @@
 "use client";
 
+import console from "console";
+
 import {
   addToast,
   Autocomplete,
@@ -28,8 +30,8 @@ import { AddScriptCard } from "./addScriptCard";
 import RevenueConnectTab from "./revenueConnectTab";
 import Title from "./tabTitle";
 
-import { addWebsiteSchema, TAddWebsiteForm } from "@/lib/zodSchemas";
 import { tryCatchWrapper } from "@/lib/utils/client";
+import { addWebsiteSchema, TAddWebsiteForm } from "@/lib/zodSchemas";
 
 type WebsiteData = { websiteId: string; step: string; domain: string };
 
@@ -97,7 +99,7 @@ export default function NewWebsite() {
 
         if (res && res?.$id) {
           router.push(
-            `/dashboard/new?step=addScript&websiteId=${res.$id}&domain=${res.domain}`,
+            `/dashboard/new?step=addScript&websiteId=${res.$id}&domain=${res.domain}`
           );
           addToast({
             color: "success",
@@ -235,7 +237,7 @@ export default function NewWebsite() {
                       : "/dashboard/new?step=revenue";
 
                     setWebsiteData(
-                      (prev) => ({ ...prev, step: "revenue" }) as WebsiteData,
+                      (prev) => ({ ...prev, step: "revenue" }) as WebsiteData
                     );
                     router.push(url);
                   }}
@@ -288,6 +290,8 @@ export function Time({ selectedTimeZone }: { selectedTimeZone: string }) {
         })
       : "";
   } catch (error) {
+    console.log(error);
+
     console.log({ selectedTimeZone });
   }
 

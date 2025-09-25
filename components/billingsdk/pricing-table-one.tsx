@@ -196,6 +196,7 @@ export interface PricingTableOneProps
   plans: Plan[];
   title?: string;
   description?: string;
+  // eslint-disable-next-line no-unused-vars
   onPlanSelect?: (planId: string) => void;
 }
 

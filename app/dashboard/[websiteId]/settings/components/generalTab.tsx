@@ -10,6 +10,7 @@ import {
   Divider,
   Input,
 } from "@heroui/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { deleteWebsite, getWebsite, saveWebsiteData } from "../../actions";
@@ -18,8 +19,6 @@ import { AddScriptCard } from "@/app/dashboard/new/components/addScriptCard";
 import { Time } from "@/app/dashboard/new/components/newWebsite";
 import { useTimeZones } from "@/lib/hooks";
 import { tryCatchWrapper } from "@/lib/utils/client";
-import { addWebsiteSchema } from "@/lib/zodSchemas";
-import { useRouter } from "next/navigation";
 
 export interface TWebsiteData {
   domain: string;
@@ -33,6 +32,7 @@ function GeneralTab({ websiteId }: { websiteId: string }) {
   });
   const timeZones = useTimeZones();
   const router = useRouter();
+
   useEffect(() => {
     async function init() {
       const website = await getWebsite(websiteId);
@@ -74,10 +74,6 @@ function GeneralTab({ websiteId }: { websiteId: string }) {
     tryCatchWrapper({
       callback: async () => {
         setIsLoading(true);
-
-        const data = await addWebsiteSchema.parseAsync({
-          ...websiteData,
-        });
 
         await saveWebsiteData({ $id: websiteId, ...websiteData });
         setIsLoading(false);

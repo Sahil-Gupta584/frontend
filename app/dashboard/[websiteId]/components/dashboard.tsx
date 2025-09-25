@@ -68,6 +68,7 @@ export default function Dashboard() {
     },
     enabled: false,
   });
+
   useEffect(() => {
     mainGraphQuery.refetch(),
       otherGraphQuery.refetch(),
@@ -78,6 +79,7 @@ export default function Dashboard() {
       ? getWebsitesQuery.data.find((w) => w?.$id === websiteId)
       : null;
   }, [getWebsitesQuery.data]);
+
   return (
     <section className="mb-6">
       {mainGraphQuery.data && mainGraphQuery.data?.isEmpty && (

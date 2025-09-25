@@ -1,3 +1,6 @@
+import axios from "axios";
+import { ID, Query } from "node-appwrite";
+
 import { database, databaseId } from "@/appwrite/serverConfig";
 import { TPaymentProviders } from "@/lib/types";
 import {
@@ -5,8 +8,6 @@ import {
   polarBaseUrl,
   stripeApiBaseUrl,
 } from "@/lib/utils/server";
-import axios from "axios";
-import { ID, Query } from "node-appwrite";
 
 export async function handleStripePaymentLinks({
   csid,
@@ -21,9 +22,11 @@ export async function handleStripePaymentLinks({
 }) {
   try {
     const key = await getWebsiteKey(websiteId, "Stripe");
+
     if (!key) return;
 
     const params = new URLSearchParams();
+
     params.append("metadata[insightly_visitor_id]", vId);
     params.append("metadata[insightly_session_id]", sId);
     const checkoutRes = await axios(
@@ -33,6 +36,7 @@ export async function handleStripePaymentLinks({
         validateStatus: () => true,
       }
     );
+
     if (checkoutRes.data.mode === "subscription") {
       const updateSessionRes = await axios.post(
         stripeApiBaseUrl + `/checkout/sessions/${csid}`,
@@ -42,12 +46,14 @@ export async function handleStripePaymentLinks({
           validateStatus: () => true,
         }
       );
+
       if (!updateSessionRes?.data?.id) {
         console.log("Failed to update checkout stripe checkout session", {
           websiteId,
           csid,
           res: updateSessionRes.data,
         });
+
         return;
       } else {
         console.log("updated stripe checkout session", {
@@ -82,6 +88,7 @@ export async function handleStripePaymentLinks({
       csid,
       websiteId,
     });
+
     return;
   }
 }
@@ -92,6 +99,7 @@ export async function getSessionMetaFromStripe(
 ) {
   try {
     const key = await getWebsiteKey(websiteId, "Stripe");
+
     if (!key) return;
     const res = await axios.get(
       stripeApiBaseUrl + `/checkout/sessions?payment_intent=${payIntId}`,
@@ -101,12 +109,14 @@ export async function getSessionMetaFromStripe(
       }
     );
     const sessionData = res?.data?.data?.[0];
+
     if (!sessionData) {
       console.log("Unable to find session using paymentIntent", {
         payIntId,
         websiteId,
         sessionData: res.data,
       });
+
       return;
     }
 
@@ -118,8 +128,10 @@ export async function getSessionMetaFromStripe(
         payIntId,
         websiteId,
       });
+
       return;
     }
+
     return {
       visitorId: sessionData?.metadata.insightly_visitor_id,
       sessionId: sessionData?.metadata.insightly_session_id,
@@ -130,6 +142,7 @@ export async function getSessionMetaFromStripe(
       payIntId,
       websiteId,
     });
+
     return;
   }
 }
@@ -143,18 +156,22 @@ export async function isFirstRenewalDodo({
 }) {
   try {
     const key = await getWebsiteKey(websiteId, "Dodo");
+
     if (!key) return;
     const paymentsRes = await axios.get(
       dodoApiBaseUrl + `/payments?subscription_id=${subId}`,
       { headers: { Authorization: `Bearer ${key}` } }
     );
+
     console.log("paymentsRes:", JSON.stringify(paymentsRes.data));
+
     return paymentsRes.data?.items?.length === 1;
   } catch (error) {
     console.log("Error checking first renewal for dodo", error, {
       subId,
       websiteId,
     });
+
     return false;
   }
 }
@@ -172,6 +189,7 @@ export async function handleDodoSubscriptionLink({
 }) {
   try {
     const key = await getWebsiteKey(websiteId, "Dodo");
+
     if (!key) return;
 
     const subRes = await axios.get(dodoApiBaseUrl + `/subscriptions/${subId}`, {
@@ -181,11 +199,13 @@ export async function handleDodoSubscriptionLink({
     const isMetadataExists =
       subscription.metadata?.insightly_session_id &&
       subscription.metadata?.insightly_visitor_id;
+
     if (isMetadataExists) {
       console.log("Metadata already exists for dodo subscription", {
         subId,
         websiteId,
       });
+
       return;
     }
     await database.createRow({
@@ -215,6 +235,7 @@ export async function handleDodoSubscriptionLink({
       },
       { headers: { Authorization: `Bearer ${key}` } }
     );
+
     if (!res?.data?.subscription_id) {
       console.log(
         "Failed to add metadata for dodo subscription",
@@ -251,6 +272,7 @@ export async function handleDodoPaymentLink({
 }) {
   try {
     const key = await getWebsiteKey(websiteId, "Dodo");
+
     if (!key) return;
     const payRes = await axios.get(dodoApiBaseUrl + `/payments/${payId}`, {
       headers: { Authorization: `Bearer ${key}` },
@@ -259,11 +281,13 @@ export async function handleDodoPaymentLink({
     const isMetadataExists =
       payment?.metadata?.insightly_session_id &&
       payment?.metadata?.insightly_visitor_id;
+
     if (isMetadataExists) {
       console.log("Metadata already exists for dodo Payment", {
         payId,
         websiteId,
       });
+
       return;
     }
     if (payment.status !== "succeeded") {
@@ -272,6 +296,7 @@ export async function handleDodoPaymentLink({
         websiteId,
         status: payment.status,
       });
+
       return;
     }
     await database.createRow({
@@ -312,6 +337,7 @@ export async function updatePolarCustomer({
 }) {
   try {
     const key = await getWebsiteKey(websiteId, "Polar");
+
     if (!key) return;
 
     // First, get the checkout to retrieve customer_id
@@ -328,6 +354,7 @@ export async function updatePolarCustomer({
         websiteId,
         res: JSON.stringify(checkoutRes.data),
       });
+
       return;
     }
 
@@ -383,12 +410,15 @@ export async function getWebsiteKey(
     tableId: "keys",
     queries: [Query.equal("$id", websiteId)],
   });
+
   if (!res.rows[0]?.[provider.toLowerCase()]) {
     console.log(`No ${provider.toLowerCase()} key found for website`, {
       websiteId,
       res: JSON.stringify(res),
     });
+
     return;
   }
+
   return res.rows[0]?.[provider.toLowerCase()] as string;
 }

@@ -123,6 +123,7 @@ export async function GET(req: NextRequest) {
     // --- Visitors ---
     for (const ev of events) {
       const date = getDateKey(ev.$createdAt, duration);
+
       if (!buckets[date]) {
         console.log("🚨 Missing bucket for event:", {
           eventCreatedAt: ev.$createdAt,

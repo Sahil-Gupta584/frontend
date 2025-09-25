@@ -12,7 +12,7 @@ export async function isDomainExists(domain: string) {
       tableId: "websites",
       queries: [Query.equal("domain", domain)],
     });
-  } catch (error) {
+  } catch {
     return null;
   }
 }

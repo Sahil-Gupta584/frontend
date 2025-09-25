@@ -97,7 +97,7 @@ export default defineConfig([globalIgnores([
         "no-unused-vars": "error",
         "unused-imports/no-unused-vars": "error",
         "unused-imports/no-unused-imports": "error",
-        "react/no-unescaped-entities": "error",
+        "react/no-unescaped-entities": "off",
         "@typescript-eslint/no-unused-vars": ["error", {
             args: "after-used",
             ignoreRestSiblings: false,

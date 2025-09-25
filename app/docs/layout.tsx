@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Suspense } from "react";
 import { LuDot } from "react-icons/lu";
 
 import BackBtn from "../dashboard/[websiteId]/components/backBtn";
 
 import { Nav } from "@/components/navbar";
-import { Suspense } from "react";
 
 export default function RootLayout({
   children,
@@ -19,7 +19,6 @@ export default function RootLayout({
   function Anchor({
     href,
     text,
-    isBold,
     isIcon,
   }: {
     href: string;

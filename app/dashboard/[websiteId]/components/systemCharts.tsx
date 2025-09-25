@@ -4,9 +4,6 @@ import { Card, CardBody, Tab, Tabs } from "@heroui/react";
 import { CommonChart, CommonChartProps } from "./commonChart";
 import { classNames } from "./locationCharts";
 
-const geoUrl =
-  "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson";
-
 interface SystemChartProps {
   browserData: CommonChartProps["data"];
   osData: CommonChartProps["data"];

@@ -1,11 +1,11 @@
 // app/api/website/[websiteId]/webhook/polar/route.ts
 import { ID } from "appwrite";
 import { NextRequest, NextResponse } from "next/server";
+import axios from "axios";
 
 import { getWebsiteKey } from "@/app/api/actions";
 import { database, databaseId } from "@/appwrite/serverConfig";
 import { polarBaseUrl } from "@/lib/utils/server";
-import axios from "axios";
 
 export async function POST(
   req: NextRequest,
@@ -25,6 +25,7 @@ export async function POST(
 
     if ((!visitorId || !sessionId) && eventType === "order.paid") {
       const key = await getWebsiteKey(websiteId, "Polar");
+
       if (!key) return;
 
       if ((!visitorId || !sessionId) && data?.customer_id) {
@@ -57,6 +58,7 @@ export async function POST(
             checkout_id: data?.checkout_id,
           }
         );
+
         return NextResponse.json({ ok: true }, { status: 400 });
       }
     }
@@ -74,6 +76,7 @@ export async function POST(
         break;
       default:
         console.log("Unhandled polar event:", eventType);
+
         return NextResponse.json({ ok: true });
     }
 

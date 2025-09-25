@@ -10,26 +10,26 @@ import { useUser } from "@/lib/hooks";
 export default function Home() {
   const user = useUser();
 
-  async function checkout() {
-    try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          visitorId: "0da293e0-3887-4151-8601-2a390e585fd2",
-          sessionId: "se465ae9a-29b1-410a-bc40-68647ec8a7e0",
-        }),
-      });
+  // async function checkout() {
+  //   try {
+  //     const res = await fetch("/api/checkout", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         visitorId: "0da293e0-3887-4151-8601-2a390e585fd2",
+  //         sessionId: "se465ae9a-29b1-410a-bc40-68647ec8a7e0",
+  //       }),
+  //     });
 
-      const data = await res.json();
+  //     const data = await res.json();
 
-      if (data.url) {
-        window.location.href = data.url; // ✅ safe redirect
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  //     if (data.url) {
+  //       window.location.href = data.url; // ✅ safe redirect
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
   return (
     <main className="bg-[#19191C]">

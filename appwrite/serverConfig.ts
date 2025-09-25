@@ -1,14 +1,17 @@
+/* eslint-disable */
 import { faker } from "@faker-js/faker";
 // import fs from "fs";
 import { Client, ID, Query, TablesDB } from "node-appwrite";
 
 const rawDatabaseId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
+
 if (!rawDatabaseId)
   throw new Error("Missing NEXT_PUBLIC_APPWRITE_DATABASE_ID in .env");
 
 const databaseId: string = rawDatabaseId;
 const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID;
 const projectKey = process.env.APPWRITE_KEY;
+
 if (!projectId)
   throw new Error("Missing NEXT_PUBLIC_APPWRITE_PROJECT_ID in .env");
 
@@ -65,10 +68,12 @@ const referrers = [
 function weightedRandom<T extends { weight: number }>(arr: T[]) {
   const totalWeight = arr.reduce((sum, item) => sum + item.weight, 0);
   let rnd = Math.random() * totalWeight;
+
   for (const item of arr) {
     if (rnd < item.weight) return item;
     rnd -= item.weight;
   }
+
   return arr[0];
 }
 
@@ -77,6 +82,7 @@ function randomDateWithPeak(dayStart: Date, dayEnd: Date) {
   const peakHour = faker.number.int({ min: 10, max: 22 });
   const minutes = faker.number.int({ min: 0, max: 59 });
   const seconds = faker.number.int({ min: 0, max: 59 });
+
   return new Date(
     dayStart.getFullYear(),
     dayStart.getMonth(),
@@ -90,6 +96,7 @@ function randomDateWithPeak(dayStart: Date, dayEnd: Date) {
 async function generateDummyData() {
   const events: any[] = [];
   const revenues: any[] = [];
+
   for (
     let d = new Date(
       startDate.getFullYear(),
@@ -224,6 +231,7 @@ async function generateDummyData() {
 }
 async function seed(tableId: string, data: any[]) {
   const chunkSize = 50;
+
   for (let [i, row] of data?.entries()) {
     // delete row?.viewport;
     if (row?.$createdAt > new Date().toISOString()) continue;
@@ -243,6 +251,7 @@ async function deleterows() {
     tableId: "events",
     queries: [Query.equal("website", websiteId)],
   });
+
   console.log("Deleted events:", res.total);
 }
 // deleterows();
@@ -251,4 +260,5 @@ async function deleterows() {
 // seed("revenues", revenuesData);
 // seed('revenues', (await generateDummyData()).revenues);
 const MODE = process.env.MODE || "dev";
+
 export { database, databaseId, MODE };

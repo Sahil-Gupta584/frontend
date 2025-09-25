@@ -30,6 +30,7 @@ export async function POST(
         eventType,
         id: data?.id,
       });
+
       return NextResponse.json({ ok: true }, { status: 200 });
     }
     switch (eventType) {
@@ -39,6 +40,7 @@ export async function POST(
             "No visitorId or sessionId found in metadata for dodo subscription.renewed",
             { websiteId }
           );
+
           return NextResponse.json(
             { ok: true, msg: "metadata not found" },
             { status: 400 }
@@ -48,6 +50,7 @@ export async function POST(
           subId: data?.subscription_id,
           websiteId,
         });
+
         firstRenewal
           ? (revenue = data?.recurring_pre_tax_amount)
           : (renewalRevenue = data?.recurring_pre_tax_amount);
@@ -63,6 +66,7 @@ export async function POST(
             websiteId,
             subsId: data?.subscription_id,
           });
+
           return NextResponse.json({ ok: true });
         }
         revenue =
@@ -103,6 +107,7 @@ export async function POST(
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("Dodo Webhook Err:", err);
+
     return NextResponse.json(
       { error: (err as Error).message },
       { status: 500 }

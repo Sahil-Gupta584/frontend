@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
         validateStatus: () => true,
       }
     );
+
     if (res.data?.error?.type === "invalid_request_error") {
       console.log(res.data);
       throw new Error(
@@ -43,6 +44,7 @@ export async function POST(req: NextRequest) {
     }
 
     const params = new URLSearchParams();
+
     params.append("url", getWebhookUrl("Stripe", formdata.websiteId) || "");
     ["payment_intent.succeeded", "refund.created"].forEach((event) => {
       params.append("enabled_events[]", event);
@@ -80,6 +82,7 @@ export async function POST(req: NextRequest) {
       tableId: "websites",
       rowId: body.websiteId,
     });
+
     website.paymentProviders.push("Stripe");
 
     await database.updateRow({

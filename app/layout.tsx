@@ -2,8 +2,9 @@ import { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
-import { MODE } from "@/appwrite/serverConfig";
 import { Providers } from "./providers";
+
+import { MODE } from "@/appwrite/serverConfig";
 
 export const metadata: Metadata = {
   title:
@@ -56,13 +57,13 @@ export default function RootLayout({
           data-domain="insightly-three.vercel.app"
           data-allow-localhost={MODE === "prod" ? "false" : "true"}
           src="/script.js"
-        ></script>
+         />
         <script
           defer
           data-website-id="68cd7f8d0a106d351d532350"
           data-domain="insightly-three.vercel.app"
           src="https://datafa.st/js/script.js"
-        ></script>
+         />
       </head>
       <body className={sen.className}>
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>

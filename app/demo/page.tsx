@@ -6,6 +6,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 import { CommonChart } from "../dashboard/[websiteId]/components/commonChart";
+import Filters from "../dashboard/[websiteId]/components/filters";
 import LocationCharts from "../dashboard/[websiteId]/components/locationCharts";
 import MainGraph from "../dashboard/[websiteId]/components/mainGraph";
 import SystemCharts from "../dashboard/[websiteId]/components/systemCharts";
@@ -13,7 +14,6 @@ import { ReactQueryProvider } from "../providers";
 
 import { GraphLoader, LocationSystemChartsLoader } from "@/components/loaders";
 import MainGraphLoader from "@/components/loaders/mainGraph";
-import Filters from "../dashboard/[websiteId]/components/filters";
 
 function Page() {
   const websiteId = "68d124eb001034bd8493";
@@ -44,7 +44,6 @@ function Page() {
   const {
     pageData,
     referrerData,
-    mapData,
     countryData,
     regionData,
     cityData,
@@ -57,6 +56,7 @@ function Page() {
     mainGraphQuery.refetch();
     otherGraphQuery.refetch();
   }, [duration]);
+
   return (
     <section className="mb-6 max-w-6xl mx-auto p-4">
       <ReactQueryProvider>

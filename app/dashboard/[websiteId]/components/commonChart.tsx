@@ -9,8 +9,9 @@ import {
   YAxis,
 } from "recharts";
 
-import { Metric } from "@/lib/types";
 import CommonTooltip from "./commonTooltip";
+
+import { Metric } from "@/lib/types";
 
 function CustomBarShape({ x, y, width, height, bar, payload }: any) {
   const hasRevenue = payload?.revenue;
@@ -67,7 +68,7 @@ export function CommonChart({ data }: CommonChartProps) {
             stackId="a"
           >
             <LabelList
-              content={({ height, x, y, value, index }) => (
+              content={({ height, y, value }) => (
                 <foreignObject x={-5} y={y} width="100%" height={height}>
                   <div className="w-full h-full flex flex-col cursor-pointer">
                     <span className="self-end pr-2 mt-[2px]">{value}</span>
@@ -79,7 +80,7 @@ export function CommonChart({ data }: CommonChartProps) {
             />
 
             <LabelList
-              content={({ height, x, y, value, index }) => {
+              content={({ height, y, value, index }) => {
                 return (
                   <foreignObject x={10} y={y} width="100%" height={height}>
                     <div className="w-full h-full flex flex-col cursor-pointer z-100">
