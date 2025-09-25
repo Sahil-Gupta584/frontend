@@ -1,7 +1,5 @@
 "use client";
 
-import console from "console";
-
 import {
   addToast,
   Autocomplete,
