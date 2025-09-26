@@ -33,8 +33,10 @@ export async function POST(
 
       return NextResponse.json({ ok: true }, { status: 200 });
     }
+
     switch (eventType) {
       case "subscription.renewed":
+        console.log("data", JSON.stringify(data));
         if (!visitorId || !sessionId) {
           console.log(
             "No visitorId or sessionId found in metadata for dodo subscription.renewed",
