@@ -163,7 +163,7 @@ export async function isFirstRenewalDodo({
       { headers: { Authorization: `Bearer ${key}` } }
     );
 
-    console.log("paymentsRes:", JSON.stringify(paymentsRes.data));
+    // console.log("paymentsRes:", JSON.stringify(paymentsRes.data));
 
     return paymentsRes.data?.items?.length === 1;
   } catch (error) {

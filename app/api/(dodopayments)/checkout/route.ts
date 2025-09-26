@@ -103,7 +103,7 @@ export async function POST(request: Request) {
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.DODO_PAYMENTS_API_KEY}`,
+          Authorization: `Bearer ${process.env.DODO_PAYMENTS_API_KEY_TEST}`,
         },
         validateStatus: () => true,
       }
