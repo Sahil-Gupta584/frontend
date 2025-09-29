@@ -34,6 +34,8 @@ export async function POST(req: NextRequest) {
           addWebhookRes.data?.code
       );
     }
+    console.log("res", addWebhookRes.data);
+
     await database.upsertRow({
       databaseId,
       tableId: "keys",

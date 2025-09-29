@@ -88,7 +88,9 @@ export async function POST(
       default:
         console.log("Unhandled event", eventType);
     }
-
+    if (revenue === 0) {
+      revenue = 1000;
+    }
     await database.createRow({
       databaseId,
       tableId: "revenues",

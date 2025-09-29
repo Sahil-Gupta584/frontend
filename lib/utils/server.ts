@@ -266,11 +266,11 @@ export function getWebhookUrl(provider: TPaymentProviders, websiteId: string) {
 
   switch (provider) {
     case "Dodo":
-      return `https://${MODE === "dev" ? "5ecc1b2f29d8.ngrok-free.app" : domain}/api/website/${websiteId}/webhook/dodo`;
+      return `https://${MODE === "dev" ? domain : domain}/api/website/${websiteId}/webhook/dodo`;
     case "Polar":
-      return `https://${MODE === "dev" ? "5ecc1b2f29d8.ngrok-free.app" : domain}/api/website/${websiteId}/webhook/polar`;
+      return `https://${MODE === "dev" ? domain : domain}/api/website/${websiteId}/webhook/polar`;
     case "Stripe":
-      return `https://${MODE === "dev" ? "5ecc1b2f29d8.ngrok-free.app" : domain}/api/website/${websiteId}/webhook/stripe`;
+      return `https://${MODE === "dev" ? domain : domain}/api/website/${websiteId}/webhook/stripe`;
   }
 }
 

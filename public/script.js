@@ -35,7 +35,6 @@
     }
 
     function s(t, e, n) {
-        console.log('called with', { t, e, n });
 
         let a = "";
         if (n) {
@@ -44,7 +43,6 @@
         }
         let s = t + "=" + (e || "") + a + "; path=/";
         g && !o(window.location.hostname) && "file:" !== window.location.protocol && (s += "; domain=." + g.replace(/^\./, "")), document.cookie = s;
-        console.log({ s });
 
     }
 
