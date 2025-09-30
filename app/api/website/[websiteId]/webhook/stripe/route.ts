@@ -11,7 +11,17 @@ export async function POST(
 ) {
   try {
     const body = await req.json();
+    const isExists = await database.getRow({
+      databaseId,
+      tableId: "revenues",
+      rowId: body.id,
+    });
 
+    if (isExists?.$id) {
+      console.log("Stripe duplicate event returned");
+
+      return NextResponse.json({ ok: true });
+    }
     // console.log("Stripe webhook body", JSON.stringify(body));
 
     const websiteId = (await params).websiteId;
@@ -65,6 +75,7 @@ export async function POST(
       tableId: "revenues",
       rowId: ID.unique(),
       data: {
+        $id: body.id,
         website: websiteId,
         eventType: "purchase",
         revenue: Number((revenue / 100).toFixed()),
