@@ -57,13 +57,14 @@ export default function RootLayout({
           data-domain="insightly-three.vercel.app"
           data-allow-localhost={MODE === "prod" ? "false" : "true"}
           src="/script.js"
-         />
+        />
         <script
           defer
-          data-website-id="68cd7f8d0a106d351d532350"
+          data-website-id="68dbbbaef6b5b47e279e1e0f"
           data-domain="insightly-three.vercel.app"
           src="https://datafa.st/js/script.js"
-         />
+          data-allow-localhost={true}
+        />
       </head>
       <body className={sen.className}>
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>

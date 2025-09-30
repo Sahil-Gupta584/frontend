@@ -11,22 +11,6 @@ export async function POST(
   try {
     const body = await req.json();
 
-    try {
-      const isExists = await database.getRow({
-        databaseId,
-        tableId: "revenues",
-        rowId: body.id,
-      });
-
-      if (isExists?.$id) {
-        console.log("Stripe duplicate event returned");
-
-        return NextResponse.json({ ok: true });
-      }
-    } catch {
-      console.log("No duplicate stripe event found");
-    }
-
     // console.log("Stripe webhook body", JSON.stringify(body));
 
     const websiteId = (await params).websiteId;
