@@ -15,7 +15,7 @@ async function createCheckoutSession(mode: string) {
       "rk_test_51RxtB51tNDBT2PI2F7D7qtbXRbJdQE92ImqICUke2THpSPRf8MWFan3UKeatCOfJYWmmuqAABMNqPuDR1YTOi0Re00JY4ceKI8"
     );
     const session = await stripe.checkout.sessions.create({
-      success_url: "http://localhost:3000/",
+      success_url: window.location.origin,
       // mode: "subscription",
       mode: mode === "p" ? "payment" : "subscription",
       // mode: "payment",
