@@ -1,5 +1,4 @@
 // app/api/website/[websiteId]/webhook/stripe/route.ts
-import { ID } from "appwrite";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getSessionMetaFromStripe } from "@/app/api/actions";
@@ -79,9 +78,8 @@ export async function POST(
     await database.createRow({
       databaseId,
       tableId: "revenues",
-      rowId: ID.unique(),
+      rowId: body.id,
       data: {
-        $id: body.id,
         website: websiteId,
         eventType: "purchase",
         revenue: Number((revenue / 100).toFixed()),
