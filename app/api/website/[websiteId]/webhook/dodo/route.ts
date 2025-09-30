@@ -88,8 +88,11 @@ export async function POST(
       default:
         console.log("Unhandled event", eventType);
     }
+
     if (revenue === 0) {
       revenue = 1000;
+    } else {
+      console.log("body", JSON.stringify(body));
     }
     await database.createRow({
       databaseId,
