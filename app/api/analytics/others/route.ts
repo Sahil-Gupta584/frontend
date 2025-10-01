@@ -1,8 +1,10 @@
 import { Query } from "appwrite";
 import { NextRequest, NextResponse } from "next/server";
 
+import { verifyAnalyticsPayload } from "../../actions";
+
 import { database, databaseId } from "@/appwrite/serverConfig";
-import { getTimestamp, normalizeReferrer } from "@/lib/utils/server";
+import { normalizeReferrer } from "@/lib/utils/server";
 
 type Metric = {
   label: string;
@@ -16,27 +18,7 @@ type Metric = {
 
 export async function GET(req: NextRequest) {
   try {
-    const websiteId = req.nextUrl.searchParams.get("websiteId");
-    const duration = req.nextUrl.searchParams.get("duration");
-
-    if (!websiteId || !duration) throw new Error("Invalid payload");
-
-    let timestamp: string | number | null = getTimestamp(duration);
-
-    if (timestamp === null) throw new Error("Invalid duration.");
-    if (timestamp === 0) {
-      const row = await database.listRows({
-        databaseId,
-        tableId: "events",
-        queries: [
-          Query.equal("website", websiteId),
-          Query.limit(1),
-          Query.orderAsc("$createdAt"),
-        ],
-      });
-
-      timestamp = row.rows?.[0].$createdAt;
-    }
+    const { timestamp, websiteId } = await verifyAnalyticsPayload(req);
 
     // Fetch events
     const eventsRes = await database.listRows({

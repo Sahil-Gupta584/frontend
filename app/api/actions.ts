@@ -1,13 +1,16 @@
 import axios from "axios";
+import { NextRequest, NextResponse } from "next/server";
 import { ID, Query } from "node-appwrite";
 
 import { database, databaseId } from "@/appwrite/serverConfig";
 import { TPaymentProviders } from "@/lib/types";
 import {
   dodoApiBaseUrl,
+  getTimestamp,
   polarBaseUrl,
   stripeApiBaseUrl,
 } from "@/lib/utils/server";
+import { analyticsPayloadSchema, eventExtraDataForm } from "@/lib/zodSchemas";
 
 export async function handleStripePaymentLinks({
   csid,
@@ -421,4 +424,83 @@ export async function getWebsiteKey(
   }
 
   return res.rows[0]?.[provider.toLowerCase()] as string;
+}
+
+export async function handleCustomEvent({
+  extraData,
+  sessionId,
+  visitorId,
+  websiteId,
+}: {
+  extraData: any;
+  websiteId: string;
+  visitorId: string;
+  sessionId: string;
+}) {
+  try {
+    const { eventName, ...metadata } = extraData;
+    const formdata = eventExtraDataForm.safeParse(metadata);
+
+    console.log("extraData", JSON.stringify(extraData));
+
+    if (formdata.error)
+      return NextResponse.json({ error: formdata.error.message });
+
+    if (!eventName) {
+      return NextResponse.json({ error: "eventName is required" });
+    }
+    await database.createRow({
+      databaseId: databaseId,
+      tableId: "goals",
+      rowId: ID.unique(),
+      data: {
+        website: websiteId,
+        visitorId,
+        sessionId,
+        name: eventName,
+        metadata: JSON.stringify(metadata),
+      },
+    });
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.log("Error in handleCustomEvent", error);
+
+    return NextResponse.json(
+      { error: "Unknown server error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function verifyAnalyticsPayload(req: NextRequest) {
+  try {
+    const { duration, websiteId } = await analyticsPayloadSchema.parseAsync({
+      websiteId: req.nextUrl.searchParams.get("websiteId"),
+      duration: req.nextUrl.searchParams.get("duration"),
+    });
+
+    if (!websiteId || !duration) throw new Error("Invalid payload");
+
+    let timestamp: string | number | null = getTimestamp(duration);
+
+    if (timestamp === null) throw new Error("Invalid duration.");
+    if (timestamp === 0) {
+      const row = await database.listRows({
+        databaseId,
+        tableId: "events",
+        queries: [
+          Query.equal("website", websiteId),
+          Query.limit(1),
+          Query.orderAsc("$createdAt"),
+        ],
+      });
+
+      timestamp = row.rows?.[0].$createdAt;
+    }
+
+    return { websiteId, duration, timestamp };
+  } catch (error) {
+    throw error;
+  }
 }

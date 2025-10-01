@@ -37,6 +37,7 @@ type MainGraphProps = {
   avgSessionTime: number;
   websiteId: string;
   conversionRate: number;
+  totalVisitors: number;
 };
 type TLiveVisitor = {
   visitorId: string;
@@ -49,6 +50,7 @@ function MainGraph({
   bounceRate,
   websiteId,
   conversionRate,
+  totalVisitors,
 }: MainGraphProps) {
   const [isVisitorsSelected, setIsVisitorsSelected] = useState(true);
   const [isRevenueSelected, setIsRevenueSelected] = useState(true);
@@ -113,7 +115,6 @@ function MainGraph({
     );
   }
 
-  const visitors = chartData.reduce((prev, cur) => prev + cur.visitors, 0);
   const revenue = chartData.reduce((prev, cur) => prev + cur.revenue, 0);
 
   const headerData = [
@@ -133,14 +134,17 @@ function MainGraph({
           Visitors
         </Checkbox>
       ),
-      value: visitors,
+      value: totalVisitors,
     },
     // only add revenue block if revenue > 0
     ...(revenue > 0
       ? [
           {
             name: "Revenue/visitor",
-            value: visitors > 0 ? "$" + (revenue / visitors).toFixed(2) : "$0",
+            value:
+              totalVisitors > 0
+                ? "$" + (revenue / totalVisitors).toFixed(2)
+                : "$0",
           },
         ]
       : []),

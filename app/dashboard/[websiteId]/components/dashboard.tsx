@@ -1,28 +1,29 @@
 "use client";
-import { Alert, Card, CardBody, CardHeader, Divider } from "@heroui/react";
+import { Card, CardBody, CardHeader, Divider } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { FiAlertTriangle } from "react-icons/fi";
-import { GoAlertFill } from "react-icons/go";
 
 import { CommonChart } from "./charts/commonChart";
 import LocationCharts from "./charts/locationCharts";
 import MainGraph from "./charts/mainGraph";
 import SystemCharts from "./charts/systemCharts";
+import CustomEvents from "./customEvents";
 import Filters from "./filters";
+import WaitForFirstEvent from "./WaitForFirstEvent";
 
 import { account } from "@/appwrite/clientConfig";
-import { GraphLoader, LocationSystemChartsLoader } from "@/components/loaders";
-import MainGraphLoader from "@/components/loaders/mainGraph";
-import NextLink from "@/components/nextLink";
-
+import {
+  CustomEventsLoader,
+  GraphLoader,
+  LocationSystemChartsLoader,
+  MainGraphLoader,
+} from "@/components/loaders";
 export type TWebsite = { $id: string; domain: string };
 export default function Dashboard() {
   const { websiteId } = useParams<{ websiteId: string }>();
   const [duration, setDuration] = useState("last_7_days");
-
   const mainGraphQuery = useQuery({
     queryKey: ["mainGraph", websiteId, duration],
     queryFn: async () => {
@@ -69,67 +70,51 @@ export default function Dashboard() {
     enabled: false,
   });
 
-  useEffect(() => {
-    mainGraphQuery.refetch(),
-      otherGraphQuery.refetch(),
-      getWebsitesQuery.refetch();
-  }, [duration]);
   const currentWebsite = useMemo(() => {
     return getWebsitesQuery.data
       ? getWebsitesQuery.data.find((w) => w?.$id === websiteId)
       : null;
   }, [getWebsitesQuery.data]);
 
+  const totalVisitors = useMemo(() => {
+    if (!mainGraphQuery.data?.dataset) return 0;
+
+    return (
+      Number(
+        mainGraphQuery.data?.dataset?.reduce(
+          (prev: any, cur: any) => prev + cur.visitors,
+          0
+        )
+      ) || 0
+    );
+  }, [mainGraphQuery.data]);
+
+  const goalsQuery = useQuery({
+    queryKey: ["goals", websiteId, duration],
+    queryFn: async () => {
+      return (
+        await axios("/api/analytics/goals", {
+          params: { duration, websiteId },
+        })
+      ).data;
+    },
+    enabled: false,
+  });
+
+  useEffect(() => {
+    mainGraphQuery.refetch();
+    otherGraphQuery.refetch();
+    getWebsitesQuery.refetch();
+    goalsQuery.refetch();
+  }, [duration]);
+
   return (
     <section className="mb-6">
       {mainGraphQuery.data && mainGraphQuery.data?.isEmpty && (
-        <Alert
-          color="warning"
-          icon={<FiAlertTriangle />}
-          hideIcon
-          className="dark:bg-[#312107]  border-warning-100 border text-sm fixed bottom-5 left-5 w-fit __className_23ba4a z-50"
-        >
-          <div className="flex gap-3">
-            <GoAlertFill className="mt-1 text-black" fill="#eab308" />
-            <ul>
-              <li className="flex gap-2 font-medium text-warning-600">
-                Awaiting the first event...
-                <span
-                  role="status"
-                  aria-label="Loading"
-                  className="inline-block w-3 h-3 rounded-full  border mt- border-current border-t-transparent animate-spin text-white"
-                />
-              </li>
-              <ol className="list-decimal list-inside text-warning-500 ">
-                <li className="flex">
-                  Install the script using the{" "}
-                  <NextLink
-                    text="tracking code"
-                    href={`/dashboard/${websiteId}/settings`}
-                    blank
-                  />
-                </li>
-                <li>
-                  Visit{" "}
-                  <NextLink
-                    text={currentWebsite ? currentWebsite.domain : ""}
-                    blank
-                    href={`https://${currentWebsite ? currentWebsite.domain : ""}`}
-                  />
-                  to register the first event yourself
-                </li>
-                <li>Refresh your dashboard</li>
-                <li>
-                  Still not working?{" "}
-                  <NextLink
-                    text="Contact support"
-                    href="https://x.com/sahil_builds"
-                  />
-                </li>
-              </ol>
-            </ul>
-          </div>
-        </Alert>
+        <WaitForFirstEvent
+          websiteId={websiteId}
+          currentWebsite={currentWebsite}
+        />
       )}
       {getWebsitesQuery.data && (
         <Filters
@@ -153,6 +138,7 @@ export default function Dashboard() {
         ) : (
           mainGraphQuery.data && (
             <MainGraph
+              totalVisitors={totalVisitors}
               chartData={mainGraphQuery.data?.dataset}
               duration={duration}
               avgSessionTime={mainGraphQuery.data?.avgSessionTime}
@@ -206,6 +192,14 @@ export default function Dashboard() {
           </>
         )}
       </div>
+      {goalsQuery.isFetching ? (
+        <CustomEventsLoader />
+      ) : (
+        <CustomEvents
+          goalsData={goalsQuery.data}
+          totalVisitors={totalVisitors}
+        />
+      )}
     </section>
   );
 }

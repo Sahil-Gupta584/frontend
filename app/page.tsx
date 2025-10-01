@@ -11,7 +11,7 @@ import { useUser } from "@/lib/hooks";
 
 declare global {
   interface Window {
-    datafast: any;
+    insightly: any;
   }
 }
 
@@ -19,7 +19,7 @@ export default function Home() {
   const user = useUser();
 
   useEffect(() => {
-    window?.datafast("checkout_initiated", {
+    window?.insightly("checkout_initiated", {
       name: "Elon Musk",
       email: "elon@x.com",
       product_id: "prod_123",

@@ -3,7 +3,7 @@
 import { Card, CardBody, CardHeader, Divider } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { CommonChart } from "../dashboard/[websiteId]/components/charts/commonChart";
 import LocationCharts from "../dashboard/[websiteId]/components/charts/locationCharts";
@@ -13,7 +13,7 @@ import Filters from "../dashboard/[websiteId]/components/filters";
 import { ReactQueryProvider } from "../providers";
 
 import { GraphLoader, LocationSystemChartsLoader } from "@/components/loaders";
-import MainGraphLoader from "@/components/loaders/mainGraph";
+import MainGraphLoader from "@/components/loaders/mainGraphLoader";
 
 function Page() {
   const websiteId = "68d124eb001034bd8493";
@@ -57,6 +57,19 @@ function Page() {
     otherGraphQuery.refetch();
   }, [duration]);
 
+  const totalVisitors = useMemo(() => {
+    if (!mainGraphQuery.data?.dataset) return 0;
+
+    return (
+      Number(
+        mainGraphQuery.data?.dataset?.reduce(
+          (prev: any, cur: any) => prev + cur.visitors,
+          0
+        )
+      ) || 0
+    );
+  }, [mainGraphQuery.data]);
+
   return (
     <section className="mb-6 max-w-6xl mx-auto p-4">
       <ReactQueryProvider>
@@ -81,6 +94,7 @@ function Page() {
                 bounceRate={mainGraphQuery.data?.bounceRate}
                 websiteId={websiteId}
                 conversionRate={otherGraphQuery.data?.overallConversionRate}
+                totalVisitors={totalVisitors}
               />
             )
           )}

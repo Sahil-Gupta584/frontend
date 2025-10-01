@@ -49,17 +49,6 @@ export default function LocationCharts({
       ...country,
     };
   };
-  const getCountryName = (code: string) => {
-    if (!code || code === "-99") return "Unknown";
-
-    try {
-      return (
-        new Intl.DisplayNames(["en"], { type: "region" }).of(code) || "Unknown"
-      );
-    } catch {
-      return "Unknown";
-    }
-  };
 
   return (
     <Card className="border border-[#373737]">
@@ -145,7 +134,9 @@ export default function LocationCharts({
                 return (
                   <CommonTooltip
                     data={parsed}
-                    label={getCountryName(parsed?.countryCode)}
+                    label={new Intl.DisplayNames(["en"], { type: "region" }).of(
+                      parsed?.countryCode || "Un"
+                    )}
                   />
                 );
               }}

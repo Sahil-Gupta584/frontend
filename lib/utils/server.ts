@@ -1,29 +1,9 @@
-import { Query } from "node-appwrite";
-
 import { TPaymentProviders } from "../types";
 
-import { database, databaseId, MODE } from "@/appwrite/serverConfig";
+import { MODE } from "@/appwrite/serverConfig";
 
 export function getFaviconUrl(domain: string) {
   return `https://icons.duckduckgo.com/ip3/${domain}.ico`;
-}
-
-// utility to round down to nearest bucket (ex: 3h groups → 0-2 = 0, 3-5 = 3, etc.)
-export function bucketHour(date: Date, groupSize: number) {
-  const h = date.getHours();
-  const bucket = Math.floor(h / groupSize) * groupSize;
-  const d = new Date(date);
-
-  d.setHours(bucket, 0, 0, 0);
-
-  return d;
-}
-
-export function getCountryName(countryCode: string) {
-  return (
-    new Intl.DisplayNames(["en"], { type: "region" }).of(countryCode) ||
-    "Unknown"
-  );
 }
 
 export function getTimestamp(duration: string) {
@@ -205,34 +185,6 @@ export async function getGeo(ip: string) {
 
     return null;
   }
-}
-
-export async function fetchRevenuesInChunks(
-  sessionIds: string[],
-  websiteId: string,
-  timestamp: string
-) {
-  const chunkSize = 50;
-  let results: any[] = [];
-
-  for (let i = 0; i < sessionIds.length; i += chunkSize) {
-    const chunk = sessionIds.slice(i, i + chunkSize);
-
-    const res = await database.listRows({
-      databaseId,
-      tableId: "revenues",
-      queries: [
-        Query.equal("website", websiteId),
-        Query.equal("sessionId", chunk),
-        Query.greaterThan("$createdAt", timestamp),
-        Query.limit(1000),
-      ],
-    });
-
-    results = results.concat(res.rows);
-  }
-
-  return results;
 }
 
 export function normalizeBrowser(name?: string): string {

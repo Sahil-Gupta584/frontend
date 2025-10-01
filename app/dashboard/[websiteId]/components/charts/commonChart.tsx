@@ -12,6 +12,7 @@ import {
 import CommonTooltip from "../commonTooltip";
 
 import { Metric } from "@/lib/types";
+import { formatNumber } from "@/lib/utils/client";
 
 function CustomBarShape({ x, y, width, height, bar, payload }: any) {
   const hasRevenue = payload?.revenue;
@@ -33,8 +34,14 @@ function CustomBarShape({ x, y, width, height, bar, payload }: any) {
 
 export interface CommonChartProps {
   data: Metric[];
+  totalVisitors?: number;
+  showConversion?: boolean;
 }
-export function CommonChart({ data }: CommonChartProps) {
+export function CommonChart({
+  data,
+  showConversion,
+  totalVisitors,
+}: CommonChartProps) {
   return (
     <CardBody className={`space-y-2 px-0 h-full`}>
       <ResponsiveContainer
@@ -57,21 +64,22 @@ export function CommonChart({ data }: CommonChartProps) {
             dataKey="visitors"
             stackId={"a"}
             shape={<CustomBarShape bar={"visitor"} />}
-          />
-
-          <Bar dataKey="revenue" shape={<CustomBarShape />} stackId="a" />
-
-          <Bar
-            dataKey="visitors"
-            fill="transparent"
-            isAnimationActive={false}
-            stackId="a"
           >
             <LabelList
               content={({ height, y, value }) => (
                 <foreignObject x={-5} y={y} width="100%" height={height}>
                   <div className="w-full h-full flex flex-col cursor-pointer">
-                    <span className="self-end pr-2 mt-[2px]">{value}</span>
+                    <span className="self-end pr-2 mt-[2px]">
+                      {formatNumber(Number(value) || 0)}
+                      {showConversion && totalVisitors ? (
+                        <>
+                          &nbsp; (
+                          {+(Number(value) / totalVisitors).toFixed(2) * 100}%)
+                        </>
+                      ) : (
+                        ""
+                      )}
+                    </span>
                   </div>
                 </foreignObject>
               )}
@@ -103,6 +111,9 @@ export function CommonChart({ data }: CommonChartProps) {
               dataKey="label"
             />
           </Bar>
+
+          <Bar dataKey="revenue" shape={<CustomBarShape />} stackId="a" />
+
           <Tooltip
             cursor={{ fill: "none" }}
             content={({ payload }) => (

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { UAParser } from "ua-parser-js";
 
 import {
+  handleCustomEvent,
   handleDodoPaymentLink,
   handleDodoSubscriptionLink,
   handleStripePaymentLinks,
@@ -60,6 +61,15 @@ export async function POST(req: NextRequest) {
         });
       }
     }
+    if (type === "custom") {
+      return await handleCustomEvent({
+        extraData,
+        sessionId,
+        visitorId,
+        websiteId,
+      });
+    }
+
     const userAgent = req.headers.get("user-agent") || "";
     const parser = new UAParser(userAgent);
 
@@ -95,7 +105,6 @@ export async function POST(req: NextRequest) {
         "Website not found, please register it on https://insightly.appwrite.network/dashboard/new"
       );
 
-    // Save event without viewport
     await database.createRow({
       databaseId: databaseId,
       tableId: "events",

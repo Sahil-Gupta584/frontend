@@ -1,32 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Query } from "node-appwrite";
 
+import { verifyAnalyticsPayload } from "../../actions";
+
 import { database, databaseId } from "@/appwrite/serverConfig";
-import { getDateKey, getTimestamp } from "@/lib/utils/server";
+import { getDateKey } from "@/lib/utils/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const websiteId = req.nextUrl.searchParams.get("websiteId");
-    const duration = req.nextUrl.searchParams.get("duration");
+    const { timestamp, websiteId, duration } =
+      await verifyAnalyticsPayload(req);
 
-    if (!websiteId || !duration) throw new Error("Invalid payload");
-
-    let timestamp: string | number | null = getTimestamp(duration);
-
-    if (timestamp === null) throw new Error("Invalid duration.");
-    if (timestamp === 0) {
-      const row = await database.listRows({
-        databaseId,
-        tableId: "events",
-        queries: [
-          Query.equal("website", websiteId),
-          Query.limit(1),
-          Query.orderAsc("$createdAt"),
-        ],
-      });
-
-      timestamp = row.rows?.[0]?.$createdAt;
-    }
     const checkForEmpty = await database.listRows({
       databaseId,
       tableId: "events",
