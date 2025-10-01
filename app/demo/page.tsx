@@ -5,11 +5,11 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-import { CommonChart } from "../dashboard/[websiteId]/components/commonChart";
+import { CommonChart } from "../dashboard/[websiteId]/components/charts/commonChart";
+import LocationCharts from "../dashboard/[websiteId]/components/charts/locationCharts";
+import MainGraph from "../dashboard/[websiteId]/components/charts/mainGraph";
+import SystemCharts from "../dashboard/[websiteId]/components/charts/systemCharts";
 import Filters from "../dashboard/[websiteId]/components/filters";
-import LocationCharts from "../dashboard/[websiteId]/components/locationCharts";
-import MainGraph from "../dashboard/[websiteId]/components/mainGraph";
-import SystemCharts from "../dashboard/[websiteId]/components/systemCharts";
 import { ReactQueryProvider } from "../providers";
 
 import { GraphLoader, LocationSystemChartsLoader } from "@/components/loaders";

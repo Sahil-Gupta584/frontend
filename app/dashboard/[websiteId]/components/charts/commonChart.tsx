@@ -9,7 +9,7 @@ import {
   YAxis,
 } from "recharts";
 
-import CommonTooltip from "./commonTooltip";
+import CommonTooltip from "../commonTooltip";
 
 import { Metric } from "@/lib/types";
 

@@ -12,9 +12,8 @@ import {
   YAxis,
 } from "recharts";
 
-import { getLiveVisitors } from "../actions";
-
-import CommonTooltip from "./commonTooltip";
+import { getLiveVisitors } from "../../actions";
+import CommonTooltip from "../commonTooltip";
 
 import { client } from "@/appwrite/clientConfig";
 import { databaseId } from "@/appwrite/serverConfig";

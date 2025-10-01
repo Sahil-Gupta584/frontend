@@ -171,20 +171,7 @@
           "encrypt": false
         }
       ],
-      "indexes": [
-        {
-          "key": "index_1",
-          "type": "key",
-          "status": "available",
-          "orders": ["ASC"]
-        },
-        {
-          "key": "index_2",
-          "type": "key",
-          "status": "available",
-          "orders": ["ASC"]
-        }
-      ]
+      "indexes": []
     },
     {
       "$id": "heartbeats",
@@ -303,20 +290,99 @@
           "encrypt": false
         }
       ],
-      "indexes": [
+      "indexes": []
+    },
+    {
+      "$id": "keys",
+      "$permissions": [],
+      "databaseId": "68cbc63100188b1cf674",
+      "name": "keys",
+      "enabled": true,
+      "columns": [
         {
-          "key": "index_1",
-          "type": "key",
-          "status": "available",
-          "orders": ["ASC"]
+          "key": "stripe",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 10000,
+          "default": null,
+          "encrypt": false
         },
         {
-          "key": "index_2",
-          "type": "key",
-          "status": "available",
-          "orders": ["ASC"]
+          "key": "dodo",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 1000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "polar",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 1000,
+          "default": null,
+          "encrypt": false
         }
-      ]
+      ],
+      "indexes": []
+    },
+    {
+      "$id": "goals",
+      "$permissions": [],
+      "databaseId": "68cbc63100188b1cf674",
+      "name": "Goals",
+      "enabled": true,
+      "columns": [
+        {
+          "key": "name",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 200,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "website",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "visitorId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "sessionId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "region",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": []
     }
   ]
 }

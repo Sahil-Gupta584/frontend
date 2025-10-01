@@ -88,7 +88,7 @@
     const m = n(e + "website-id"),
         g = n(e + "domain");
     !d || m && g || (d = !1, u = "Missing website ID or domain");
-    const w = !t.src.includes("insightly-three.vercel.app") ? new URL("/api/events", window.location.origin).href : "https://insightly-three.vercel.app/api/events";
+    const w = t.src.includes("insightly-three.vercel.app") ? new URL("/api/events", window.location.origin).href : "https://insightly-three.vercel.app/api/events";
 
     function h() {
         const t = window.location.href;
@@ -270,13 +270,13 @@
     }
 
     function I(t) {
-        const e = t.getAttribute("data-fast-goal");
+        const e = t.getAttribute("insightly-goal");
         if (e && e.trim()) {
             const n = {
                 eventName: e.trim()
             };
             for (const e of t.attributes)
-                if (e.name.startsWith("data-fast-goal-") && "data-fast-goal" !== e.name) {
+                if (e.name.startsWith("insightly-goal-") && "insightly-goal" !== e.name) {
                     const t = e.name.substring(15);
                     if (t) {
                         n[t.replace(/-/g, "_")] = e.value
@@ -287,9 +287,9 @@
     }
 
     function A(t) {
-        const e = t.getAttribute("data-fast-scroll");
+        const e = t.getAttribute("insightly-scroll");
         if (e && e.trim()) {
-            const n = t.getAttribute("data-fast-scroll-delay");
+            const n = t.getAttribute("insightly-scroll-delay");
             let o = 0;
             if (null !== n) {
                 const t = parseInt(n, 10);
@@ -303,7 +303,7 @@
                         o = t - e;
                     return o <= 0 ? 100 : Math.min(100, Math.round(n / o * 100))
                 }(),
-                    a = t.getAttribute("data-fast-scroll-threshold");
+                    a = t.getAttribute("insightly-scroll-threshold");
                 let s = .5;
                 if (null !== a) {
                     const t = parseFloat(a);
@@ -316,7 +316,7 @@
                     delay: o.toString()
                 };
                 for (const e of t.attributes)
-                    if (e.name.startsWith("data-fast-scroll-") && "data-fast-scroll" !== e.name && "data-fast-scroll-threshold" !== e.name && "data-fast-scroll-delay" !== e.name) {
+                    if (e.name.startsWith("insightly-scroll-") && "insightly-scroll" !== e.name && "insightly-scroll-threshold" !== e.name && "insightly-scroll-delay" !== e.name) {
                         const t = e.name.substring(17);
                         if (t) {
                             r[t.replace(/-/g, "_")] = e.value
@@ -330,11 +330,11 @@
 
     function L() {
         if (!window.IntersectionObserver) return void console.warn("insightly: Intersection Observer not supported, scroll tracking disabled");
-        const t = document.querySelectorAll("[data-fast-scroll]");
+        const t = document.querySelectorAll("[insightly-scroll]");
         if (0 === t.length) return;
         const e = new Map;
         t.forEach((function (t) {
-            const n = t.getAttribute("data-fast-scroll-threshold");
+            const n = t.getAttribute("insightly-scroll-threshold");
             let o = .5;
             if (null !== n) {
                 const t = parseFloat(n);
@@ -369,25 +369,25 @@
             _ = 0, x = ""
         }
     }(), document.addEventListener("click", (function (t) {
-        const e = t.target.closest("[data-fast-goal]");
+        const e = t.target.closest("[insightly-goal]");
         e && I(e);
         E(t.target.closest("a"))
     })), document.addEventListener("keydown", (function (t) {
         if ("Enter" === t.key || " " === t.key) {
-            const e = t.target.closest("[data-fast-goal]");
+            const e = t.target.closest("[insightly-goal]");
             e && I(e);
             E(t.target.closest("a"))
         }
     })), document.addEventListener("submit", (function (t) {
-        const e = t.target.closest("form[data-fast-goal]");
+        const e = t.target.closest("form[insightly-goal]");
         e && function (t) {
-            const e = t.getAttribute("data-fast-goal");
+            const e = t.getAttribute("insightly-goal");
             if (e && e.trim()) {
                 const n = {
                     eventName: e.trim()
                 };
                 for (const e of t.attributes)
-                    if (e.name.startsWith("data-fast-goal-") && "data-fast-goal" !== e.name) {
+                    if (e.name.startsWith("insightly-goal-") && "insightly-goal" !== e.name) {
                         const t = e.name.substring(15);
                         t && (n[t.replace(/-/g, "_")] = e.value)
                     } const o = new FormData(t);
@@ -452,9 +452,9 @@
 
     function sendHeartbeat() {
         const payload = {
-            visitorId: i(), // existing function that gives a unique visitor ID
-            sessionId: c(), // existing function that gives session ID
-            websiteId: m,   // from data-website-id
+            visitorId: i(),
+            sessionId: c(),
+            websiteId: m,
             url: window.location.href,
             referrer: document.referrer || null,
             ts: Date.now(),
@@ -467,9 +467,8 @@
         }).catch((err) => console.error("Heartbeat error:", err));
     }
     F();
-    // ---- Heartbeat loop ----
+
     sendHeartbeat();
-    // setInterval(sendHeartbeat, 5 * 60 * 60 * 1000);
     setInterval(sendHeartbeat, 5 * 60 * 60 * 1000);
     let M = window.location.pathname;
     const P = window.history.pushState;

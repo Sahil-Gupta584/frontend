@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 import AddWebsiteForm from "./components/addWebsiteForm";
 import HowItWorks from "./components/howItWorks";
 import LandingPageNav from "./components/landingNav";
@@ -7,8 +9,22 @@ import Pricing from "./components/pricing";
 
 import { useUser } from "@/lib/hooks";
 
+declare global {
+  interface Window {
+    datafast: any;
+  }
+}
+
 export default function Home() {
   const user = useUser();
+
+  useEffect(() => {
+    window?.datafast("checkout_initiated", {
+      name: "Elon Musk",
+      email: "elon@x.com",
+      product_id: "prod_123",
+    });
+  }, []);
 
   // async function checkout() {
   //   try {

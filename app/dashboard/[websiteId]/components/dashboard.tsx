@@ -7,11 +7,11 @@ import { useEffect, useMemo, useState } from "react";
 import { FiAlertTriangle } from "react-icons/fi";
 import { GoAlertFill } from "react-icons/go";
 
-import { CommonChart } from "./commonChart";
+import { CommonChart } from "./charts/commonChart";
+import LocationCharts from "./charts/locationCharts";
+import MainGraph from "./charts/mainGraph";
+import SystemCharts from "./charts/systemCharts";
 import Filters from "./filters";
-import LocationCharts from "./locationCharts";
-import MainGraph from "./mainGraph";
-import SystemCharts from "./systemCharts";
 
 import { account } from "@/appwrite/clientConfig";
 import { GraphLoader, LocationSystemChartsLoader } from "@/components/loaders";

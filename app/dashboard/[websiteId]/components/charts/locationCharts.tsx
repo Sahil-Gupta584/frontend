@@ -4,8 +4,9 @@ import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import { Tooltip } from "react-tooltip";
 
 import "react-tooltip/dist/react-tooltip.css";
+import CommonTooltip from "../commonTooltip";
+
 import { CommonChart, CommonChartProps } from "./commonChart";
-import CommonTooltip from "./commonTooltip";
 
 const geoUrl =
   "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson";
