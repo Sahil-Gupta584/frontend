@@ -12,8 +12,11 @@ import SystemCharts from "../dashboard/[websiteId]/components/charts/systemChart
 import Filters from "../dashboard/[websiteId]/components/filters";
 import { ReactQueryProvider } from "../providers";
 
-import { GraphLoader, LocationSystemChartsLoader } from "@/components/loaders";
-import MainGraphLoader from "@/components/loaders/mainGraphLoader";
+import {
+  GraphLoader,
+  LocationSystemChartsLoader,
+  MainGraphLoader,
+} from "@/components/loaders";
 
 function Page() {
   const websiteId = "68d124eb001034bd8493";
