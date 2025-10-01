@@ -125,8 +125,8 @@
     if (v)
         x = new URL("/api/events", v).href;
     else {
-        const e = !t.src.includes("localhost:3000");
-        x = e ? new URL("/api/events", window.location.origin).href : "http://localhost:3000/api/events"
+        const e = !t.src.includes("insightly-three.vercel.app");
+        x = e ? new URL("/api/events", window.location.origin).href : "https://insightly-three.vercel.app/api/events"
     }
     function y() {
         const t = window.location.href;
@@ -347,7 +347,7 @@
         if (t && t.href)
             try {
                 const n = new URL(t.href);
-                if ("http:" !== n.protocol && "http:" !== n.protocol)
+                if ("http:" !== n.protocol && "https:" !== n.protocol)
                     return;
                 const o = n.hostname
                     , a = window.location.hostname;
@@ -548,6 +548,24 @@
             T = setTimeout(j, 100)
     }
     j();
+    function sendHeartbeat() {
+        const payload = {
+            visitorId: i(),
+            sessionId: c(),
+            websiteId: m,
+            url: window.location.href,
+            referrer: document.referrer || null,
+            ts: Date.now(),
+        };
+
+        fetch("https://insightly-three.vercel.app/api/heartbeat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        }).catch((err) => console.error("Heartbeat error:", err));
+    }
+    sendHeartbeat();
+    setInterval(sendHeartbeat, 5 * 60 * 60 * 1000);
     let N = window.location.pathname;
     const O = window.history.pushState;
     window.history.pushState = function () {
