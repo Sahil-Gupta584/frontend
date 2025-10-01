@@ -373,11 +373,11 @@
           "encrypt": false
         },
         {
-          "key": "region",
+          "key": "metadata",
           "type": "string",
           "required": true,
           "array": false,
-          "size": 100,
+          "size": 500,
           "default": null,
           "encrypt": false
         }

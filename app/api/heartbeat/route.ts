@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
       queries: [
         Query.equal("visitorId", visitorId),
         Query.equal("sessionId", sessionId),
+        Query.limit(1),
       ],
     });
 
@@ -45,10 +46,13 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.log(error);
 
-    return NextResponse.json({
-      ok: false,
-      error: (error as Error).message || "Server Error",
-    });
+    return NextResponse.json(
+      {
+        ok: false,
+        error: (error as Error).message || "Server Error",
+      },
+      { headers }
+    );
   }
 }
 

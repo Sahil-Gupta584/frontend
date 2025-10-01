@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ID, Query } from "node-appwrite";
 
 import { database, databaseId } from "@/appwrite/serverConfig";
+import { headers } from "@/lib/constants";
 import { TPaymentProviders } from "@/lib/types";
 import {
   dodoApiBaseUrl,
@@ -444,10 +445,10 @@ export async function handleCustomEvent({
     console.log("extraData", JSON.stringify(extraData));
 
     if (formdata.error)
-      return NextResponse.json({ error: formdata.error.message });
+      return NextResponse.json({ error: formdata.error.message }, { headers });
 
     if (!eventName) {
-      return NextResponse.json({ error: "eventName is required" });
+      return NextResponse.json({ error: "eventName is required" }, { headers });
     }
     await database.createRow({
       databaseId: databaseId,
@@ -462,13 +463,13 @@ export async function handleCustomEvent({
       },
     });
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true }, { headers });
   } catch (error) {
     console.log("Error in handleCustomEvent", error);
 
     return NextResponse.json(
       { error: "Unknown server error" },
-      { status: 500 }
+      { status: 500, headers }
     );
   }
 }
