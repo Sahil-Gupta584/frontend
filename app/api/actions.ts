@@ -442,8 +442,6 @@ export async function handleCustomEvent({
     const { eventName, ...metadata } = extraData;
     const formdata = eventExtraDataForm.safeParse(metadata);
 
-    console.log("extraData", JSON.stringify(extraData));
-
     if (formdata.error)
       return NextResponse.json({ error: formdata.error.message }, { headers });
 

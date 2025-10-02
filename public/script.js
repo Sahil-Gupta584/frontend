@@ -552,7 +552,7 @@
         const payload = {
             visitorId: i(),
             sessionId: c(),
-            websiteId: m,
+            websiteId: g,
             url: window.location.href,
             referrer: document.referrer || null,
             ts: Date.now(),

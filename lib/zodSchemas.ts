@@ -55,6 +55,7 @@ export const analyticsPayloadSchema = z.object({
     "yesterday",
     "last_24_hours",
     "last_7_days",
+    "last_30_days",
     "last_12_months",
     "all_time",
   ]),

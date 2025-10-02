@@ -24,12 +24,8 @@ export async function GET(req: NextRequest) {
 
     for (const g of goals) {
       if (goalsBucket[g.name]) {
-        console.log("second");
         goalsBucket[g.name].visitors += 1;
       } else {
-        console.log("first");
-        console.log("name", g.name);
-
         goalsBucket[g.name] = {
           visitors: 1,
           label: g.name,
