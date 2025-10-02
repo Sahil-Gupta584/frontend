@@ -51,6 +51,10 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning lang="en" className="dark:bg-[#19191C]">
       <head>
+        <link
+          href="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css"
+          rel="stylesheet"
+        />
         <script
           defer
           data-website-id="68d2611f0011c3785cb2"
@@ -58,13 +62,13 @@ export default function RootLayout({
           data-allow-localhost={MODE === "prod" ? "false" : "true"}
           src="/script.js"
         />
-        {/* <script
+        <script
           defer
           data-website-id="68dbbbaef6b5b47e279e1e0f"
           data-domain="insightly-three.vercel.app"
           src="https://datafa.st/js/script.js"
           data-allow-localhost={true}
-        /> */}
+        />
       </head>
       <body className={sen.className}>
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
