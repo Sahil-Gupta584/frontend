@@ -575,7 +575,7 @@
             ts: Date.now(),
         };
 
-        fetch("http://insightly-three.vercel.app/api/heartbeat", {
+        fetch("https://insightly-three.vercel.app/api/heartbeat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
