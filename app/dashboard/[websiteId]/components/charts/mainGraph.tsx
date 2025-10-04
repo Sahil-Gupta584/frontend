@@ -16,8 +16,8 @@ import {
 
 import { getLiveVisitors } from "../../actions";
 import CommonTooltip from "../commonTooltip";
+import GlobalMap from "../globalMap";
 
-import GlobalMap from "@/app/map/page";
 import { client } from "@/appwrite/clientConfig";
 import { databaseId } from "@/appwrite/serverConfig";
 import AnimatedCounter from "@/components/animatedCounter";
