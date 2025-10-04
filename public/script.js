@@ -1,7 +1,7 @@
 !function () {
     "use strict";
     const t = document.currentScript
-        , e = "insightly-"
+        , e = "data-"
         , n = t.getAttribute.bind(t);
     function o(t) {
         if (!t)
@@ -110,7 +110,7 @@
     const f = "true" === n(e + "allow-file-protocol")
         , m = "true" === n(e + "allow-localhost");
     d && (o(window.location.hostname) && !m || "file:" === window.location.protocol && !f) && (d = !1,
-        u = "file:" === window.location.protocol ? "Tracking disabled on file protocol (use insightly-allow-file-protocol='true' to enable)" : "Tracking disabled on localhost (use insightly-allow-localhost='true' to enable)");
+        u = "file:" === window.location.protocol ? "Tracking disabled on file protocol (use data-allow-file-protocol='true' to enable)" : "Tracking disabled on localhost (use data-allow-localhost='true' to enable)");
     const w = "true" === n(e + "debug");
     d && window !== window.parent && !w && (d = !1,
         u = "Tracking disabled inside an iframe");
