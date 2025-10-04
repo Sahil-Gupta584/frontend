@@ -95,7 +95,8 @@ function Page() {
                 duration={duration}
                 avgSessionTime={mainGraphQuery.data?.avgSessionTime}
                 bounceRate={mainGraphQuery.data?.bounceRate}
-                websiteId={websiteId}
+                $id={websiteId}
+                domain="syncmate.xyz"
                 conversionRate={otherGraphQuery.data?.overallConversionRate}
                 totalVisitors={totalVisitors}
               />

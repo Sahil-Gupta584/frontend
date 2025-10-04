@@ -7,7 +7,7 @@ import HowItWorks from "./components/howItWorks";
 import LandingPageNav from "./components/landingNav";
 import Pricing from "./components/pricing";
 
-import { useUser } from "@/lib/hooks";
+import { useUser } from "@/hooks/useUser";
 
 declare global {
   interface Window {

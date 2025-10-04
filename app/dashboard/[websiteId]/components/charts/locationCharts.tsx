@@ -8,6 +8,8 @@ import CommonTooltip from "../commonTooltip";
 
 import { CommonChart, CommonChartProps } from "./commonChart";
 
+import { getCountryName } from "@/lib/utils/client";
+
 const geoUrl =
   "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson";
 
@@ -134,9 +136,7 @@ export default function LocationCharts({
                 return (
                   <CommonTooltip
                     data={parsed}
-                    label={new Intl.DisplayNames(["en"], { type: "region" }).of(
-                      parsed?.countryCode || "Un"
-                    )}
+                    label={getCountryName(parsed?.countryCode)}
                   />
                 );
               }}

@@ -17,7 +17,7 @@ import { deleteWebsite, getWebsite, saveWebsiteData } from "../../actions";
 
 import { AddScriptCard } from "@/app/dashboard/new/components/addScriptCard";
 import { Time } from "@/app/dashboard/new/components/newWebsite";
-import { useTimeZones } from "@/lib/hooks";
+import { useTimeZones } from "@/hooks/useUser";
 import { tryCatchWrapper } from "@/lib/utils/client";
 
 export interface TWebsiteData {

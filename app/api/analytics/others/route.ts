@@ -135,7 +135,9 @@ export async function GET(req: NextRequest) {
       // --- City ---
       updateBucket(cityMap, e.city);
       // --- Browser ---
-      updateBucket(browserMap, e.browser);
+      updateBucket(browserMap, e.browser, {
+        imageUrl: `https://cdnjs.cloudflare.com/ajax/libs/browser-logos/74.1.0/${e.browser}/${e.browser}_64x64.png`,
+      });
       // --- OS ---
       updateBucket(osMap, e.os);
       // --- Device ---

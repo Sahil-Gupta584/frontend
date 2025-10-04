@@ -66,3 +66,15 @@ export function formatNumber(num: number): string {
 
   return num.toString();
 }
+
+export const getCountryName = (code: string) => {
+  if (!code || code === "-99") return "Unknown";
+
+  try {
+    return (
+      new Intl.DisplayNames(["en"], { type: "region" }).of(code) || "Unknown"
+    );
+  } catch {
+    return "Unknown";
+  }
+};

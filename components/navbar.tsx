@@ -19,7 +19,7 @@ import React from "react";
 import Logo from "./logo";
 
 import { account } from "@/appwrite/clientConfig";
-import { useUser } from "@/lib/hooks";
+import { useUser } from "@/hooks/useUser";
 import { TClassName } from "@/lib/types";
 
 export function Nav({

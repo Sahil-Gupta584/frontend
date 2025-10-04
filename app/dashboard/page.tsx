@@ -4,12 +4,13 @@ import { Button, Skeleton } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
+import { useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 import { Line, LineChart, ResponsiveContainer } from "recharts";
-import { useEffect } from "react";
 
 import { account } from "@/appwrite/clientConfig";
 import { Favicon } from "@/components/favicon";
+import { TBucket } from "@/lib/types";
 
 export default function Dashboard() {
   const getWebsitesQuery = useQuery({
@@ -31,7 +32,7 @@ export default function Dashboard() {
   function getEventsByDay(events: any) {
     // Example: group by weekday
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const counts: Record<string, any> = {};
+    const counts: TBucket = {};
 
     if (Array.isArray(events)) {
       events.forEach((e: any) => {

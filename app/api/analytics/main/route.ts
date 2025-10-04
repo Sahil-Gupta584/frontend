@@ -4,6 +4,7 @@ import { Query } from "node-appwrite";
 import { verifyAnalyticsPayload } from "../../actions";
 
 import { database, databaseId } from "@/appwrite/serverConfig";
+import { TBucket } from "@/lib/types";
 import { getDateKey } from "@/lib/utils/server";
 
 export async function GET(req: NextRequest) {
@@ -51,7 +52,7 @@ export async function GET(req: NextRequest) {
 
     const revenues = revenuesRes.rows;
 
-    const buckets: Record<string, any> = {};
+    const buckets: TBucket = {};
 
     const startDate = new Date(timestamp);
 

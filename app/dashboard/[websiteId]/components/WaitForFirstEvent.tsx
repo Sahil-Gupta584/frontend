@@ -2,9 +2,8 @@ import { Alert } from "@heroui/react";
 import { FiAlertTriangle } from "react-icons/fi";
 import { GoAlertFill } from "react-icons/go";
 
-import { TWebsite } from "./dashboard";
-
 import NextLink from "@/components/nextLink";
+import { TWebsite } from "@/lib/types";
 
 export default function WaitForFirstEvent({
   websiteId,

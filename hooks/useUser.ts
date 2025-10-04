@@ -1,7 +1,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { User } from "./types";
+import { User } from "../lib/types";
 
 import { account } from "@/appwrite/clientConfig";
 

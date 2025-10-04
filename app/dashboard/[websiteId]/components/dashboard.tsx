@@ -20,7 +20,8 @@ import {
   LocationSystemChartsLoader,
   MainGraphLoader,
 } from "@/components/loaders";
-export type TWebsite = { $id: string; domain: string };
+import { TWebsite } from "@/lib/types";
+
 export default function Dashboard() {
   const { websiteId } = useParams<{ websiteId: string }>();
   const [duration, setDuration] = useState("last_7_days");
@@ -143,7 +144,8 @@ export default function Dashboard() {
               duration={duration}
               avgSessionTime={mainGraphQuery.data?.avgSessionTime}
               bounceRate={mainGraphQuery.data?.bounceRate}
-              websiteId={websiteId}
+              $id={websiteId}
+              domain={currentWebsite?.domain as string}
               conversionRate={otherGraphQuery.data?.overallConversionRate}
             />
           )

@@ -140,7 +140,7 @@ export function getInterval(duration: string) {
 
 export function normalizeReferrer(referrer?: string): string {
   if (!referrer || !referrer.trim()) {
-    return "Direct/None";
+    return "Direct";
   }
 
   try {
@@ -161,9 +161,9 @@ export function normalizeReferrer(referrer?: string): string {
       host = host.slice(4);
     }
 
-    return host || "Direct/None";
+    return host || "Direct";
   } catch {
-    return "Direct/None";
+    return "Direct";
   }
 }
 

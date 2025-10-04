@@ -3,9 +3,8 @@ import Link from "next/link";
 import { IoSettingsSharp } from "react-icons/io5";
 import { TfiReload } from "react-icons/tfi";
 
-import { TWebsite } from "./dashboard";
-
 import { Favicon } from "@/components/favicon";
+import { TWebsite } from "@/lib/types";
 export const durationOptions = [
   { key: "today", label: "Today" },
   { key: "yesterday", label: "Yesterday" },

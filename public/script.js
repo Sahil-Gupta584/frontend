@@ -1,7 +1,7 @@
 !function () {
     "use strict";
     const t = document.currentScript
-        , e = "data-"
+        , e = "insightly-"
         , n = t.getAttribute.bind(t);
     function o(t) {
         if (!t)
@@ -110,7 +110,7 @@
     const f = "true" === n(e + "allow-file-protocol")
         , m = "true" === n(e + "allow-localhost");
     d && (o(window.location.hostname) && !m || "file:" === window.location.protocol && !f) && (d = !1,
-        u = "file:" === window.location.protocol ? "Tracking disabled on file protocol (use data-allow-file-protocol='true' to enable)" : "Tracking disabled on localhost (use data-allow-localhost='true' to enable)");
+        u = "file:" === window.location.protocol ? "Tracking disabled on file protocol (use insightly-allow-file-protocol='true' to enable)" : "Tracking disabled on localhost (use insightly-allow-localhost='true' to enable)");
     const w = "true" === n(e + "debug");
     d && window !== window.parent && !w && (d = !1,
         u = "Tracking disabled inside an iframe");
@@ -131,7 +131,7 @@
     function y() {
         const t = window.location.href;
         if (!t)
-            return void console.warn("DataFast: Unable to collect href. This may indicate incorrect script implementation or browser issues.");
+            return void console.warn("Insightly: Unable to collect href. This may indicate incorrect script implementation or browser issues.");
         const e = new URL(t)
             , n = {}
             , o = e.searchParams.get("fbclid")
@@ -167,10 +167,10 @@
         }
     }
     function b(t, e) {
-        return "true" === localStorage.getItem("insightly_ignore") ? (console.log("DataFast: Tracking disabled via localStorage flag"),
+        return "true" === localStorage.getItem("insightly_ignore") ? (console.log("Insightly: Tracking disabled via localStorage flag"),
             void (e && e({
                 status: 200
-            }))) : a() ? (console.log("DataFast: Bot detected, not sending data"),
+            }))) : a() ? (console.log("Insightly: Bot detected, not sending data"),
                 void (e && e({
                     status: 200
                 }))) : void function (t, e) {
@@ -203,7 +203,7 @@
         const e = Date.now()
             , n = window.location.href;
         if (n === D && e - S < 6e4)
-            return console.log("DataFast: Pageview throttled - too recent"),
+            return console.log("Insightly: Pageview throttled - too recent"),
                 void (t && t({
                     status: 200
                 }));
@@ -232,9 +232,10 @@
                 stripe_session_id: e
             } : "lemonsqueezy" === t ? o.extraData = {
                 lemonsqueezy_order_id: e
-            } : "polar" === t && (o.extraData = {
+            } : "polar" === t ? (o.extraData = {
                 polar_checkout_id: e
-            }),
+            }) : "dodo_subscription" === t ? (o.extraData = { dodo_subscription_id: e })
+                : "dodo_payment" === t && (o.extraData = { dodo_payment_id: e }),
             b(o, n)
     }
     function L(t, e, n) {
@@ -274,24 +275,24 @@
                         else {
                             const n = A(e || {});
                             if (null === n)
-                                return void console.error("DataFast: Custom event rejected due to validation errors");
+                                return void console.error("Insightly: Custom event rejected due to validation errors");
                             L("custom", {
                                 eventName: t,
                                 ...n
                             })
                         }
                     else
-                        console.warn(`DataFast: Missing user_id for ${t} event`);
+                        console.warn(`Insightly: Missing user_id for ${t} event`);
                 else
-                    console.warn(`DataFast: Missing email for ${t} event`);
+                    console.warn(`Insightly: Missing email for ${t} event`);
             else
-                console.warn("DataFast: Missing event_name for custom event");
+                console.warn("Insightly: Missing event_name for custom event");
         else
-            console.log(`DataFast: Event '${t}' ignored - ${u}`)
+            console.log(`Insightly: Event '${t}' ignored - ${u}`)
     }
     function A(t) {
         if (!t || "object" != typeof t || Array.isArray(t))
-            return console.warn("DataFast: customData must be a non-null object"),
+            return console.warn("Insightly: customData must be a non-null object"),
                 {};
         const e = {};
         let n = 0;
@@ -309,10 +310,10 @@
                 continue
             }
             if (n >= 10)
-                return console.error("DataFast: Maximum 10 custom parameters allowed"),
+                return console.error("Insightly: Maximum 10 custom parameters allowed"),
                     null;
             if ("string" != typeof (a = r) || 0 === a.length || a.length > 32 || !/^[a-z0-9_-]+$/.test(a.toLowerCase()))
-                return console.error(`DataFast: Invalid property name "${r}". Use only lowercase letters, numbers, underscores, and hyphens. Max 32 characters.`),
+                return console.error(`Insightly: Invalid property name "${r}". Use only lowercase letters, numbers, underscores, and hyphens. Max 32 characters.`),
                     null;
             const t = r.toLowerCase()
                 , i = o(s);
@@ -331,12 +332,12 @@
                     try {
                         P.apply(null, t)
                     } catch (e) {
-                        console.error("DataFast: Error processing queued call:", e, t)
+                        console.error("Insightly: Error processing queued call:", e, t)
                     }
             }
         }(),
         !d)
-        return void console.warn(`DataFast: ${u}`);
+        return void console.warn(`Insightly: ${u}`);
     function k(t) {
         if (!t)
             return null;
@@ -384,13 +385,13 @@
         var e
     }
     function q(t) {
-        const e = t.getAttribute("data-fast-goal");
+        const e = t.getAttribute("insightly-fast-goal");
         if (e && e.trim()) {
             const n = {
                 eventName: e.trim()
             };
             for (const e of t.attributes)
-                if (e.name.startsWith("data-fast-goal-") && "data-fast-goal" !== e.name) {
+                if (e.name.startsWith("insightly-fast-goal-") && "insightly-fast-goal" !== e.name) {
                     const t = e.name.substring(15);
                     if (t) {
                         n[t.replace(/-/g, "_")] = e.value
@@ -401,9 +402,9 @@
         }
     }
     function M(t, e) {
-        const n = t.getAttribute("data-fast-scroll");
+        const n = t.getAttribute("insightly-fast-scroll");
         if (n && n.trim()) {
-            const o = t.getAttribute("data-fast-scroll-delay");
+            const o = t.getAttribute("insightly-fast-scroll-delay");
             let a = 0;
             if (null !== o) {
                 const t = parseInt(o, 10);
@@ -420,7 +421,7 @@
                         , o = t - e;
                     return o <= 0 ? 100 : Math.min(100, Math.round(n / o * 100))
                 }()
-                    , s = t.getAttribute("data-fast-scroll-threshold");
+                    , s = t.getAttribute("insightly-fast-scroll-threshold");
                 let i = .5;
                 if (null !== s) {
                     const t = parseFloat(s);
@@ -433,7 +434,7 @@
                     delay: a.toString()
                 };
                 for (const e of t.attributes)
-                    if (e.name.startsWith("data-fast-scroll-") && "data-fast-scroll" !== e.name && "data-fast-scroll-threshold" !== e.name && "data-fast-scroll-delay" !== e.name) {
+                    if (e.name.startsWith("insightly-fast-scroll-") && "insightly-fast-scroll" !== e.name && "insightly-fast-scroll-threshold" !== e.name && "insightly-fast-scroll-delay" !== e.name) {
                         const t = e.name.substring(17);
                         if (t) {
                             c[t.replace(/-/g, "_")] = e.value
@@ -449,17 +450,17 @@
     }
     function R() {
         if (!window.IntersectionObserver)
-            return void console.warn("DataFast: Intersection Observer not supported, scroll tracking disabled");
-        const t = document.querySelectorAll("[data-fast-scroll]");
+            return void console.warn("Insightly: Intersection Observer not supported, scroll tracking disabled");
+        const t = document.querySelectorAll("[insightly-fast-scroll]");
         if (0 === t.length)
             return;
         const e = new Map;
         t.forEach((function (t) {
-            const n = t.getAttribute("data-fast-scroll-threshold");
+            const n = t.getAttribute("insightly-fast-scroll-threshold");
             let o = .5;
             if (null !== n) {
                 const t = parseFloat(n);
-                !isNaN(t) && t >= 0 && t <= 1 ? o = t : console.warn(`DataFast: Invalid threshold value "${n}" for element. Using default 0.5. Threshold must be between 0 and 1.`)
+                !isNaN(t) && t >= 0 && t <= 1 ? o = t : console.warn(`Insightly: Invalid threshold value "${n}" for element. Using default 0.5. Threshold must be between 0 and 1.`)
             }
             e.has(o) || e.set(o, []),
                 e.get(o).push(t)
@@ -498,14 +499,14 @@
         }
     }(),
         document.addEventListener("click", (function (t) {
-            const e = t.target.closest("[data-fast-goal]");
+            const e = t.target.closest("[insightly-fast-goal]");
             e && q(e);
             F(t.target.closest("a"))
         }
         )),
         document.addEventListener("keydown", (function (t) {
             if ("Enter" === t.key || " " === t.key) {
-                const e = t.target.closest("[data-fast-goal]");
+                const e = t.target.closest("[insightly-fast-goal]");
                 e && q(e);
                 F(t.target.closest("a"))
             }
@@ -541,6 +542,22 @@
                 } catch (t) {
                     console.error("Error auto detecting Lemonsqueezy order ID:", t)
                 }
+            }(),
+            function () {
+                try {
+                    const t = new URL(window.location.href).searchParams.get("subscription_id");
+                    t && !sessionStorage.getItem("insightly_dodo_subscription_sent_" + t) && (y("dodo_subscription", t), sessionStorage.setItem("insightly_dodo_subscription_sent_" + t, "1"))
+                } catch (t) {
+                    console.error("Error auto detecting DodoPayments subscription ID:", t)
+                }
+            }(),
+            function () {
+                try {
+                    const t = new URL(window.location.href).searchParams.get("payment_id");
+                    t && !sessionStorage.getItem("insightly_dodo_payment_sent_" + t) && (y("dodo_payment", t), sessionStorage.setItem("insightly_dodo_payment_sent_" + t, "1"))
+                } catch (t) {
+                    console.error("Error auto detecting DodoPayments payment ID:", t)
+                }
             }()
     }
     function U() {
@@ -558,7 +575,7 @@
             ts: Date.now(),
         };
 
-        fetch("https://insightly-three.vercel.app/api/heartbeat", {
+        fetch("http://insightly-three.vercel.app/api/heartbeat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),

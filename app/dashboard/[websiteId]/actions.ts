@@ -4,6 +4,7 @@ import { Query } from "node-appwrite";
 import { TWebsiteData } from "./settings/components/generalTab";
 
 import { database, databaseId } from "@/appwrite/serverConfig";
+import { TEvent, TLiveVisitor } from "@/lib/types";
 
 export async function getLiveVisitors(websiteId: string) {
   try {
@@ -13,7 +14,7 @@ export async function getLiveVisitors(websiteId: string) {
       queries: [
         Query.lessThan(
           "$createdAt",
-          new Date(Date.now() - 5 * 60 * 1000).toISOString()
+          new Date(Date.now() - 1000 * 60 * 1000).toISOString()
         ),
       ],
     });
@@ -85,6 +86,44 @@ export async function deleteWebsite($id: string) {
       tableId: "websites",
       rowId: $id,
     });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getLiveVisitorsEvent(liveVisitors: TLiveVisitor[]) {
+  try {
+    const events: TEvent[] = [];
+
+    for (const lv of liveVisitors) {
+      const eventsRes = await database.listRows({
+        databaseId,
+        tableId: "events",
+        queries: [
+          Query.equal("visitorId", lv.visitorId),
+          Query.equal("sessionId", lv.sessionId),
+          Query.orderDesc("$createdAt"),
+          Query.limit(1),
+        ],
+      });
+      const totalVisit = await database.listRows({
+        databaseId,
+        tableId: "events",
+        queries: [
+          Query.equal("visitorId", lv.visitorId),
+          Query.equal("sessionId", lv.sessionId),
+        ],
+      });
+      if (eventsRes.rows[0])
+        // @ts-expect-error
+        events.push({
+          ...eventsRes.rows[0],
+          totalVisit: totalVisit.total,
+          lastEventTs: lv.$createdAt,
+        });
+    }
+
+    return events;
   } catch (error) {
     throw error;
   }

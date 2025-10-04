@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyAnalyticsPayload } from "../../actions";
 
 import { database, databaseId } from "@/appwrite/serverConfig";
+import { TBucket } from "@/lib/types";
 
 export async function GET(req: NextRequest) {
   try {
@@ -20,7 +21,7 @@ export async function GET(req: NextRequest) {
       ],
     });
     const goals = goalsRes.rows;
-    const goalsBucket: Record<string, any> = {};
+    const goalsBucket: TBucket = {};
 
     for (const g of goals) {
       if (goalsBucket[g.name]) {

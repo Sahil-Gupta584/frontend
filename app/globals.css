@@ -14,7 +14,6 @@ html {
   @apply text-xs text-default-500;
 }
 
-/* put this AFTER your @import "tailwindcss"; */
 .before\:bg-gradient-to-r::before {
   background: linear-gradient(
     to right,
@@ -41,4 +40,14 @@ a[role="button"] {
         shadow-[4px_4px_0px_rgba(0,0,0,0.4)]
         hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_rgba(0,0,0,0.4)]
         active:translate-y-[2px] active:shadow-[2px_2px_0px_rgba(0,0,0,0.4)];
+}
+
+.mapboxgl-popup-close-button,
+.mapboxgl-popup-tip {
+  display: none;
+}
+
+.mapboxgl-popup-content {
+  padding: 0 !important;
+  background: transparent !important;
 }

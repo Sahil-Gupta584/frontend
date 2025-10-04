@@ -20,9 +20,11 @@ import CommonTooltip from "../commonTooltip";
 import MapboxExample from "@/app/map/page";
 import { client } from "@/appwrite/clientConfig";
 import { databaseId } from "@/appwrite/serverConfig";
+import AnimatedCounter from "@/components/animatedCounter";
+import { TLiveVisitor, TWebsite } from "@/lib/types";
 import { getLabel } from "@/lib/utils/server";
 
-type MainGraphProps = {
+interface MainGraphProps extends TWebsite {
   chartData: {
     id: string;
     name: string;
@@ -38,20 +40,19 @@ type MainGraphProps = {
   duration: string;
   bounceRate: string;
   avgSessionTime: number;
-  websiteId: string;
+  // websiteId: string;
+  // domain: string;
   conversionRate: number;
   totalVisitors: number;
-};
-type TLiveVisitor = {
-  visitorId: string;
-  sessionId: string;
-};
+}
+
 function MainGraph({
   chartData,
   duration,
   avgSessionTime,
   bounceRate,
-  websiteId,
+  $id,
+  domain,
   conversionRate,
   totalVisitors,
 }: MainGraphProps) {
@@ -76,35 +77,44 @@ function MainGraph({
   );
 
   useEffect(() => {
-    getLiveVisitors(websiteId).then((data) => {
+    getLiveVisitors($id).then((data) => {
       if (data) {
         setLiveVisitors(
-          data.map((v) => ({ sessionId: v.sessionId, visitorId: v.visitorId }))
+          data.map((v) => ({
+            sessionId: v.sessionId,
+            visitorId: v.visitorId,
+            $createdAt: v.$createdAt,
+          }))
         );
       }
     });
+    const event = `databases.${databaseId}.tables.heartbeats.rows`;
     client.subscribe(
-      `databases.${databaseId}.tables.heartbeats.rows`,
+      event,
       ({ payload, events }: { payload: TLiveVisitor; events: string[] }) => {
-        console.log({ payload });
-        if (
-          !events.includes(
-            `databases.${databaseId}.tables.heartbeats.rows.*.create`
-          )
-        )
-          return;
+        if (events.includes(event + ".*.create")) {
+          setLiveVisitors((prev) => {
+            const exists = prev.some(
+              (v) =>
+                v.sessionId === payload.sessionId &&
+                v.visitorId === payload.visitorId
+            );
 
-        setLiveVisitors((prev) => {
-          const exists = prev.some(
-            (v) =>
-              v.sessionId === payload.sessionId &&
-              v.visitorId === payload.visitorId
+            if (exists) return prev;
+
+            return [...prev, payload];
+          });
+        }
+
+        if (events.includes(event + ".*.delete")) {
+          setLiveVisitors((prev) =>
+            prev.filter(
+              (lv) =>
+                lv.sessionId !== payload.sessionId &&
+                lv.visitorId !== payload.visitorId
+            )
           );
-
-          if (exists) return prev;
-
-          return [...prev, payload];
-        });
+        }
       }
     );
   }, []);
@@ -232,7 +242,9 @@ function MainGraph({
                   <span className="inline-flex size-2 rounded-full bg-primary items-center justify-center" />
                 </span>
               </li>
-              <li className="text-[1.5rem] font-bold">{liveVisitors.length}</li>
+              <li className="text-[1.5rem] font-bold">
+                <AnimatedCounter value={liveVisitors.length} />
+              </li>
 
               <span className="absolute left-0 top-full mt-1 text-sm text-neutral-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                 Watch in real time
@@ -298,7 +310,6 @@ function MainGraph({
           </ResponsiveContainer>
         </CardBody>
       </Card>
-      {/* 🔥 Fullscreen map overlay */}
       <AnimatePresence>
         {showMap && (
           <motion.div
@@ -314,8 +325,7 @@ function MainGraph({
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <MapboxExample />
-              {/* Close button */}
+              <MapboxExample liveVisitors={liveVisitors} domain={domain} />
               <Button
                 variant="light"
                 onPress={() => setShowMap(false)}

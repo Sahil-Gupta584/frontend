@@ -20,7 +20,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoIosArrowRoundUp } from "react-icons/io";
 
-import { useTimeZones, useUser } from "../../../../lib/hooks";
+import { useTimeZones, useUser } from "../../../../hooks/useUser";
 import BackBtn from "../../[websiteId]/components/backBtn";
 import { createDomain, isDomainExists } from "../actions";
 

@@ -21,12 +21,21 @@ export async function POST(req: NextRequest) {
       ],
     });
 
-    if (!event.rows[0]) throw new Error("Smart move 🫡, but you cant do it!");
-
+    if (!event.rows[0])
+      return NextResponse.json(
+        {
+          error: "No visitor found for this heartbeat",
+        },
+        { status: 400 }
+      );
     const isExist = await database.listRows({
       databaseId,
       tableId: "heartbeats",
-      queries: [Query.equal("website", websiteId)],
+      queries: [
+        Query.equal("website", websiteId),
+        Query.equal("sessionId", sessionId),
+        Query.equal("visitorId", visitorId),
+      ],
     });
 
     if (!isExist.rows[0]) {
