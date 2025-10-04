@@ -16,7 +16,7 @@ import ReactDOM from "react-dom/client";
 import { GoScreenFull } from "react-icons/go";
 import { GrRotateLeft } from "react-icons/gr";
 
-import { getLiveVisitorsEvent } from "../dashboard/[websiteId]/actions";
+import { getLiveVisitorsEvent } from "../../actions";
 
 import { getCoords, spin, toggleFullscreen } from "./actions";
 import { CustomPopup, LabeledData } from "./components";
@@ -28,7 +28,7 @@ import { TBucket, TLiveVisitor } from "@/lib/types";
 import { getCountryName } from "@/lib/utils/client";
 import { normalizeReferrer } from "@/lib/utils/server";
 
-export default function MapboxExample({
+export default function GlobalMap({
   liveVisitors,
   domain,
 }: {

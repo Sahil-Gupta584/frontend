@@ -17,7 +17,7 @@ import {
 import { getLiveVisitors } from "../../actions";
 import CommonTooltip from "../commonTooltip";
 
-import MapboxExample from "@/app/map/page";
+import GlobalMap from "@/app/map/page";
 import { client } from "@/appwrite/clientConfig";
 import { databaseId } from "@/appwrite/serverConfig";
 import AnimatedCounter from "@/components/animatedCounter";
@@ -325,7 +325,7 @@ function MainGraph({
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <MapboxExample liveVisitors={liveVisitors} domain={domain} />
+              <GlobalMap liveVisitors={liveVisitors} domain={domain} />
               <Button
                 variant="light"
                 onPress={() => setShowMap(false)}
