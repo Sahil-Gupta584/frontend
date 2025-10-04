@@ -167,10 +167,10 @@
         }
     }
     function b(t, e) {
-        return "true" === localStorage.getItem("insightly_ignore") ? (console.log("Insightly: Tracking disabled via localStorage flag"),
+        return "true" === localStorage.getItem("insightly_ignore") ? (console.warn("Insightly: Tracking disabled via localStorage flag"),
             void (e && e({
                 status: 200
-            }))) : a() ? (console.log("Insightly: Bot detected, not sending data"),
+            }))) : a() ? (console.warn("Insightly: Bot detected, not sending data"),
                 void (e && e({
                     status: 200
                 }))) : void function (t, e) {
@@ -288,7 +288,7 @@
             else
                 console.warn("Insightly: Missing event_name for custom event");
         else
-            console.log(`Insightly: Event '${t}' ignored - ${u}`)
+            console.warn(`Insightly: Event '${t}' ignored - ${u}`)
     }
     function A(t) {
         if (!t || "object" != typeof t || Array.isArray(t))

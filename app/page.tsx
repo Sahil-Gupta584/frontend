@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-
 import AddWebsiteForm from "./components/addWebsiteForm";
 import HowItWorks from "./components/howItWorks";
 import LandingPageNav from "./components/landingNav";
@@ -17,14 +15,6 @@ declare global {
 
 export default function Home() {
   const user = useUser();
-
-  useEffect(() => {
-    window?.insightly("checkout_initiated", {
-      name: "Elon Musk",
-      email: "elon@x.com",
-      product_id: "prod_123",
-    });
-  }, []);
 
   // async function checkout() {
   //   try {
