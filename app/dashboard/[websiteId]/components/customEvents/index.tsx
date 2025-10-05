@@ -23,11 +23,11 @@ function CustomEvents({
   totalVisitors: number;
 }) {
   return (
-    <Card className="border border-[#373737] mt-4 md:col-span-2">
+    <Card className="border border-neutral-200 dark:border-[#373737] mt-4 md:col-span-2">
       <CardBody className="h-80 overflow-hidden p-0">
         <Tabs
           aria-label="Custom events"
-          className=" border-b-[#ffffff26] border-b-[1px] rounded-none w-full"
+          className=" border-b-[1px] rounded-none w-full border-b-neutral-200 dark:border-b-[#ffffff26]"
           classNames={classNames}
           color="secondary"
         >

@@ -1,3 +1,5 @@
+"use client";
+
 import { CardBody } from "@heroui/react";
 import {
   Bar,
@@ -10,9 +12,11 @@ import {
 
 import { Metric } from "@/lib/types";
 import { formatNumber } from "@/lib/utils/client";
+import { useChartTheme } from "@/hooks/useChartTheme";
 
-function CustomBarShape({ x, y, width, height, bar, payload }: any) {
+function CustomBarShape({ x, y, width, height, bar, payload, colors }: any) {
   const hasRevenue = payload?.revenue;
+  const baseColor = bar == "visitor" ? colors?.primary : colors?.secondary;
 
   return (
     <foreignObject
@@ -23,7 +27,8 @@ function CustomBarShape({ x, y, width, height, bar, payload }: any) {
       className="cursor-pointer"
     >
       <div
-        className={`group-hover:opacity-40 hover:!opacity-100 flex items-center ${bar === "visitor" ? "" : "rounded-r-md"} ${!hasRevenue ? "rounded-r-md" : ""} h-full transition cursor-pointer ${bar == "visitor" ? "bg-[#fd366e]/50 mr-[2px]" : "bg-[#e78468]/50"} z-10 `}
+        style={{ backgroundColor: baseColor, opacity: 0.5 }}
+        className={`group-hover:opacity-40 hover:!opacity-100 flex items-center ${bar === "visitor" ? "" : "rounded-r-md"} ${!hasRevenue ? "rounded-r-md" : ""} h-full transition cursor-pointer ${bar == "visitor" ? "mr-[2px]" : ""} z-10 `}
       />
     </foreignObject>
   );
@@ -39,6 +44,7 @@ export function CommonChart({
   showConversion,
   totalVisitors,
 }: CommonChartProps) {
+  const colors = useChartTheme();
   return (
     <CardBody className={`space-y-2 px-0 h-full`}>
       <ResponsiveContainer
@@ -60,7 +66,7 @@ export function CommonChart({
             legendType="cross"
             dataKey="visitors"
             stackId={"a"}
-            shape={<CustomBarShape bar={"visitor"} />}
+            shape={<CustomBarShape bar={"visitor"} colors={colors} />}
           >
             <LabelList
               content={({ height, y, value }) => (
@@ -90,7 +96,7 @@ export function CommonChart({
                 return (
                   <foreignObject x={10} y={y} width="100%" height={height}>
                     <div className="w-full h-full flex flex-col cursor-pointer z-100">
-                      <span className="flex gap-2 items-center pt-1 text-white text-[14px]">
+                      <span className="flex gap-2 items-center pt-1 text-neutral-900 dark:text-white text-[14px]">
                         {index !== undefined && data[index].imageUrl && (
                           <img
                             className="size-[18px]"
@@ -110,7 +116,7 @@ export function CommonChart({
             />
           </Bar>
 
-          <Bar dataKey="revenue" shape={<CustomBarShape />} stackId="a" />
+          <Bar dataKey="revenue" shape={<CustomBarShape colors={colors} />} stackId="a" />
 
           {/* <Tooltip
             cursor={{ fill: "none" }}

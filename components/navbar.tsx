@@ -14,6 +14,7 @@ import {
 } from "@heroui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import React from "react";
 
 import Logo from "./logo";
@@ -32,6 +33,7 @@ export function Nav({
 }) {
   const user = useUser();
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
 
   return (
     <Navbar
@@ -128,12 +130,15 @@ export function Nav({
                     className="cursor-default"
                     endContent={
                       <select
-                        className="z-10 w-20 rounded-md text-xs border border-neutral-700 bg-[#19191C] text-neutral-400 hover:border-pink-500 transition"
+                        className="z-10 w-20 rounded-md text-xs border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[#19191C] text-neutral-600 dark:text-neutral-400 hover:border-pink-500 transition"
                         id="theme"
                         name="theme"
+                        value={theme}
+                        onChange={(e) => setTheme(e.target.value)}
                       >
-                        <option>Dark</option>
-                        {/* <option>Light</option> */}
+                        <option value="dark">Dark</option>
+                        <option value="light">Light</option>
+                        <option value="system">System</option>
                       </select>
                     }
                   >

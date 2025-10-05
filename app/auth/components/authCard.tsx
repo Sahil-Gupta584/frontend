@@ -36,7 +36,7 @@ function AuthCard() {
   }
 
   return (
-    <Card className=" w-fit p-4 hover:border-primary/50 transition border border-neutral-500">
+    <Card className=" w-fit p-4 transition border border-neutral-200 dark:border-neutral-500 hover:border-primary/50">
       <CardBody>
         <ul className="space-y-4 mb-4">
           <li>

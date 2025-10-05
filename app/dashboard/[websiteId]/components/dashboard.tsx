@@ -150,7 +150,7 @@ export default function Dashboard() {
           />
         )}
 
-        <Card className="border border-[#373737]">
+        <Card className="border border-neutral-200 dark:border-[#373737]">
           <CardHeader>Page</CardHeader>
           <Divider />
           {otherGraphQuery.isFetching || !pageData ? (
@@ -160,7 +160,7 @@ export default function Dashboard() {
           )}
         </Card>
 
-        <Card className="border border-[#373737]">
+        <Card className="border border-neutral-200 dark:border-[#373737]">
           <CardHeader>Referrer</CardHeader>
           <Divider />
           <CardBody className="p-0">

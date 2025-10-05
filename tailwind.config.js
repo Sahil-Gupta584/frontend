@@ -48,7 +48,6 @@ const config = {
               DEFAULT: "#e78468",
               foreground: "#ffffff",
             },
-            content1: "#1d1d21",
           },
         },
         dark: {
@@ -82,7 +81,6 @@ const config = {
               DEFAULT: "#e78468",
               foreground: "#ffffff",
             },
-            content1: "#1d1d21",
           },
         },
       },

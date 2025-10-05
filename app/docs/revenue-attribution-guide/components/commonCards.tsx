@@ -22,7 +22,7 @@ function CommonCards({ provider }: { provider: TPaymentProviders }) {
         as={Link}
         // @ts-expect-error
         href={`/docs/${provider?.toLowerCase()}-checkout-api`}
-        className="group border-1 border-gray-800 hover:border-gray-700 transition rounded-xl"
+        className="group border-1 border-neutral-200 dark:border-gray-800 hover:border-neutral-300 dark:hover:border-gray-700 transition rounded-xl"
         variants={cardVariants}
         initial="hidden"
         animate="visible"
@@ -59,7 +59,7 @@ function CommonCards({ provider }: { provider: TPaymentProviders }) {
         as={Link}
         // @ts-expect-error
         href={`/docs/${provider.toLocaleLowerCase()}-payment-links`}
-        className="group border-1 border-gray-800 hover:border-gray-700 transition rounded-xl"
+        className="group border-1 border-neutral-200 dark:border-gray-800 hover:border-neutral-300 dark:hover:border-gray-700 transition rounded-xl"
         variants={cardVariants}
         initial="hidden"
         animate="visible"

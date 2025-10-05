@@ -49,7 +49,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html suppressHydrationWarning lang="en" className="dark:bg-[#19191C]">
+    <html suppressHydrationWarning lang="en">
       <head>
         <link
           href="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css"
@@ -71,7 +71,7 @@ export default function RootLayout({
         />
       </head>
       <body className={sen.className}>
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+        <Providers themeProps={{ attribute: "class", defaultTheme: "dark", enableSystem: true }}>
           {children}
         </Providers>
       </body>

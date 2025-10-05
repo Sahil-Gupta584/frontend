@@ -15,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-      <div className="min-h-screen max-w-6xl m-auto text-foreground bg-[#131315] font-sans antialiased">
+      <div className="min-h-screen max-w-6xl m-auto">
         <Nav />
         <main className="container mx-auto max-w-6xl pt-6 px-6 flex-grow">
           {children}

@@ -9,6 +9,7 @@ import CommonTooltip from "../commonTooltip";
 import { CommonChart, CommonChartProps } from "./commonChart";
 
 import { getCountryName } from "@/lib/utils/client";
+import { useChartTheme } from "@/hooks/useChartTheme";
 
 const geoUrl =
   "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson";
@@ -21,7 +22,7 @@ interface LocationChartProps {
 
 export const classNames = {
   tabList: ["bg-transparent p-3 "],
-  tabContent: "group-data-[selected=true]:text-white",
+  tabContent: "group-data-[selected=true]:text-neutral-900 dark:text-white",
   cursor: "bg-transparent",
   panel: "p-0 h-full overflow-x-hidden",
 };
@@ -30,33 +31,32 @@ export default function LocationCharts({
   countryData,
   regionData,
 }: LocationChartProps) {
+  const colors = useChartTheme();
   const getCountryDetails = (countryCode: string) => {
     const country = countryData.find((c) => c.countryCode == countryCode);
-    let color = "#1d1d21";
+    let opacity = 0.1;
 
     if (country) {
       const maxVisitors = Math.max(...countryData.map((c) => c.visitors));
       const intensity = country.visitors / maxVisitors;
 
-      if (intensity > 0.7)
-        color = "#fd366e"; // High
-      else if (intensity > 0.4)
-        color = "#fd366eb3"; // Medium
-      else if (intensity > 0.1) color = "#fd366e38"; // Low
+      if (intensity > 0.7) opacity = 0.9; // High
+      else if (intensity > 0.4) opacity = 0.6; // Medium
+      else if (intensity > 0.1) opacity = 0.25; // Low
     }
 
     return {
-      color,
+      opacity,
       ...country,
     };
   };
 
   return (
-    <Card className="border border-[#373737]">
+    <Card className="border border-divider">
       <CardBody className="h-80 overflow-hidden p-0">
         <Tabs
           aria-label="Options"
-          className=" border-b-[#ffffff26] border-b-[1px] rounded-none w-full"
+          className="border-b rounded-none w-full border-divider"
           classNames={classNames}
           color="secondary"
         >
@@ -80,26 +80,27 @@ export default function LocationCharts({
                       <Geography
                         key={geo.rsmKey}
                         geography={geo}
-                        fill={countryDetails.color}
-                        stroke="#4A5568"
+                        fill={colors.primary}
+                        stroke={colors.grid}
                         strokeWidth={0.5}
                         style={{
                           default: {
-                            fill: countryDetails.color,
-                            stroke: "#4A5568",
+                            fill: colors.primary,
+                            fillOpacity: countryDetails.opacity,
+                            stroke: colors.grid,
                             strokeWidth: 0.5,
                             outline: "none",
                           },
                           hover: {
-                            stroke: "#EC4899",
+                            stroke: colors.primary,
                             strokeWidth: 1,
                             outline: "none",
-                            border: "1px solid #ec4899",
+                            border: `1px solid ${colors.primary}`,
                             cursor: "pointer",
                           },
                           pressed: {
-                            fill: "#EC4899",
-                            stroke: "#EC4899",
+                            fill: colors.primary,
+                            stroke: colors.primary,
                             strokeWidth: 1,
                             outline: "none",
                           },

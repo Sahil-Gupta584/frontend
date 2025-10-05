@@ -16,11 +16,11 @@ export default function SystemCharts({
   osData,
 }: SystemChartProps) {
   return (
-    <Card className="border border-[#373737]">
+    <Card className="border border-neutral-200 dark:border-[#373737]">
       <CardBody className="h-80 p-0">
         <Tabs
           aria-label="systemCharts"
-          className=" border-b-[#ffffff26] border-b-[1px] rounded-none w-full"
+          className=" border-b-[1px] rounded-none w-full border-b-neutral-200 dark:border-b-[#ffffff26]"
           classNames={classNames}
           color="secondary"
         >
