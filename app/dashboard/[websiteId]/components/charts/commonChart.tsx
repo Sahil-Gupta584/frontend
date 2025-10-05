@@ -4,12 +4,9 @@ import {
   BarChart,
   LabelList,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
-
-import CommonTooltip from "../commonTooltip";
 
 import { Metric } from "@/lib/types";
 import { formatNumber } from "@/lib/utils/client";
@@ -74,7 +71,8 @@ export function CommonChart({
                       {showConversion && totalVisitors ? (
                         <>
                           &nbsp; (
-                          {+(Number(value) / totalVisitors).toFixed(2) * 100}%)
+                          {(+(Number(value) / totalVisitors) * 100).toFixed(2)}
+                          %)
                         </>
                       ) : (
                         ""
@@ -114,7 +112,7 @@ export function CommonChart({
 
           <Bar dataKey="revenue" shape={<CustomBarShape />} stackId="a" />
 
-          <Tooltip
+          {/* <Tooltip
             cursor={{ fill: "none" }}
             content={({ payload }) => (
               <CommonTooltip
@@ -122,7 +120,7 @@ export function CommonChart({
                 label={payload?.[0]?.payload?.label}
               />
             )}
-          />
+          /> */}
         </BarChart>
       </ResponsiveContainer>
     </CardBody>

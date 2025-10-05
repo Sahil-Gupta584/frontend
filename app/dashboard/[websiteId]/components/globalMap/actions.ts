@@ -1,6 +1,11 @@
 import { Map } from "mapbox-gl";
 import { Dispatch, MutableRefObject, RefObject, SetStateAction } from "react";
 
+import { client } from "@/appwrite/clientConfig";
+import { databaseId } from "@/appwrite/serverConfig";
+import { TLiveVisitor } from "@/lib/types";
+import { getLiveVisitors } from "../../actions";
+
 export async function getCoords(city: string, country: string) {
   const query = encodeURIComponent(`${city}, ${country}`);
   const res = await fetch(
@@ -61,4 +66,50 @@ export function formatSessionTime(lastEventTs: number | string) {
   const seconds = Math.floor((diff % 60000) / 1000);
 
   return `${minutes}m ${seconds}s`;
+}
+
+export function subscribeToRealtime(
+  $id: string,
+  setLiveVisitors: Dispatch<SetStateAction<TLiveVisitor[]>>
+) {
+  getLiveVisitors($id).then((data) => {
+    if (data) {
+      setLiveVisitors(
+        data.map((v) => ({
+          sessionId: v.sessionId,
+          visitorId: v.visitorId,
+          $createdAt: v.$createdAt,
+        }))
+      );
+    }
+  });
+  const event = `databases.${databaseId}.tables.heartbeats.rows`;
+  client.subscribe(
+    event,
+    ({ payload, events }: { payload: TLiveVisitor; events: string[] }) => {
+      if (events.includes(event + ".*.create")) {
+        setLiveVisitors((prev) => {
+          const exists = prev.some(
+            (v) =>
+              v.sessionId === payload.sessionId &&
+              v.visitorId === payload.visitorId
+          );
+
+          if (exists) return prev;
+
+          return [...prev, payload];
+        });
+      }
+
+      if (events.includes(event + ".*.delete")) {
+        setLiveVisitors((prev) =>
+          prev.filter(
+            (lv) =>
+              lv.sessionId !== payload.sessionId &&
+              lv.visitorId !== payload.visitorId
+          )
+        );
+      }
+    }
+  );
 }

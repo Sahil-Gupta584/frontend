@@ -79,6 +79,13 @@ export default function RootLayout({
               text="DodoPayments Checkout API"
             />
             <Anchor href="/docs/dodo-payment-links" text="DodoPayment Links" />
+            <Link
+              href="/docs/custom-goals"
+              className={`relative hover:text-primary ${pathname === "/docs/custom-goals" ? "text-primary" : ""} transition inline-flex items-center  whitespace-nowrap`}
+            >
+              <LuDot className="stroke-[5px] absolute -left-[18px]" />
+              Custom Goals
+            </Link>
           </ul>
           {children}
         </div>

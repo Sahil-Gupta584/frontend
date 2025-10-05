@@ -23,6 +23,7 @@ function Filters({
   isLoading,
   refetchMain,
   refetchOthers,
+  refetchGoals,
 }: {
   websiteId: string;
   duration: string;
@@ -32,6 +33,7 @@ function Filters({
   isLoading: boolean;
   refetchMain?: () => void;
   refetchOthers?: () => void;
+  refetchGoals?: () => void;
 }) {
   return (
     <div className="flex gap-4 items-end">
@@ -121,6 +123,7 @@ function Filters({
         onPress={() => {
           if (refetchMain) refetchMain();
           if (refetchOthers) refetchOthers();
+          if (refetchGoals) refetchGoals();
         }}
         spinner={<TfiReload className="animate-spinner-ease-spin" />}
         className="bg-transparent"

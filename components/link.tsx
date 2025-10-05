@@ -7,7 +7,7 @@ export default function LinkComponent({
   text,
   isBold,
   isIcon,
-  className,
+  className = "",
   blank,
 }: {
   href: string;
@@ -20,11 +20,11 @@ export default function LinkComponent({
   return (
     <Link
       href={href}
-      className={`underline text-white inline-flex items-center gap-1 ${isBold ? "font-medium" : ""} text-nowrap mx-2 hover:text-pink-400 transition decoration-gray-500 ${className} `}
+      className={`underline text-white inline items-center gap-1 ${isBold ? "font-medium" : ""} text-nowrap mx-2 hover:text-pink-400 transition decoration-gray-500 ${className} `}
       target={blank ? "_blank" : "_self"}
     >
       {text}
-      {isIcon && <HiExternalLink />}
+      {isIcon && <HiExternalLink className="inline" />}
     </Link>
   );
 }

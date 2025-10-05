@@ -32,10 +32,9 @@ export default function LocationCharts({
 }: LocationChartProps) {
   const getCountryDetails = (countryCode: string) => {
     const country = countryData.find((c) => c.countryCode == countryCode);
-    let color = "#1d1d21"; // No traffic - dark gray
+    let color = "#1d1d21";
 
     if (country) {
-      // Color intensity based on visitor count
       const maxVisitors = Math.max(...countryData.map((c) => c.visitors));
       const intensity = country.visitors / maxVisitors;
 

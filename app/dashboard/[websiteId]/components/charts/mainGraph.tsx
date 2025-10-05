@@ -14,12 +14,10 @@ import {
   YAxis,
 } from "recharts";
 
-import { getLiveVisitors } from "../../actions";
 import CommonTooltip from "../commonTooltip";
 import GlobalMap from "../globalMap";
+import { subscribeToRealtime } from "../globalMap/actions";
 
-import { client } from "@/appwrite/clientConfig";
-import { databaseId } from "@/appwrite/serverConfig";
 import AnimatedCounter from "@/components/animatedCounter";
 import { TLiveVisitor, TWebsite } from "@/lib/types";
 import { getLabel } from "@/lib/utils/server";
@@ -40,8 +38,6 @@ interface MainGraphProps extends TWebsite {
   duration: string;
   bounceRate: string;
   avgSessionTime: number;
-  // websiteId: string;
-  // domain: string;
   conversionRate: number;
   totalVisitors: number;
 }
@@ -59,11 +55,11 @@ function MainGraph({
   const [isVisitorsSelected, setIsVisitorsSelected] = useState(true);
   const [isRevenueSelected, setIsRevenueSelected] = useState(true);
   const [liveVisitors, setLiveVisitors] = useState<TLiveVisitor[]>([]);
-  const searchParams = useSearchParams(); // 👈
+  const searchParams = useSearchParams();
+  setLiveVisitors;
   const router = useRouter();
   const [showMap, setShowMap] = useState(searchParams.get("realtime") === "1");
 
-  // 👇 Sync state with URL query on first render
   const data = useMemo(
     () =>
       chartData.map((d) => ({
@@ -77,46 +73,7 @@ function MainGraph({
   );
 
   useEffect(() => {
-    getLiveVisitors($id).then((data) => {
-      if (data) {
-        setLiveVisitors(
-          data.map((v) => ({
-            sessionId: v.sessionId,
-            visitorId: v.visitorId,
-            $createdAt: v.$createdAt,
-          }))
-        );
-      }
-    });
-    const event = `databases.${databaseId}.tables.heartbeats.rows`;
-    client.subscribe(
-      event,
-      ({ payload, events }: { payload: TLiveVisitor; events: string[] }) => {
-        if (events.includes(event + ".*.create")) {
-          setLiveVisitors((prev) => {
-            const exists = prev.some(
-              (v) =>
-                v.sessionId === payload.sessionId &&
-                v.visitorId === payload.visitorId
-            );
-
-            if (exists) return prev;
-
-            return [...prev, payload];
-          });
-        }
-
-        if (events.includes(event + ".*.delete")) {
-          setLiveVisitors((prev) =>
-            prev.filter(
-              (lv) =>
-                lv.sessionId !== payload.sessionId &&
-                lv.visitorId !== payload.visitorId
-            )
-          );
-        }
-      }
-    );
+    subscribeToRealtime($id, setLiveVisitors);
   }, []);
 
   useEffect(() => {

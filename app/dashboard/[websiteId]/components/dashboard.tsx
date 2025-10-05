@@ -130,34 +130,33 @@ export default function Dashboard() {
           }
           refetchMain={mainGraphQuery.refetch}
           refetchOthers={otherGraphQuery.refetch}
+          refetchGoals={goalsQuery.refetch}
         />
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-[minmax(459px,auto)]">
-        {mainGraphQuery.isFetching ? (
+        {mainGraphQuery.isFetching || !mainGraphQuery.data ? (
           <MainGraphLoader />
         ) : (
-          mainGraphQuery.data && (
-            <MainGraph
-              totalVisitors={totalVisitors}
-              chartData={mainGraphQuery.data?.dataset}
-              duration={duration}
-              avgSessionTime={mainGraphQuery.data?.avgSessionTime}
-              bounceRate={mainGraphQuery.data?.bounceRate}
-              $id={websiteId}
-              domain={currentWebsite?.domain as string}
-              conversionRate={otherGraphQuery.data?.overallConversionRate}
-            />
-          )
+          <MainGraph
+            totalVisitors={totalVisitors}
+            chartData={mainGraphQuery.data?.dataset}
+            duration={duration}
+            avgSessionTime={mainGraphQuery.data?.avgSessionTime}
+            bounceRate={mainGraphQuery.data?.bounceRate}
+            $id={websiteId}
+            domain={currentWebsite?.domain as string}
+            conversionRate={otherGraphQuery.data?.overallConversionRate}
+          />
         )}
 
         <Card className="border border-[#373737]">
           <CardHeader>Page</CardHeader>
           <Divider />
-          {otherGraphQuery.isFetching ? (
+          {otherGraphQuery.isFetching || !pageData ? (
             <GraphLoader />
           ) : (
-            pageData && <CommonChart data={pageData} />
+            <CommonChart data={pageData} />
           )}
         </Card>
 
@@ -165,43 +164,45 @@ export default function Dashboard() {
           <CardHeader>Referrer</CardHeader>
           <Divider />
           <CardBody className="p-0">
-            {otherGraphQuery.isFetching ? (
+            {otherGraphQuery.isFetching || !referrerData ? (
               <GraphLoader />
             ) : (
-              referrerData && <CommonChart data={referrerData} />
+              <CommonChart data={referrerData} />
             )}
           </CardBody>
         </Card>
 
-        {otherGraphQuery.isFetching ? (
+        {otherGraphQuery.isFetching ||
+        !countryData ||
+        !cityData ||
+        !regionData ||
+        !browserData ||
+        !deviceData ||
+        !osData ? (
           <LocationSystemChartsLoader />
         ) : (
           <>
-            {countryData && cityData && regionData && (
-              <LocationCharts
-                countryData={countryData}
-                regionData={regionData}
-                cityData={cityData}
-              />
-            )}
-            {browserData && deviceData && osData && (
-              <SystemCharts
-                browserData={browserData}
-                deviceData={deviceData}
-                osData={osData}
-              />
-            )}
+            <LocationCharts
+              countryData={countryData}
+              regionData={regionData}
+              cityData={cityData}
+            />
+            <SystemCharts
+              browserData={browserData}
+              deviceData={deviceData}
+              osData={osData}
+            />
           </>
         )}
+        {goalsQuery.isFetching || !goalsQuery.data ? (
+          <CustomEventsLoader />
+        ) : (
+          <CustomEvents
+            goalsData={goalsQuery.data}
+            totalVisitors={totalVisitors}
+          />
+        )}
       </div>
-      {goalsQuery.isFetching ? (
-        <CustomEventsLoader />
-      ) : (
-        <CustomEvents
-          goalsData={goalsQuery.data}
-          totalVisitors={totalVisitors}
-        />
-      )}
     </section>
   );
 }
