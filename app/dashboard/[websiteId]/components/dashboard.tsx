@@ -20,7 +20,6 @@ import {
   LocationSystemChartsLoader,
   MainGraphLoader,
 } from "@/components/loaders";
-import { TWebsite } from "@/lib/types";
 
 export default function Dashboard() {
   const { websiteId } = useParams<{ websiteId: string }>();
@@ -28,9 +27,10 @@ export default function Dashboard() {
   const mainGraphQuery = useQuery({
     queryKey: ["mainGraph", websiteId, duration],
     queryFn: async () => {
-      return (
-        await axios("/api/analytics/main", { params: { duration, websiteId } })
-      ).data;
+      return { dataset: [] };
+      // return (
+      //   await axios("/api/analytics/main", { params: { duration, websiteId } })
+      // ).data;
     },
     enabled: false,
   });
@@ -38,12 +38,23 @@ export default function Dashboard() {
   const otherGraphQuery = useQuery({
     queryKey: ["otherGraphs", websiteId, duration],
     queryFn: async () => {
-      return (
-        await axios("/api/analytics/others", {
-          params: { duration, websiteId },
-        })
-      ).data;
+      // return (
+      //   await axios("/api/analytics/others", {
+      //     params: { duration, websiteId },
+      //   })
+      // ).data;
+      return {
+        pageData: [],
+        referrerData: [],
+        countryData: [],
+        regionData: [],
+        cityData: [],
+        browserData: [],
+        deviceData: [],
+        osData: [],
+      };
     },
+
     enabled: false,
   });
 
@@ -66,7 +77,8 @@ export default function Dashboard() {
         params: { userId: user.$id },
       });
 
-      return res.data?.websites as TWebsite[];
+      // return res.data?.websites as TWebsite[];
+      return [];
     },
     enabled: false,
   });
