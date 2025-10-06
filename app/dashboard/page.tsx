@@ -17,8 +17,8 @@ export default function Dashboard() {
     queryKey: ["getWebsites"],
     queryFn: async () => {
       const user = await account.get();
-      const res = await axios("/api/website", {
-        params: { userId: user.$id, events: true },
+      // const res = await axios("/api/website", {
+        params: { userId: '68d12499143ba57dc0f8', events: true },
       });
 
       return res.data?.websites;
